@@ -53,19 +53,20 @@ body, html {
 }
 
 .cancel-btn {
-    background-color: rgb(35, 95, 35);
+    background-color: rgb(53, 53, 53);
 }
 .action-buttons {
     margin-top: 3rem;
 }
 
 .action-buttons .submit-btn {
-    background-color: rgb(95, 203, 95);
+    background-color: #01DD8B;
 }
 
 #upload_button {
-    background-color: yellow;
-    width: 108%;
+    background-color: rgb(255, 255, 84);
+    width: 80%;
+    height: 80px;
     border-radius: 10px;
     padding: 10px 5px;
 
