@@ -4,7 +4,6 @@ body, html {
     font-family: Arial, sans-serif;
     background-color: white;
     color: black;
-    font-size: 21px; /* Kích thước chữ cơ bản */
 }
 
 .container {
@@ -14,7 +13,7 @@ body, html {
 .form-group label {
     display: block;
     margin-bottom: 0.5em;
-    font-size: 1em; /* Kích thước chữ nhãn */
+    font-size: 1.2em; /* Kích thước chữ nhãn */
 }
 
 .form-group input[type="text"],
@@ -22,10 +21,10 @@ body, html {
 .form-group input[type="date"],
 .form-group select,
 .form-group textarea {
-    width: 80%;
+    width: 100%;
     padding: 1em; /* Đệm lớn hơn */
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 1rem;
     font-size: 2em; /* Kích thước chữ lớn hơn */
     margin-bottom: 1em; /* Khoảng cách giữa các trường */
 }
@@ -35,12 +34,56 @@ body, html {
     font-style: italic; /* Nghiêng chữ mờ */
 }
 
+#nationality {
+    margin-left: 4rem;
+}
+
+#nationality option, #relationship option {
+    font-size: 10px;
+}
+
 .action-buttons button {
-    font-size: 2em; /* Kích thước chữ lớn hơn */
-    padding: 2em;
+    font-size:3em; /* Kích thước chữ lớn hơn */
+    padding: 1em 2em;
     margin: 0.5em 0;
-    width: 90%; /* Các nút chiếm gần toàn bộ chiều rộng */
+    width: 87%; /* Các nút chiếm gần toàn bộ chiều rộng */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 2rem;
+
+}
+
+.cancel-btn {
+    background-color: rgb(35, 95, 35);
+}
+.action-buttons {
+    margin-top: 3rem;
+}
+
+.action-buttons .submit-btn {
+    background-color: rgb(95, 203, 95);
+}
+
+#upload_button {
+    background-color: yellow;
+    width: 108%;
+    border-radius: 10px;
+    padding: 10px 5px;
+
+}
+
+/* .sex {
+    margin-top: -15px ;
+} */
+.gender-options {
+    font-size: 25px;
+}
+.gender-options input[type="radio"] {
+    font-size: 25px;
+}
+
+input[type="checkbox"] {
+    width: 30px;
+    height: 30px;
 }
 
 @media (max-width: 600px) {
@@ -73,7 +116,7 @@ body, html {
 }
 .form-row {
     display: flex;
-    justify-content: start;
+    justify-content: space-between;
     align-items: center;
     gap: 20px; /* Khoảng cách giữa các form-group */
 }
@@ -81,7 +124,24 @@ body, html {
 .form-group {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10%;
 }
+
+.form-row .form-group{
+    padding: 0;
+}
+
+.form-row .form-group:first-child{
+    padding-left: 10%;
+}
+.form-row .form-group:last-child{
+    padding-right: 10%;
+}
+
+
+
 
 .gender-options {
     display: flex;
@@ -124,4 +184,65 @@ body, html {
     /* Đặt lại các thuộc tính của nút Đồng Ý */
     font-size: 18px;
     padding: 10px 20px;
+}
+
+
+
+/* fix css */
+
+
+.banner {
+    background-color: #f2f2f2; /* Màu nền cho banner */
+    color: #333333; /* Màu chữ */
+    text-align: center; /* Căn giữa chữ */
+    padding: 15px 0; /* Thêm padding trên và dưới */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Bóng đổ nhẹ */
+    font-family: 'Oswald', sans-serif; /* Phông chữ */
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    height: 200px;
+    margin-bottom: 35px;
+}
+
+@keyframes scrollBannerText {
+    0% { transform: translateX(80%); }
+    100% { transform: translateX(-500%); }
+}
+
+.wrap-textBanner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 120px;
+    overflow: hidden;
+}
+
+.banner p {
+    white-space: nowrap; /* Đảm bảo chữ không xuống dòng */
+    display: inline-block; /* Cho phép chữ chạy trên cùng một dòng */
+    margin: 0 50px; /* Khoảng cách giữa các dòng */
+    animation: scrollBannerText 10s linear infinite; /* Áp dụng animation */
+    font-size: 35px;
+}
+
+.banner-image {
+    position: absolute;
+    top: 50%; /* Căn giữa theo chiều dọc */
+    transform: translateY(-50%);
+    left: 10px; /* Đặt hình ảnh ở phía bên trái */
+}
+
+.banner-image img {
+    width: 50px; /* Kích thước hình ảnh cho mobile */
+    height: auto;
+    width: 100px;
+}
+
+.navigation {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
 }

@@ -53,18 +53,28 @@ body {
     font-family: 'Oswald', sans-serif; /* Phông chữ */
     position: relative;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    height: 100px;
 }
 
 @keyframes scrollBannerText {
-    0% { transform: translateX(100%); }
-    100% { transform: translateX(-100%); }
+    0% { transform: translateX(80%); }
+    100% { transform: translateX(-500%); }
 }
 
 .banner p {
     white-space: nowrap; /* Đảm bảo chữ không xuống dòng */
     display: inline-block; /* Cho phép chữ chạy trên cùng một dòng */
-    margin: 0 50px; /* Khoảng cách giữa các dòng */
+    margin: 0 30px; /* Khoảng cách giữa các dòng */
     animation: scrollBannerText 10s linear infinite; /* Áp dụng animation */
+}
+.wrap-textBanner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 70px;
+    overflow: hidden;
 }
 
 .banner-image {

@@ -5,8 +5,32 @@
     <link rel="stylesheet" href="{% static 'css/import_info_style.css' %}">
 </head>
 <body>
+    <div class="banner">
+        <div class="banner-image">
+            <img src="{% static 'images/we_are_aatholics.png' %}" alt="Hình Ảnh">
+        </div>
+        <div class= "wrap-textBanner">
+            <p>Đức Tin Công Giáo</p>
+            <p>Nền Tảng Gia Đình</p>
+            <p>Tự Hào Huyết Thống</p>
+            <p>Vẻ Vang Dòng Tộc</p>
+        </div>
+    </div>
 
     <form method="post" enctype="multipart/form-data">
+        <div class="form-group" style = "padding : 0 7%">
+            <label for="relationship">Quan hệ:</label>
+            <select id="relationship" name="relationship">
+                <option value="">Bà cố nội</option>
+                <option value="">Ông cố nội</option>
+                <option value="">Ông ngoại</option>
+                <option value="">Bà ngoại</option>
+                <option value="">Ông nội</option>
+                <option value="">Bà nội</option>
+                <option value="">Ba</option>
+                <option value="">Mẹ</option>
+            </select>
+        </div>
         <div class="form-group">        
             <input type="text" id="full_name" name="full_name" placeholder="Nhập họ và tên" required>
         </div>
@@ -16,7 +40,7 @@
                 <input type="date" id="birth_date" name="birth_date">
             </div>
         
-            <div class="form-group">
+            <div class="form-group sex">
                 <label>Giới Tính:</label>
                 <div class="gender-options">
                     <label class="checkbox-inline"><input type="checkbox" name="gender" value="male"> Nam</label>
@@ -38,7 +62,11 @@
             <input type="text" id="contact_address" name="contact_address" placeholder="Nhập địa chỉ liên hệ">
         </div>
         <div class="form-row">
-            <div class="form-group half">
+            <div class="form-group">
+                <label for="birth_place">Nơi Sinh:</label>
+                <input type="text" id="birth_place" name="birth_place" placeholder="Nhập nơi sinh">
+            </div>
+            <div class="form-group">
                 <label for="nationality">Quốc Tịch:</label>
                 <select id="nationality" name="nationality">
                     <option value="">Chọn quốc tịch</option>
@@ -48,50 +76,44 @@
                     <option value="australia">Úc</option>
                 </select>
             </div>
-        
-            <div class="form-group half">
-                <label for="birth_place">Nơi Sinh:</label>
-                <input type="text" id="birth_place" name="birth_place" placeholder="Nhập nơi sinh">
-            </div>
         </div>
 
         <div class="form-group">
             <input type="text" id="occupation" name="occupation" placeholder="Nghề nghiệp hiện tại">
         </div>        
-<div class="form-group">
-    <textarea id="history" name="history" placeholder="lịch sử cá nhân"></textarea>
-</div>
+        <div class="form-group">
+            <textarea id="history" name="history" placeholder="lịch sử cá nhân"></textarea>
+        </div>
 
 
-<div class="form-group">
-    <input type="text" id="education_level" name="education_level" placeholder="Học vấn">
-</div>
+        <div class="form-group">
+            <input type="text" id="education_level" name="education_level" placeholder="Học vấn">
+        </div>
 
-<div class="form-group">
-    <textarea id="hobbies_interests" name="hobbies_interests" placeholder="Sở thích "></textarea>
-</div>
+        <div class="form-group">
+            <textarea id="hobbies_interests" name="hobbies_interests" placeholder="Sở thích "></textarea>
+        </div>
 
-<div class="form-group">
-    <input type="text" id="social_media_links" name="social_media_links" placeholder="mạng xã hội">
-</div>
-
-
-<div class="form-group">
-    <label for="profile_picture">Ảnh Đại Diện:</label>
-    <input type="file" id="profile_picture" name="profile_picture" class="file-input">
-    <button type="button" id="upload_button" class="submit-btn">Upload Ảnh</button>
-</div>
-
-<div class="action-buttons">
-    <button type="button" class="cancel-btn">Huỷ</button>
-    <button type="submit" class="submit-btn">Đồng Ý</button>
-</div>
-
-<script>
-    document.getElementById('upload_button').addEventListener('click', function() {
-        document.getElementById('profile_picture').click();
-    });
-</script>
-
-</body>
+        <div class="form-group">
+            <input type="text" id="social_media_links" name="social_media_links" placeholder="mạng xã hội">
+        </div>
+        
+        <div class="form-group">
+            <label for="profile_picture">Ảnh Đại Diện:</label>
+            <input type="file" id="profile_picture" name="profile_picture" class="file-input">
+            <button type="button" id="upload_button" class="submit-btn">Upload Ảnh</button>
+        </div>
+        
+        <div class="action-buttons">
+            <button type="submit" class="submit-btn">Đồng Ý</button>
+            <button type="button" class="cancel-btn">Huỷ</button>
+        </div>
+    </form>
+        
+    <script>
+        document.getElementById('upload_button').addEventListener('click', function() {
+            document.getElementById('profile_picture').click();
+        });
+    </script>
+</body> 
 </html>
