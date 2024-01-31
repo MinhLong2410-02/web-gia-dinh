@@ -1,0 +1,127 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: white;
+    color: black;
+    font-size: 21px; /* Kích thước chữ cơ bản */
+}
+
+.container {
+    padding: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5em;
+    font-size: 1em; /* Kích thước chữ nhãn */
+}
+
+.form-group input[type="text"],
+.form-group input[type="tel"],
+.form-group input[type="date"],
+.form-group select,
+.form-group textarea {
+    width: 80%;
+    padding: 1em; /* Đệm lớn hơn */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 2em; /* Kích thước chữ lớn hơn */
+    margin-bottom: 1em; /* Khoảng cách giữa các trường */
+}
+
+.form-group input::placeholder {
+    color: #a9a9a9; /* Màu sắc của chữ mờ */
+    font-style: italic; /* Nghiêng chữ mờ */
+}
+
+.action-buttons button {
+    font-size: 2em; /* Kích thước chữ lớn hơn */
+    padding: 2em;
+    margin: 0.5em 0;
+    width: 90%; /* Các nút chiếm gần toàn bộ chiều rộng */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 600px) {
+    body, html {
+        font-size: 30px; /* Tăng kích thước chữ trên di động */
+    }
+    .form-group label {
+        display: none; /* Ẩn nhãn trên di động */
+    }
+    .form-group {
+        margin-bottom: 2em; /* Khoảng cách lớn hơn giữa các trường */
+    }
+    .action-buttons button {
+        padding: 1.5em;
+        margin-bottom: 2em; /* Khoảng cách lớn hơn giữa các nút */
+    }
+}
+
+.upload-btn input[type="file"] {
+    margin-bottom: 20px;
+}
+
+.action-buttons {
+    text-align: center;
+}
+
+.action-buttons button:hover {
+    background-color: darkgreen;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+.form-row {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 20px; /* Khoảng cách giữa các form-group */
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.gender-options {
+    display: flex;
+    flex-direction: column; /* Các tùy chọn giới tính hiển thị theo cột */
+}
+
+.checkbox-inline {
+    margin-bottom: 5px; /* Khoảng cách giữa các hộp kiểm */
+}
+
+@media (max-width: 600px) {
+    .form-row {
+        flex-direction: column;
+    }
+    .form-group {
+        width: 100%;
+    }
+}
+.form-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.form-group.half {
+    flex: 1; /* Mỗi form-group sẽ chiếm một nửa chiều rộng của hàng */
+    margin-right: 10px; /* Khoảng cách giữa các form-group */
+}
+
+.form-group.half:last-child {
+    margin-right: 0; /* Không có khoảng cách bên phải cho form-group cuối cùng */
+}
+
+/* Thêm các định dạng cần thiết khác tương tự như đã được cung cấp trước đó */
+
+.file-input {
+    display: none; /* Ẩn nút chọn file thực */
+}
+
+.submit-btn {
+    /* Đặt lại các thuộc tính của nút Đồng Ý */
+    font-size: 18px;
+    padding: 10px 20px;
+}

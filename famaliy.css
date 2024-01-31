@@ -1,0 +1,49 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: white;
+    color: black;
+    padding: 20px;
+}
+
+.leaders {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.leader-box {
+    border: 2px solid grey;
+    border-radius: 10px;
+    text-align: center;
+    padding: 10px;
+}
+
+.leader-box img {
+    max-width: 100px;
+    max-height: 100px;
+    border-radius: 5px;
+}
+
+.upload-btn input[type="file"] {
+    margin-bottom: 20px;
+}
+
+.action-buttons {
+    text-align: center;
+}
+
+.cancel-btn, .submit-btn {
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.cancel-btn:hover, .submit-btn:hover {
+    background-color: darkgreen;
+}
+
+/* Điều chỉnh các kiểu khác theo nhu cầu */

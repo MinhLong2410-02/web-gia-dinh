@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Full Name List</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Full Name List</h1>
+        <ul>
+            {% for name in names %}
+                <li>{{ name }}</li>
+            {% empty %}
+                <li>No names found.</li>
+            {% endfor %}
+        </ul>
+        <!-- Debugging: print out the names variable -->
+        <div>Debug: {{ names }}</div>
+    </div>
+</body>
+</html>
