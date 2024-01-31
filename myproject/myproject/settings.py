@@ -67,7 +67,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'myproject.wsgi.application'
-
+MEDIA_URL = '/media/'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 DATABASES = {
@@ -124,6 +124,7 @@ USE_TZ = True
 # Cấu hình cho các tệp tĩnh
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+AUTH_USER_MODEL = 'home.CustomUser'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
