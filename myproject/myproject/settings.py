@@ -71,18 +71,18 @@ MEDIA_URL = '/media/'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
     # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'lehungba',
-    #     'USER': 'lehungba',
-    #     'PASSWORD': 'Lamgiau@123!',
-    #     'HOST': 'localhost',  # Hoặc địa chỉ IP của máy chủ cơ sở dữ liệu
-    #     'PORT': '5432',       # Cổng mặc định của PostgreSQL
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
     # }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'lehungba',
+        'USER': 'lehungba',
+        'PASSWORD': 'Lamgiau@123!',
+        'HOST': '45.117.79.16',  # Hoặc địa chỉ IP của máy chủ cơ sở dữ liệu
+        'PORT': '5432',       # Cổng mặc định của PostgreSQL
+    }
 }
 
 # Password validation
@@ -125,6 +125,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 AUTH_USER_MODEL = 'home.CustomUser'
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
