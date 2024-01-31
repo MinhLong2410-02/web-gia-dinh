@@ -64,7 +64,7 @@ body, html {
 }
 
 #upload_button {
-    background-color: rgb(255, 255, 84);
+    background-color: rgb(143, 143, 67);
     width: 80%;
     height: 80px;
     border-radius: 10px;
@@ -188,6 +188,35 @@ input[type="checkbox"] {
 }
 
 
+.wrap-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 30px;
+}
+.option {
+    border-radius: 1rem;
+    object-fit: cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.option img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin-bottom: 5px;
+    border-radius: 8px;
+    background-color: #f2f2f2;
+
+}
+.option input[type="radio"] {
+    width: 30px;
+    height: 30px;
+}
 
 /* fix css */
 
