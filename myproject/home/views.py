@@ -1,18 +1,24 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.list import ListView
-
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from .forms import PeopleForm
-
+from .models import People
 def index(request):
     
     
     return render(request, 'home/index.html')  
 
+@api_view(['GET'])
 def get_people_with_relationships(request):
-    # print out the get request with request.GET
-    print(request.GET)
-    return render(request, 'home/index.html')
+    day = request.GET['day']
+    # in theory, the day would be a date, but for the sake of simplicity, we will use a string that has the format of a date: 'YYYY-MM-DD'
+    # day = '2021-07-01'
+    # get all people who older than 20 years old from the person who was born on the day
+    peope = People.objects.filter(birthday__lte=day)
+    return Response({'number': 1})
+    
 # class StudentView(LoginRequiredMixin, ListView):
 #     template_name = 'home/index.html'
 #     # model = Student
