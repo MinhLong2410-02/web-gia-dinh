@@ -23,27 +23,27 @@
                 <div class= "option">
                     <img src="{% static 'images/family_tree.png' %}" alt="Hình Ảnh">
                     <label class="checkbox-inline">Noi dung thu</label>
-                    <input type="radio" id="option1" name="option1"/>
+                    {% comment %} <input type="radio" id="option1" name="option1" value="option1" checked /> {% endcomment %}
                 </div>
                 <div class= "option">
                     <img src="{% static 'images/family_tree.png' %}" alt="Hình Ảnh">
                     <label class="checkbox-inline">Noi dung thu</label>
-                    <input type="radio" id="option1" name="option1"/>
+                    {% comment %} <input type="radio" id="option1" name="option1" value="option2"/> {% endcomment %}
                 </div>
                 <div class= "option">
                     <img src="{% static 'images/family_tree.png' %}" alt="Hình Ảnh">
                     <label class="checkbox-inline">Noi dung thu</label>
-                    <input type="radio" id="option1" name="option1"/>
+                    {% comment %} <input type="radio" id="option1" name="option1" value="option3"/> {% endcomment %}
                 </div>
                 <div class= "option">
                     <img src="{% static 'images/family_tree.png' %}" alt="Hình Ảnh">
                     <label class="checkbox-inline">Noi dung thu</label>
-                    <input type="radio" id="option1" name="option1"/>
+                    {% comment %} <input type="radio" id="option1" name="option1" value="option4"/> {% endcomment %}
                 </div>
             </div>
         </div>
         <div class="form-group">        
-            <input type="text" id="full_name" name="full_name" placeholder="Nhập họ và tên" required>
+            <input type="text" id="full_name" name="full_name" placeholder="Nhập họ và tên">
         </div>
         <div class="form-row">
             <div class="form-group">
@@ -54,8 +54,12 @@
             <div class="form-group sex">
                 <label>Giới Tính:</label>
                 <div class="gender-options">
-                    <label class="checkbox-inline"><input type="checkbox" name="gender" value="male"> Nam</label>
-                    <label class="checkbox-inline"><input type="checkbox" name="gender" value="female"> Nữ</label>
+                    <label class="checkbox-inline">
+                        <input type="radio" name="gender" value="male" checked> Nam
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="radio" name="gender" value="female">Nữ
+                    </label>
                 </div>
             </div>
         
@@ -67,15 +71,18 @@
         <div class="form-group" style = "padding : 0 7%">
             <label for="relationship">Quan hệ:</label>
             <select id="relationship" name="relationship">
-                <option value="">Bà cố nội</option>
-                <option value="">Ông cố nội</option>
-                <option value="">Ông ngoại</option>
-                <option value="">Bà ngoại</option>
-                <option value="">Ông nội</option>
-                <option value="">Bà nội</option>
-                <option value="">Ba</option>
-                <option value="">Mẹ</option>
+                <option value="paternal-great-grandmother">Bà cố nội</option>
+                <option value="paternal-great-grandfather">Ông cố nội</option>
+                <option value="grandfather-ngoai">Ông ngoại</option>
+                <option value="grandmother-ngoai">Bà ngoại</option>
+                <option value="grandfather-noi">Ông nội</option>
+                <option value="grandmother-noi">Bà nội</option>
+                <option value="father">Ba</option>
+                <option value="mother">Mẹ</option>
             </select>
+        </div>
+        <div class="form-group">
+            <input type="text" id="search" name="search" placeholder="Nhập nội dung cần tìm kiếm">
         </div>
         <div class="form-group">
             <input type="tel" id="phone_number" name="phone_number" placeholder="Nhập số điện thoại">
@@ -130,6 +137,8 @@
         <div class="action-buttons">
             <button type="submit" class="submit-btn">ĐỒNG Ý</button>
             <button type="button" class="cancel-btn">HỦY</button>
+            {% comment %} 
+            const sex = document.querySelector('input[name="gender"]:checked').value {% endcomment %}
         </div>
     </form>
         
@@ -137,6 +146,80 @@
         document.getElementById('upload_button').addEventListener('click', function() {
             document.getElementById('profile_picture').click();
         });
+
+        const url = "http://localhost:8000/import_info/"
+        const form = document.querySelector('form');
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            const formData = new FormData(form);
+
+            {% comment %} let option1Radios = document.querySelectorAll('input[name="option1"]'); 
+            let option
+            option1Radios.forEach(radio => {
+                if (radio.checked) {
+                    option = radio.value;
+                }
+            }) {% endcomment %}
+
+            let sexRadio = document.querySelectorAll('input[name="gender"]')
+            let sex
+            sexRadio.forEach(radio => {
+                if(radio.checked){
+                    sex = radio.value;
+                }
+            })
+
+
+            const full_name = document.getElementById('full_name').value;
+            const birth_date = document.querySelector("#birth_date").value;
+            const death_date = document.querySelector("#death_date").value;
+            const relationship = document.getElementById('relationship').value;
+            const phone_number = document.getElementById('phone_number').value;
+            const contact_address = document.getElementById('contact_address').value;
+            const birth_place = document.querySelector("#birth_place").value;
+            const nationality = document.querySelector("#nationality").value
+            const occupation = document.querySelector("#occupation").value
+            const history = document.querySelector("#history").value
+            const education_level = document.querySelector("#education_level").value
+            const hobbies_interests = document.querySelector("#hobbies_interests").value
+            const social_media_links = document.querySelector("#social_media_links").value
+            const profile_picture = document.querySelector("#profile_picture").value
+
+
+            console.log(sex, full_name, birth_date,  death_date, relationship, phone_number, contact_address, birth_place, nationality, occupation, history, education_level, hobbies_interests, social_media_links, profile_picture);
+            
+
+            {% comment %} formData.append('option', option); {% endcomment %}
+            formData.append('full_name', full_name);
+            formData.append("birth_date", birth_date);
+            formData.append("sex", sex);
+            formData.append("death_date", death_date);
+            formData.append("relationship", relationship);
+            formData.append("phone_number", phone_number);
+            formData.append("contact_address", contact_address);
+            formData.append("birth_place", birth_place);
+            formData.append("nationality", nationality);
+            formData.append("occupation", occupation);
+            formData.append("history", history);
+            formData.append("education_level", education_level);
+            formData.append("hobbies_interests", hobbies_interests);
+            formData.append("social_media_links", social_media_links);
+            formData.append("hobbies_interests", hobbies_interests);
+            formData.append("profile_picture", profile_picture);
+
+
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            }).then(res => {
+                console.log(res);
+                console.log(formData);
+            }).catch(err => {
+                console.log(formData);
+            })   
+
+        })
+
     </script>
 </body> 
 </html>
