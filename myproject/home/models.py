@@ -19,12 +19,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 class People(models.Model):
     people_id = models.AutoField(primary_key=True)
-    full_name = models.CharField(max_length=255, null=True)
-    birth_date = models.DateField(null=True)
-    gender = models.CharField(max_length=50, null=True)
+    full_name = models.CharField(max_length=255)
+    full_name_vn = models.CharField(max_length=255)
+    birth_date = models.DateField()
+    gender = models.BooleanField()
     phone_number = models.CharField(max_length=20, null=True)
     contact_address = models.CharField(max_length=255, null=True)
-    nationality = models.CharField(max_length=50, null=True)
+    nationality = models.CharField(max_length=50, default='Việt Nam')
     birth_place = models.CharField(max_length=255, null=True)
     marital_status = models.CharField(max_length=50, null=True)
     history = models.TextField(null=True)
