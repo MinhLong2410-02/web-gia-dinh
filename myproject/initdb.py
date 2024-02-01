@@ -2,6 +2,15 @@ from myproject.wsgi import *
 from home.models import *
 from django.utils import timezone
 
+# import and create user
+from django.contrib.auth.models import User
+user = CustomUser.objects.create(
+    email = 'minhlong2002@gmail.com',
+    is_staff = True,
+    is_active = True,
+    is_superuser = True,
+)
+
 birth_date = timezone.datetime.strptime('01-01-1922', '%d-%m-%Y').date()
 People.objects.create(
     full_name_vn='Nguyễn Thị Dương',

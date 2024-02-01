@@ -15,7 +15,7 @@
 
     <footer>
         <div class="footer-section">
-            <a href="{{index}}" class="icon-button">
+            <a href="/home" class="icon-button">
                 <img src="{% static 'images/family_tree.png' %}" alt="GIA ĐÌNH">
             </a>
             <span class="icon-text">Gia Đình</span>
@@ -33,7 +33,7 @@
             <span class="icon-text">Ngày Cưới</span>
         </div>
         <div class="footer-section">
-            <a href="#" class="icon-button">
+            <a href="{% url 'login' %}" class="icon-button">
                 <img src="{% static 'images/info.png' %}" alt="ĐĂNG NHẬP">
             </a>     
             <span class="icon-text">Đăng Nhập</span>

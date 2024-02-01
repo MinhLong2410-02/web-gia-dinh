@@ -1,11 +1,18 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.template import loader
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.list import ListView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .forms import PeopleForm
+from .forms import PeopleForm, LoginForm
 from .models import People
 from rest_framework import status
+from django.contrib.auth.views import (LoginView)
+from django.conf import settings
+from django.urls import reverse_lazy
+
+API_URL = settings.API_URL
 def convert_vietnamese_accent_to_english(text):
     """
     Convert Vietnamese accents to English
@@ -28,8 +35,33 @@ def convert_vietnamese_accent_to_english(text):
     for k, v in vietnamese_accents.items():
         text = text.replace(k, v)
     return text
+
 def index(request):
     return render(request, 'home/index.html')  
+
+class Login(LoginView):
+    template_name = 'home/login.html'
+    fields = ['username', 'password']
+    redirect_authenticated_user = True
+    form_class = LoginForm
+    # def get_success_url(self):
+    #     class_ = University_class.objects.filter(teacher=self.request.user, is_active=True).first()
+    #     class_name = class_.class_name if class_ else False
+    #     return reverse_lazy('home', kwargs={'class_name': class_name})
+
+class HomeView(LoginRequiredMixin, ListView):
+    template_name = 'home/index.html'
+    # model = People
+    # context_object_name = 'people'
+    
+    def get_queryset(self):
+        return People.objects.all()
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['API_URL'] = API_URL
+        # context['current_link'] = 'home'
+        return context
 
 @api_view(['GET'])
 def find_people(request):
