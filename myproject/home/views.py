@@ -146,12 +146,13 @@ def import_info(request):
             birth_date=day,
             gender=bool(request.POST.get('gender')),
         )
-        profile_picture = request.FILES['profile_picture']
-        with open(f'./static/profile_pictures/{people.people_id}.jpg', 'wb+') as destination:
-            for chunk in profile_picture.chunks():
-                destination.write(chunk)
-        people.profile_picture = f'{API_URL}/static/profile_pictures/{people.people_id}.jpg'
-        people.save()
+        if request.POST.get('profile_picture') is not None:
+            profile_picture = request.FILES['profile_picture']
+            with open(f'./static/profile_pictures/{people.people_id}.jpg', 'wb+') as destination:
+                for chunk in profile_picture.chunks():
+                    destination.write(chunk)
+            people.profile_picture = f'{API_URL}/static/profile_pictures/{people.people_id}.jpg'
+            people.save()
         people2 = People.objects.get(full_name=request.POST.get('search'))
         Relationships.objects.create(
             person1=people,
