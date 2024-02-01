@@ -150,11 +150,6 @@
 
         const BE_HOST = "http://127.0.0.1:8080/"
 
-
-        document.getElementById('upload_button').addEventListener('click', function() {
-            document.getElementById('profile_picture').click();
-        });
-
         const recommend = document.querySelector('.recommend');
         const search = document.querySelector('#search');
 
@@ -231,25 +226,22 @@
             const education_level = document.querySelector("#education_level").value
             const hobbies_interests = document.querySelector("#hobbies_interests").value
             const social_media_links = document.querySelector("#social_media_links").value
-            const profile_picture = document.querySelector("#profile_picture").value
+            let profile_picture = document.querySelector("#profile_picture").files[0]
+            var reader = new FileReader();
+            reader.onloadend = function() {
+                console.log('RESULT', reader.result)
+                formData.profile_picture = reader.result
+              }
+            reader.readAsDataURL(profile_picture);
 
-
-            {% comment %} console.log(sex, full_name, birth_date,  death_date, relationship, phone_number, contact_address, birth_place, nationality, occupation, history, education_level, hobbies_interests, social_media_links, profile_picture); {% endcomment %}
-
-            {% comment %} formData.gender = parseInt(formData.gender);
-            formData.profile_picture = btoa(formData.profile_picture.name);
-
-            console.log(formData); {% endcomment %}
-
-            {% comment %} fetch(`${BE_HOST}/home/update-people/`, {
+            fetch(`${BE_HOST}/home/import-info/`, {
                 method: 'POST',
                 body: formData
             }).then(res => {
                 console.log(res);
-                console.log(formData);
             }).catch(err => {
-                console.log(formData);
-            })    {% endcomment %}
+                console.log(err);
+            })    
 
         })
 

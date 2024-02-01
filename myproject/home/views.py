@@ -83,18 +83,18 @@ def find_people(request):
             })
     return Response({'data': res})
 
-@api_view(['POST'])
-def update_people(request):
-    # people_id = request.data.get('people_id')
-    # full_name = request.data.get('full_name')
-    # people = People.objects.get(people_id=people_id)
-    # people.full_name = full_name
-    # people.save()
-    print(request.data)
-    return Response({
-        'message': 'Updated successfully!',
-        'data': request.data
-    }, status=status.HTTP_201_CREATED)
+# @api_view(['POST'])
+# def update_people(request):
+#     # people_id = request.data.get('people_id')
+#     # full_name = request.data.get('full_name')
+#     # people = People.objects.get(people_id=people_id)
+#     # people.full_name = full_name
+#     # people.save()
+#     print(request.data)
+#     return Response({
+#         'message': 'Updated successfully!',
+#         'data': request.data
+#     }, status=status.HTTP_201_CREATED)
 
 # class StudentView(LoginRequiredMixin, ListView):
 #     template_name = 'home/index.html'
@@ -140,22 +140,25 @@ from django.views.decorators.csrf import csrf_exempt
 def import_info(request):
     if request.method == 'POST':
         day = timezone.datetime.strptime(request.POST.get('birth_date'), '%Y-%m-%d').date()
-        
         people = People.objects.create(
             full_name_vn=request.POST.get('full_name'),
-            full_name=convert_vietnamese_accent_to_english(request.POST.get('full_name')[0]),
+            full_name=convert_vietnamese_accent_to_english(request.POST.get('full_name')),
             birth_date=day,
             gender=bool(request.POST.get('gender')),
         )
-        image = Image.open(BytesIO(request.POST.get('profile_picture'))).convert('RGB')
-        image.save(f'./static/profile_pictures/{people.people_id}.jpg', 'JPEG')
-        people2 = People.objects.get(full_name=request.POST.get('search')[0])
+        profile_picture = request.FILES['profile_picture']
+        with open(f'./static/profile_pictures/{people.people_id}.jpg', 'wb+') as destination:
+            for chunk in profile_picture.chunks():
+                destination.write(chunk)
+        people.profile_picture = f'{API_URL}/static/profile_pictures/{people.people_id}.jpg'
+        people.save()
+        people2 = People.objects.get(full_name=request.POST.get('search'))
         Relationships.objects.create(
-            people1=people,
-            people2=people2,
-            relationship_type=request.POST.get('relationship')[0],
+            person1=people,
+            person2=people2,
+            relationship_type=request.POST.get('relationship'),
         )
-        return redirect('import-info')  
+        return reverse_lazy('import-info')  
 
     
     return render(request, 'home/import_info.html')

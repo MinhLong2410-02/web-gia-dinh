@@ -35,7 +35,7 @@ class People(models.Model):
     health_status = models.CharField(max_length=255, null=True)
     death_date = models.DateField(null=True, blank=True)
     family_info = models.TextField(null=True)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', null=True)  # Modified field
+    profile_picture = models.CharField(max_length=255, null=True)  # Modified field
     hobbies_interests = models.TextField(null=True)
     social_media_links = models.TextField(null=True)
 
@@ -44,10 +44,10 @@ class People(models.Model):
 
 class Relationships(models.Model):
     relationship_id = models.AutoField(primary_key=True)
-    person1 = models.OneToOneField(People, on_delete=models.CASCADE, related_name='person1_relationships')
-    person2 = models.OneToOneField(People, on_delete=models.CASCADE, related_name='person2_relationships')
+    person1 = models.ForeignKey(People, on_delete=models.CASCADE, related_name='person1_relationships')
+    person2 = models.ForeignKey(People, on_delete=models.CASCADE, related_name='person2_relationships')
     relationship_type = models.CharField(max_length=100)
-    start_date = models.DateField()
+    start_date = models.DateField(null=True)
     end_date = models.DateField(null=True, blank=True)
 
 class Families(models.Model):
