@@ -11,6 +11,7 @@ from rest_framework import status
 from django.contrib.auth.views import (LoginView)
 from django.conf import settings
 from django.urls import reverse_lazy
+from django.utils import timezone
 
 API_URL = settings.API_URL
 def convert_vietnamese_accent_to_english(text):
@@ -136,14 +137,14 @@ from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt
 def import_info(request):
     if request.method == 'POST':
-        # People.objects.create(
-        print(request.POST)
+        day = timezone.datetime.strptime(request.POST.get('birth_date'), '%Y-%m-%d').date()
+        
         people = People.objects.create(
-            full_name_vn=request.POST.get('full_name')[0],
-            full_name_vn=convert_vietnamese_accent_to_english(request.POST.get('full_name')[0]),
-            birth_date=request.POST.get('birth_date')[0],
-            gender=True
-        ) 
+            full_name_vn=request.POST.get('full_name'),
+            full_name=convert_vietnamese_accent_to_english(request.POST.get('full_name')[0]),
+            birth_date=day,
+            gender=True)
+        
         people2 = People.objects.get(full_name=request.POST.get('search')[0])
         Relationships.objects.create(
             people1=people,
@@ -152,7 +153,5 @@ def import_info(request):
         )
         return redirect('import-info')  
 
-    else:
-        form = PeopleForm()
     
     return render(request, 'home/import_info.html')
