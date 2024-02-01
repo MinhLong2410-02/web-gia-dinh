@@ -5,19 +5,48 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .forms import PeopleForm
 from .models import People
+
+def convert_vietnamese_accent_to_english(text):
+    """
+    Convert Vietnamese accents to English
+    """
+    vietnamese_accents = {
+        'à': 'a', 'á': 'a', 'ả': 'a', 'ã': 'a', 'ạ': 'a',
+        'ă': 'a', 'ằ': 'a', 'ắ': 'a', 'ẳ': 'a', 'ẵ': 'a', 'ặ': 'a',
+        'â': 'a', 'ầ': 'a', 'ấ': 'a', 'ẩ': 'a', 'ẫ': 'a', 'ậ': 'a',
+        'đ': 'd',
+        'è': 'e', 'é': 'e', 'ẻ': 'e', 'ẽ': 'e', 'ẹ': 'e',
+        'ê': 'e', 'ề': 'e', 'ế': 'e', 'ể': 'e', 'ễ': 'e', 'ệ': 'e',
+        'ì': 'i', 'í': 'i', 'ỉ': 'i', 'ĩ': 'i', 'ị': 'i',
+        'ò': 'o', 'ó': 'o', 'ỏ': 'o', 'õ': 'o', 'ọ': 'o',
+        'ô': 'o', 'ồ': 'o', 'ố': 'o', 'ổ': 'o', 'ỗ': 'o', 'ộ': 'o',
+        'ơ': 'o', 'ờ': 'o', 'ớ': 'o', 'ở': 'o', 'ỡ': 'o', 'ợ': 'o',
+        'ù': 'u', 'ú': 'u', 'ủ': 'u', 'ũ': 'u', 'ụ': 'u',
+        'ư': 'u', 'ừ': 'u', 'ứ': 'u', 'ử': 'u', 'ữ': 'u', 'ự': 'u',
+        'ỳ': 'y', 'ý': 'y', 'ỷ': 'y', 'ỹ': 'y', 'ỵ': 'y'
+    }
+    for k, v in vietnamese_accents.items():
+        text = text.replace(k, v)
+    return text
 def index(request):
-    
-    
     return render(request, 'home/index.html')  
 
 @api_view(['GET'])
-def get_people_with_relationships(request):
-    day = request.GET['day']
-    # in theory, the day would be a date, but for the sake of simplicity, we will use a string that has the format of a date: 'YYYY-MM-DD'
-    # day = '2021-07-01'
-    # get all people who older than 20 years old from the person who was born on the day
-    peope = People.objects.filter(birthday__lte=day)
-    return Response({'number': 1})
+def find_people(request):
+    name = request.GET.get('name')
+    name = name.strip().lower()
+    name = name.split()
+    for i in range(len(name)):
+        name[i] = convert_vietnamese_accent_to_english(name[i]).capitalize()
+    name = ' '.join(name)  
+    people = People.objects.filter(full_name__icontains=name)
+    res = []
+    for person in people:
+        res.append({
+            "full_name": person.full_name,
+            "people_id": person.people_id,
+            })
+    return Response({'data': res})
     
 # class StudentView(LoginRequiredMixin, ListView):
 #     template_name = 'home/index.html'
