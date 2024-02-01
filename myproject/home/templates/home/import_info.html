@@ -135,7 +135,7 @@
         <div class="form-group">
             <label for="profile_picture">Ảnh Đại Diện:</label>
             <input type="file" id="profile_picture" name="profile_picture" class="file-input">
-            <button type="button" id="upload_button" class="submit-btn">Upload Ảnh</button>
+            {% comment %} <button type="button" id="upload_button" class="submit-btn">Upload Ảnh</button> {% endcomment %}
         </div>
         
         <div class="action-buttons">
@@ -236,7 +236,12 @@
 
             {% comment %} console.log(sex, full_name, birth_date,  death_date, relationship, phone_number, contact_address, birth_place, nationality, occupation, history, education_level, hobbies_interests, social_media_links, profile_picture); {% endcomment %}
 
-            fetch(`${BE_HOST}/home/update-people/`, {
+            {% comment %} formData.gender = parseInt(formData.gender);
+            formData.profile_picture = btoa(formData.profile_picture.name);
+
+            console.log(formData); {% endcomment %}
+
+            {% comment %} fetch(`${BE_HOST}/home/update-people/`, {
                 method: 'POST',
                 body: formData
             }).then(res => {
@@ -244,7 +249,7 @@
                 console.log(formData);
             }).catch(err => {
                 console.log(formData);
-            })   
+            })    {% endcomment %}
 
         })
 
