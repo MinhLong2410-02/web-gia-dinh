@@ -36,6 +36,7 @@ class LoginForm(AuthenticationForm):
         widget=forms.PasswordInput(attrs={
             'class': 'input password',
             'name': 'pass',
+            'type': 'password',
             'placeholder': 'Mật khẩu',
             'required': 'required'  
         }),

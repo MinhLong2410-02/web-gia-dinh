@@ -87,6 +87,7 @@ def update_people(request):
     # people = People.objects.get(people_id=people_id)
     # people.full_name = full_name
     # people.save()
+    print(request.data)
     return Response({
         'message': 'Updated successfully!',
         'data': request.data
@@ -150,6 +151,7 @@ def import_info(request):
             relationship_type=request.POST.get('relationship')[0],
         )
         return redirect('import-info')  
+
     else:
         form = PeopleForm()
     
