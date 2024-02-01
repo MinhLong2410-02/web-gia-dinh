@@ -167,7 +167,7 @@
         })
 
         search.addEventListener('keyup', function() {
-            fetch('http://127.0.0.1:8080/home/find_people/?name=' + search.value)
+            fetch('http://127.0.0.1:8080/home/find-people/?name=' + search.value)
             .then(response => response.json())
             .then(data => {
                 const wrapItem = document.querySelector('#warp-item');
@@ -191,7 +191,7 @@
         })
         
 
-        const url = "http://localhost:8000/import_info/"
+        const url = "http://localhost:8000/import-info/"
         const form = document.querySelector('form');
         form.addEventListener('submit', e => {
             e.preventDefault();
