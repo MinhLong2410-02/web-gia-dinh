@@ -130,14 +130,15 @@ def update_people(request):
 #         context['current_date'] = datetime.now().strftime("%d/%m/%Y")
 #         context['iframeUrl'] = get_iframe_url(3, student_id=student_id)
 #         return context 
+from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt
 def import_info(request):
     if request.method == 'POST':
-        form = PeopleForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('import_info')  # Thay 'some-view' bằng tên view bạn muốn chuyển hướng đến
+        # People.objects.create(
+        print(request.POST)  
+        return redirect('import-info')  
     else:
         form = PeopleForm()
     
-    return render(request, 'home/import_info.html', {'form': form})
+    return render(request, 'home/import_info.html')

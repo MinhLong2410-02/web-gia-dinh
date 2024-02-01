@@ -191,7 +191,7 @@
         })
         
 
-        const url = "http://localhost:8000/import-info/"
+        const url = "http://localhost:8080/home/import-info/"
         const form = document.querySelector('form');
         form.addEventListener('submit', e => {
             e.preventDefault();
@@ -250,7 +250,6 @@
             formData.append("social_media_links", social_media_links);
             formData.append("hobbies_interests", hobbies_interests);
             formData.append("profile_picture", profile_picture);
-
 
             fetch(url, {
                 method: 'POST',
