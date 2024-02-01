@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .forms import PeopleForm
 from .models import People
-
+from rest_framework import status
 def convert_vietnamese_accent_to_english(text):
     """
     Convert Vietnamese accents to English
@@ -47,7 +47,19 @@ def find_people(request):
             "people_id": person.people_id,
             })
     return Response({'data': res})
-    
+
+@api_view(['POST'])
+def update_people(request):
+    # people_id = request.data.get('people_id')
+    # full_name = request.data.get('full_name')
+    # people = People.objects.get(people_id=people_id)
+    # people.full_name = full_name
+    # people.save()
+    return Response({
+        'message': 'Updated successfully!',
+        'data': request.data
+    }, status=status.HTTP_201_CREATED)
+
 # class StudentView(LoginRequiredMixin, ListView):
 #     template_name = 'home/index.html'
 #     # model = Student
