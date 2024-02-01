@@ -81,8 +81,12 @@
                 <option value="mother">Mẹ</option>
             </select>
         </div>
-        <div class="form-group">
-            <input type="text" id="search" name="search" placeholder="Nhập nội dung cần tìm kiếm">
+        <div class="form-group wrap-search">
+            <input type="text" id="search" name="search" placeholder="Nhập tên người cần tìm kiếm">
+            <div class="recommend">
+                <ul id="warp-item">
+                </ul>
+            </div>
         </div>
         <div class="form-group">
             <input type="tel" id="phone_number" name="phone_number" placeholder="Nhập số điện thoại">
@@ -146,6 +150,46 @@
         document.getElementById('upload_button').addEventListener('click', function() {
             document.getElementById('profile_picture').click();
         });
+
+        const recommend = document.querySelector('.recommend');
+        const search = document.querySelector('#search');
+
+        search.addEventListener('focus', function() {
+            recommend.style.display = 'block';
+        })
+        search.addEventListener('blur', function() {
+            if (!recommend.contains(event.relatedTarget)) {
+                console.log("trong")
+                return;
+            }
+            console.log("ngoai")
+            {% comment %} recommend.style.display = 'none'; {% endcomment %}
+        })
+
+        search.addEventListener('keyup', function() {
+            fetch('http://127.0.0.1:8080/home/find_people/?name=' + search.value)
+            .then(response => response.json())
+            .then(data => {
+                const wrapItem = document.querySelector('#warp-item');
+                const arr = []
+                data.data.forEach(item => {
+                    arr.push(`<li id='item'>${item.full_name}</li>`)
+                })
+                if (arr.length === 0) {
+                    arr.push(`<li>Không tìm thấy</li>`)
+                }
+                wrapItem.innerHTML = arr.slice(0, 5).join('');
+            })
+
+        })
+
+        recommend.addEventListener('click', function(e) {
+            if (e.target.id === 'item') {
+                search.value = e.target.innerText;
+                recommend.style.display = 'none';
+            }
+        })
+        
 
         const url = "http://localhost:8000/import_info/"
         const form = document.querySelector('form');
