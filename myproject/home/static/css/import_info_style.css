@@ -22,6 +22,7 @@ body, html {
 .form-group input[type="text"],
 .form-group input[type="tel"],
 .form-group input[type="date"],
+.form-group input[type="file"],
 .form-group select,
 .form-group textarea {
     width: 100%;
@@ -30,6 +31,14 @@ body, html {
     border-radius: 1rem;
     font-size: 2em; /* Kích thước chữ lớn hơn */
     margin-bottom: 1em; /* Khoảng cách giữa các trường */
+}
+
+.profile_picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    background-color: #f2f2f2;
 }
 
 .form-group input::placeholder {
@@ -164,10 +173,6 @@ input[type="radio"] {
 }
 
 /* Thêm các định dạng cần thiết khác tương tự như đã được cung cấp trước đó */
-
-.file-input {
-    display: none; /* Ẩn nút chọn file thực */
-}
 
 .submit-btn {
     /* Đặt lại các thuộc tính của nút Đồng Ý */
