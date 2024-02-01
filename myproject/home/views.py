@@ -12,6 +12,8 @@ from django.contrib.auth.views import (LoginView)
 from django.conf import settings
 from django.urls import reverse_lazy
 from django.utils import timezone
+from PIL import Image
+from io import BytesIO
 
 API_URL = settings.API_URL
 def convert_vietnamese_accent_to_english(text):
@@ -143,8 +145,10 @@ def import_info(request):
             full_name_vn=request.POST.get('full_name'),
             full_name=convert_vietnamese_accent_to_english(request.POST.get('full_name')[0]),
             birth_date=day,
-            gender=True)
-        
+            gender=bool(request.POST.get('gender')),
+        )
+        image = Image.open(BytesIO(request.POST.get('profile_picture'))).convert('RGB')
+        image.save(f'./static/profile_pictures/{people.people_id}.jpg', 'JPEG')
         people2 = People.objects.get(full_name=request.POST.get('search')[0])
         Relationships.objects.create(
             people1=people,
