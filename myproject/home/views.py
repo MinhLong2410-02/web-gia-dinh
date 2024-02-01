@@ -6,7 +6,7 @@ from django.views.generic.list import ListView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .forms import PeopleForm, LoginForm
-from .models import People
+from .models import People, Relationships
 from rest_framework import status
 from django.contrib.auth.views import (LoginView)
 from django.conf import settings
@@ -136,7 +136,19 @@ from django.views.decorators.csrf import csrf_exempt
 def import_info(request):
     if request.method == 'POST':
         # People.objects.create(
-        print(request.POST)  
+        print(request.POST)
+        people = People.objects.create(
+            full_name_vn=request.POST.get('full_name')[0],
+            full_name_vn=convert_vietnamese_accent_to_english(request.POST.get('full_name')[0]),
+            birth_date=request.POST.get('birth_date')[0],
+            gender=True
+        ) 
+        people2 = People.objects.get(full_name=request.POST.get('search')[0])
+        Relationships.objects.create(
+            people1=people,
+            people2=people2,
+            relationship_type=request.POST.get('relationship')[0],
+        )
         return redirect('import-info')  
     else:
         form = PeopleForm()
