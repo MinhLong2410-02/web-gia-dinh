@@ -87,6 +87,7 @@ def update_people(request):
     # people = People.objects.get(people_id=people_id)
     # people.full_name = full_name
     # people.save()
+    print(request.data)
     return Response({
         'message': 'Updated successfully!',
         'data': request.data
@@ -134,6 +135,7 @@ def update_people(request):
 def import_info(request):
     if request.method == 'POST':
         form = PeopleForm(request.POST, request.FILES)
+        print(form)
         if form.is_valid():
             form.save()
             return redirect('import_info')  # Thay 'some-view' bằng tên view bạn muốn chuyển hướng đến

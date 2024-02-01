@@ -55,10 +55,10 @@
                 <label>Giới Tính:</label>
                 <div class="gender-options">
                     <label class="checkbox-inline">
-                        <input type="radio" name="gender" value="male" checked> Nam
+                        <input type="radio" name="gender" value="true" checked> Nam
                     </label>
                     <label class="checkbox-inline">
-                        <input type="radio" name="gender" value="female">Nữ
+                        <input type="radio" name="gender" value="false">Nữ
                     </label>
                 </div>
             </div>
@@ -71,14 +71,14 @@
         <div class="form-group" style = "padding : 0 7%">
             <label for="relationship">Quan hệ:</label>
             <select id="relationship" name="relationship">
-                <option value="paternal-great-grandmother">Bà cố nội</option>
-                <option value="paternal-great-grandfather">Ông cố nội</option>
-                <option value="grandfather-ngoai">Ông ngoại</option>
-                <option value="grandmother-ngoai">Bà ngoại</option>
-                <option value="grandfather-noi">Ông nội</option>
-                <option value="grandmother-noi">Bà nội</option>
-                <option value="father">Ba</option>
-                <option value="mother">Mẹ</option>
+                <option value="Bà cố nội">Bà cố nội</option>
+                <option value="Ông cố nội">Ông cố nội</option>
+                <option value="Ông ngoại">Ông ngoại</option>
+                <option value="Bà ngoại">Bà ngoại</option>
+                <option value="Ông nội">Ông nội</option>
+                <option value="Bà nội">Bà nội</option>
+                <option value="Ba">Ba</option>
+                <option value="Mẹ">Mẹ</option>
             </select>
         </div>
         <div class="form-group wrap-search">
@@ -147,6 +147,10 @@
     </form>
         
     <script>
+
+        const BE_HOST = "http://127.0.0.1:8080/"
+
+
         document.getElementById('upload_button').addEventListener('click', function() {
             document.getElementById('profile_picture').click();
         });
@@ -159,7 +163,6 @@
         })
         search.addEventListener('blur', function() {
             if (!recommend.contains(event.relatedTarget)) {
-                console.log("trong")
                 return;
             }
             console.log("ngoai")
@@ -167,7 +170,7 @@
         })
 
         search.addEventListener('keyup', function() {
-            fetch('http://127.0.0.1:8080/home/find-people/?name=' + search.value)
+            fetch(`${BE_HOST}home/find-people/?name=` + search.value)
             .then(response => response.json())
             .then(data => {
                 const wrapItem = document.querySelector('#warp-item');
@@ -191,19 +194,19 @@
         })
         
 
-        const url = "http://localhost:8000/import-info/"
+        const url = `${BE_HOST}import-info/`
         const form = document.querySelector('form');
         form.addEventListener('submit', e => {
             e.preventDefault();
             const formData = new FormData(form);
 
-            {% comment %} let option1Radios = document.querySelectorAll('input[name="option1"]'); 
+            let option1Radios = document.querySelectorAll('input[name="option1"]'); 
             let option
             option1Radios.forEach(radio => {
                 if (radio.checked) {
                     option = radio.value;
                 }
-            }) {% endcomment %}
+            })
 
             let sexRadio = document.querySelectorAll('input[name="gender"]')
             let sex
@@ -212,7 +215,6 @@
                     sex = radio.value;
                 }
             })
-
 
             const full_name = document.getElementById('full_name').value;
             const birth_date = document.querySelector("#birth_date").value;
@@ -230,29 +232,10 @@
             const profile_picture = document.querySelector("#profile_picture").value
 
 
-            console.log(sex, full_name, birth_date,  death_date, relationship, phone_number, contact_address, birth_place, nationality, occupation, history, education_level, hobbies_interests, social_media_links, profile_picture);
-            
-
-            {% comment %} formData.append('option', option); {% endcomment %}
-            formData.append('full_name', full_name);
-            formData.append("birth_date", birth_date);
-            formData.append("sex", sex);
-            formData.append("death_date", death_date);
-            formData.append("relationship", relationship);
-            formData.append("phone_number", phone_number);
-            formData.append("contact_address", contact_address);
-            formData.append("birth_place", birth_place);
-            formData.append("nationality", nationality);
-            formData.append("occupation", occupation);
-            formData.append("history", history);
-            formData.append("education_level", education_level);
-            formData.append("hobbies_interests", hobbies_interests);
-            formData.append("social_media_links", social_media_links);
-            formData.append("hobbies_interests", hobbies_interests);
-            formData.append("profile_picture", profile_picture);
+            {% comment %} console.log(sex, full_name, birth_date,  death_date, relationship, phone_number, contact_address, birth_place, nationality, occupation, history, education_level, hobbies_interests, social_media_links, profile_picture); {% endcomment %}
 
 
-            fetch(url, {
+            fetch(`${BE_HOST}/home/update-people/`, {
                 method: 'POST',
                 body: formData
             }).then(res => {

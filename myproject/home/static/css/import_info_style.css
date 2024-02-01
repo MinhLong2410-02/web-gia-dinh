@@ -16,6 +16,9 @@ body, html {
     font-size: 1.2em; /* Kích thước chữ nhãn */
 }
 
+
+
+
 .form-group input[type="text"],
 .form-group input[type="tel"],
 .form-group input[type="date"],
@@ -87,21 +90,6 @@ input[type="radio"] {
     height: 30px;
 }
 
-@media (max-width: 600px) {
-    body, html {
-        font-size: 30px; /* Tăng kích thước chữ trên di động */
-    }
-    .form-group label {
-        display: none; /* Ẩn nhãn trên di động */
-    }
-    .form-group {
-        margin-bottom: 2em; /* Khoảng cách lớn hơn giữa các trường */
-    }
-    .action-buttons button {
-        padding: 1.5em;
-        margin-bottom: 2em; /* Khoảng cách lớn hơn giữa các nút */
-    }
-}
 
 .upload-btn input[type="file"] {
     margin-bottom: 20px;
@@ -306,3 +294,5 @@ input[type="radio"] {
 .recommend li:hover {
     background-color: #f2f2f2;
 }
+
+
