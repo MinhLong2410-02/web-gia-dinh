@@ -194,7 +194,9 @@
         })
         
 
+
         const url = `${BE_HOST}import-info/`
+
         const form = document.querySelector('form');
         form.addEventListener('submit', e => {
             e.preventDefault();
@@ -233,7 +235,6 @@
 
 
             {% comment %} console.log(sex, full_name, birth_date,  death_date, relationship, phone_number, contact_address, birth_place, nationality, occupation, history, education_level, hobbies_interests, social_media_links, profile_picture); {% endcomment %}
-
 
             fetch(`${BE_HOST}/home/update-people/`, {
                 method: 'POST',
