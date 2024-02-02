@@ -81,12 +81,12 @@ def find_people(request: request.Request):
             "full_name": person.full_name,
             "people_id": person.people_id,
             })
-    people = People.objects.raw(f"SELECT * FROM people WHERE full_name LIKE %s", f"%{name}%")
-    for person in people:
-        res.add({
-            "full_name": person.full_name,
-            "people_id": person.people_id,
-            })
+    # people = People.objects.raw(f"SELECT * FROM people WHERE full_name LIKE %s", f"%{name}%")
+    # for person in people:
+    #     res.add({
+    #         "full_name": person.full_name,
+    #         "people_id": person.people_id,
+    #         })
     return Response({'data': list(res)})
 
 @api_view(['POST'])
