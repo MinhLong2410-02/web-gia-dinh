@@ -41,6 +41,10 @@ class People(models.Model):
 
     def __str__(self):
         return self.full_name
+    # the table name is People
+    class Meta:
+        db_table = "People"
+        verbose_name = "People"
 
 class Relationships(models.Model):
     relationship_id = models.AutoField(primary_key=True)
@@ -49,7 +53,9 @@ class Relationships(models.Model):
     relationship_type = models.CharField(max_length=100)
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True, blank=True)
-
+    class Meta:
+        db_table = "Relationships"
+        verbose_name = "Relationships"
 class Families(models.Model):
     family_id = models.AutoField(primary_key=True)
     person = models.ForeignKey(People, on_delete=models.CASCADE, related_name='person_families')
@@ -59,3 +65,6 @@ class Families(models.Model):
     family_history = models.TextField()
     important_events = models.TextField()
     family_tree_link = models.TextField()
+    class Meta:
+        db_table = "Families"
+        verbose_name = "Families"
