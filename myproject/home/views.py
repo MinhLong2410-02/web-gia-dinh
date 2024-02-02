@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .forms import PeopleForm, LoginForm
 from .models import People, Relationships
-from rest_framework import status
+from rest_framework import status, request
 from django.contrib.auth.views import (LoginView)
 from django.conf import settings
 from django.urls import reverse_lazy
@@ -67,7 +67,7 @@ class HomeView(LoginRequiredMixin, ListView):
         return context
 
 @api_view(['GET'])
-def find_people(request):
+def find_people(request: request.Request):
     name = request.GET.get('name')
     name = name.strip().lower()
     name = name.split()
@@ -75,26 +75,54 @@ def find_people(request):
         name[i] = convert_vietnamese_accent_to_english(name[i]).capitalize()
     name = ' '.join(name)  
     people = People.objects.filter(full_name__icontains=name)
-    res = []
+    res = set()
     for person in people:
-        res.append({
+        res.add({
             "full_name": person.full_name,
             "people_id": person.people_id,
             })
-    return Response({'data': res})
+    people = People.objects.raw(f"SELECT * FROM people WHERE full_name LIKE %s", f"%{name}%")
+    for person in people:
+        res.add({
+            "full_name": person.full_name,
+            "people_id": person.people_id,
+            })
+    return Response({'data': list(res)})
 
-# @api_view(['POST'])
-# def update_people(request):
-#     # people_id = request.data.get('people_id')
-#     # full_name = request.data.get('full_name')
-#     # people = People.objects.get(people_id=people_id)
-#     # people.full_name = full_name
-#     # people.save()
-#     print(request.data)
-#     return Response({
-#         'message': 'Updated successfully!',
-#         'data': request.data
-#     }, status=status.HTTP_201_CREATED)
+@api_view(['POST'])
+def update_people(request: request.Request):
+    status_code = status.HTTP_400_BAD_REQUEST
+    try:
+        day = timezone.datetime.strptime(request.data.get('birth_date'), '%Y-%m-%d').date()
+        people = People.objects.create(
+            full_name_vn=request.data.get('full_name'),
+            full_name=convert_vietnamese_accent_to_english(request.data.get('full_name')),
+            birth_date=day,
+            gender=bool(request.data.get('gender')),
+        )
+    except:
+        return Response({
+            'message': 'Kiểm tra dữ liệu nhập bị lỗi',
+        }, status=status_code)
+    if request.data.get('profile_picture') is not None:
+        profile_picture = request.data.get('profile_picture')
+        with open(f'./static/profile_pictures/{people.people_id}.jpg', 'wb+') as destination:
+            for chunk in profile_picture.chunks():
+                destination.write(chunk)
+        people.profile_picture = f'{API_URL}/static/profile_pictures/{people.people_id}.jpg'
+        people.save()
+        
+    people2 = People.objects.get(full_name=request.data.get('search'))
+    Relationships.objects.create(
+        person1=people,
+        person2=people2,
+        relationship_type=request.data.get('relationship'),
+    )
+    
+    status_code = status.HTTP_201_CREATED
+    return Response({
+        'message': 'Updated successfully!',
+    }, status=status_code)
 
 # class StudentView(LoginRequiredMixin, ListView):
 #     template_name = 'home/index.html'
@@ -138,28 +166,5 @@ from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def import_info(request):
-    if request.method == 'POST':
-        day = timezone.datetime.strptime(request.POST.get('birth_date'), '%Y-%m-%d').date()
-        people = People.objects.create(
-            full_name_vn=request.POST.get('full_name'),
-            full_name=convert_vietnamese_accent_to_english(request.POST.get('full_name')),
-            birth_date=day,
-            gender=bool(request.POST.get('gender')),
-        )
-        if request.POST.get('profile_picture') is not None:
-            profile_picture = request.FILES['profile_picture']
-            with open(f'./static/profile_pictures/{people.people_id}.jpg', 'wb+') as destination:
-                for chunk in profile_picture.chunks():
-                    destination.write(chunk)
-            people.profile_picture = f'{API_URL}/static/profile_pictures/{people.people_id}.jpg'
-            people.save()
-        people2 = People.objects.get(full_name=request.POST.get('search'))
-        Relationships.objects.create(
-            person1=people,
-            person2=people2,
-            relationship_type=request.POST.get('relationship'),
-        )
-        return reverse_lazy('import-info')  
-
     
     return render(request, 'home/import_info.html')
