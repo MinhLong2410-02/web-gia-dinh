@@ -239,14 +239,17 @@
             }
             
 
-            fetch(`${BE_HOST}/home/update-people/`, {
+            fetch(`${BE_HOST}home/update-people/`, {
                 method: 'POST',
                 body: formData
             }).then(res => {
-                alert('Đã thêm thông tin thành công!');
+                return res.json(); 
+            }).then(data => {
+                console.log(data); 
             }).catch(err => {
-                alert('Lỗi! Kiểm tra lại thông tin nhập vào!');
-            })    
+                {% comment %} console.log('Lỗi! Kiểm tra lại thông tin nhập vào!'); {% endcomment %}
+                console.error(err);
+            });   
 
         })
 
