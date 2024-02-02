@@ -227,20 +227,25 @@
             const hobbies_interests = document.querySelector("#hobbies_interests").value
             const social_media_links = document.querySelector("#social_media_links").value
             let profile_picture = document.querySelector("#profile_picture").files[0]
-            var reader = new FileReader();
-            reader.onloadend = function() {
-                console.log('RESULT', reader.result)
-                formData.profile_picture = reader.result
-              }
-            reader.readAsDataURL(profile_picture);
+            if (profile_picture === undefined) {
+                profile_picture = null
+            }
+            else {
+                var reader = new FileReader();
+                reader.onloadend = function() {
+                    formData.profile_picture = reader.result
+                }
+                reader.readAsDataURL(profile_picture);
+            }
+            
 
             fetch(`${BE_HOST}/home/import-info/`, {
                 method: 'POST',
                 body: formData
             }).then(res => {
-                console.log(res);
+                alert('Đã thêm thông tin thành công!');
             }).catch(err => {
-                console.log(err);
+                alert('Lỗi! Kiểm tra lại thông tin nhập vào!');
             })    
 
         })
