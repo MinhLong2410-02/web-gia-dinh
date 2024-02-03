@@ -75,12 +75,9 @@ def find_people(request: request.Request):
         name[i] = convert_vietnamese_accent_to_english(name[i]).capitalize()
     name = ' '.join(name)  
     people = People.objects.filter(full_name__icontains=name)
-    res = set()
+    res = list()
     for person in people:
-        res.add({
-            "full_name": person.full_name,
-            "people_id": person.people_id,
-            })
+        res.append({"full_name": person.full_name, "people_id": person.people_id,})
     # people = People.objects.raw(f"SELECT * FROM people WHERE full_name LIKE %s", f"%{name}%")
     # for person in people:
     #     res.add({
@@ -104,7 +101,8 @@ def update_people(request: request.Request):
         return Response({
             'message': 'Kiểm tra dữ liệu nhập bị lỗi',
         }, status=status_code)
-    if request.data.get('profile_picture') is not None:
+    
+    if bool(request.data.get('profile_picture')):
         profile_picture = request.data.get('profile_picture')
         with open(f'./static/profile_pictures/{people.people_id}.jpg', 'wb+') as destination:
             for chunk in profile_picture.chunks():

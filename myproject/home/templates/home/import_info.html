@@ -245,10 +245,9 @@
             }).then(res => {
                 return res.json(); 
             }).then(data => {
-                console.log(data); 
+                alert('Thêm thông tin thành công!');
             }).catch(err => {
-                {% comment %} console.log('Lỗi! Kiểm tra lại thông tin nhập vào!'); {% endcomment %}
-                console.error(err);
+                alert('Lỗi! Kiểm tra lại thông tin nhập vào!');
             });   
 
         })
