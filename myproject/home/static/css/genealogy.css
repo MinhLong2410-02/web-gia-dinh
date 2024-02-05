@@ -45,7 +45,6 @@
     align-items: center;
     margin: 20px;
     position: relative;
-    border: 1px solid;
 }
 .family::before {
     content: '';

@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% comment %} <meta name="viewport" content="width=device-width, initial-scale=1.0"> {% endcomment %}
+    <link href="https://fonts.googleapis.com/css?family=Oswald:500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>{% block title %}Trang Chủ{% endblock %}</title>
+</head>
+<body>
+    {% block content %}
+    <!-- Nội dung mặc định -->
+    {% endblock %}
+
+    <footer>
+        <div class="footer-section">
+            <a href="/home" class="icon-button">
+                <img src="{% static 'images/family_tree.png' %}" alt="GIA ĐÌNH">
+            </a>
+            <span class="icon-text">Gia Đình</span>
+        </div>
+        <div class="footer-section">
+            <a href="#" class="icon-button">
+                <img src="{% static 'images/birthday.png' %}" alt="SINH NHẬT">
+            </a>
+            <span class="icon-text">Sinh Nhật</span>
+        </div>
+        <div class="footer-section">
+            <a href="#" class="icon-button">
+                <img src="{% static 'images/anniversary.png' %}" alt="NGÀY CƯỚI">
+            </a>
+            <span class="icon-text">Ngày Cưới</span>
+        </div>
+        <div class="footer-section" onclick="document.getElementById('myform').submit();" >
+            <form id="myform" method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <a href="#" class="icon-button">
+                    <img src="{% static 'images/info.png' %}" alt="ĐĂNG XUẤT">
+                </a>     
+                <span class="icon-text">
+                    Đăng xuất
+                </span>
+            </form> 
+        </div>
+    </footer>
+</body>
+</html>
