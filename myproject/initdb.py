@@ -304,14 +304,6 @@ for person in people:
 People.objects.bulk_create(people_to_create)
 
 
-relationship_type = {1: 'Ông Nội',
- 2: 'Ông Ngoại',
- 3: 'Ông Cố Nội',
- 4: 'Ông Cố Ngoại',
- 5: 'Ba',
- 6: 'Mẹ',
- 7: 'Vợ',
- 8: 'Chồng'}
 for relationship in relationships:
     people = People.objects.get(people_id=relationship['person1_id']) #person1 là người đứng trước trong quan hệ person2
     people2 = People.objects.get(people_id=relationship['person2_id'])
