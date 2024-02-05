@@ -5,16 +5,16 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.list import ListView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .forms import PeopleForm, LoginForm
+from .forms import LoginForm
 from .models import People, Relationships
 from rest_framework import status, request
-from django.contrib.auth.views import (LoginView, LogoutView)
+from django.contrib.auth.views import (LoginView)
 from django.conf import settings
 from django.urls import reverse_lazy
 from django.utils import timezone
-from PIL import Image
-from io import BytesIO
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
+
 API_URL = settings.API_URL
 def convert_vietnamese_accent_to_english(text):
     """
@@ -39,8 +39,7 @@ def convert_vietnamese_accent_to_english(text):
         text = text.replace(k, v)
     return text
 
-def index(request):
-    return render(request, 'home/index.html')  
+
 def FamilyView(request):
     return render(request, 'home/family.html')  
 
@@ -52,8 +51,7 @@ class Login(LoginView):
     
     def get_success_url(self):
         return reverse_lazy('home')
-# class Logout(LogoutView):
-#     next_page = reverse_lazy('login')
+
 class HomeView(View):
     template_name_authenticated = 'home/index_authen.html'
     template_name_non_authenticated = 'home/index_non_authen.html'
@@ -65,7 +63,6 @@ class HomeView(View):
             return self.non_authenticated_user(request)
 
     def authenticated_user(self, request):
-        
         return render(request, self.template_name_authenticated)
 
     def non_authenticated_user(self, request):
@@ -80,9 +77,9 @@ def find_people(request: request.Request):
         name[i] = convert_vietnamese_accent_to_english(name[i]).capitalize()
     name = ' '.join(name)  
     people = People.objects.filter(full_name__icontains=name)
-    res = list()
-    for person in people:
-        res.append({"full_name": person.full_name, "people_id": person.people_id,})
+    res = [{"full_name": person.full_name, "people_id": person.people_id,} for person in people]
+    # for person in people:
+    #     res.append({"full_name": person.full_name, "people_id": person.people_id,})
     # people = People.objects.raw(f"SELECT * FROM people WHERE full_name LIKE %s", f"%{name}%")
     # for person in people:
     #     res.add({
@@ -117,8 +114,8 @@ def update_people(request: request.Request):
         
     people2 = People.objects.get(full_name=request.data.get('search'))
     Relationships.objects.create(
-        person1=people,
-        person2=people2,
+        person1=people2,
+        person2=people,
         relationship_type=request.data.get('relationship'),
     )
     
@@ -165,9 +162,8 @@ def update_people(request: request.Request):
 #         context['current_date'] = datetime.now().strftime("%d/%m/%Y")
 #         context['iframeUrl'] = get_iframe_url(3, student_id=student_id)
 #         return context 
-from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def import_info(request):
-    
-    return render(request, 'home/import_info.html')
+    context = {'API_URL': API_URL}
+    return render(request, 'home/import_info.html', context)

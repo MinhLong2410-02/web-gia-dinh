@@ -148,7 +148,7 @@
         
     <script>
 
-        const BE_HOST = "http://127.0.0.1:8080/"
+        const BE_HOST = {{ API_URL|safe }};
 
         const recommend = document.querySelector('.recommend');
         const search = document.querySelector('#search');
