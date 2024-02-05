@@ -51,7 +51,7 @@ body, html {
 }
 
 #nationality option, #relationship option {
-    font-size: 10px;
+    font-size: 20px;
 }
 
 .action-buttons button {
@@ -295,6 +295,7 @@ input[type="radio"] {
     padding: 1rem;
     border-bottom: 1px solid #f2f2f2;
     list-style: none;
+    font-size: 60px;
 }
 
 .recommend li:hover {
