@@ -75,7 +75,34 @@
 
 }
 
+.wrap-people {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-direction: column;
+}
+.wrap-people .img-family {
+    width: 150px;
+    height: 150px;
+}
 
+.wrap-people .name {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}   
+.heart {
+    width: 100px;
+}
+
+.wrap-heart{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    flex-direction: column;
+}
 
 
 .banner {

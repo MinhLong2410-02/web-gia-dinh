@@ -17,41 +17,16 @@
     </div>
   
     <div class="content">
-        <div class = "item">
-            <div class = "wrap-img">
-                <img class="img-family" src="{% static 'images/we_are_aatholics.png' %}" alt="Hình Ảnh">
+        {% for family in data %}
+            <div class = "item">
+                <div class = "wrap-img">
+                    <img class="img-family" src="{{ family.image }}" alt="Hình Ảnh">
+                </div>
+                <div class = "wrap-text"> 
+                    <h2 class="name">{{ family.full_name }}</h2>
+                    <p>{{ family.birth_date }}</p>    
+                </div>
             </div>
-            <div class = "wrap-text"> 
-                <h2 class="name">Gia dinh hanh phuc</h2>
-                                <p>18-03-2004</p>
-            </div>
-        </div>
-        <div class = "item">
-            <div class = "wrap-img">
-                <img class="img-family" src="{% static 'images/we_are_aatholics.png' %}" alt="Hình Ảnh">
-            </div>
-            <div class = "wrap-text"> 
-                <h2 class="name">Gia dinh hanh phuc</h2>
-                                <p>18-03-2004</p>
-            </div>
-        </div>
-        <div class = "item">
-            <div class = "wrap-img">
-                <img class="img-family" src="{% static 'images/we_are_aatholics.png' %}" alt="Hình Ảnh">
-            </div>
-            <div class = "wrap-text"> 
-                <h2 class="name">Gia dinh hanh phuc</h2>
-                                <p>18-03-2004</p>
-            </div>
-        </div>
-        <div class = "item">
-            <div class = "wrap-img">
-                <img class="img-family" src="{% static 'images/we_are_aatholics.png' %}" alt="Hình Ảnh">
-            </div>
-            <div class = "wrap-text"> 
-                <h2 class="name">Gia dinh hanh phuc</h2>
-                                <p>18-03-2004</p>
-            </div>
-        </div>
+        {% endfor %}
     </div>
 {% endblock %}
