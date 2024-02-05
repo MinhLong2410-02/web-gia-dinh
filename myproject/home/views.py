@@ -92,7 +92,7 @@ class MarriedDateView(View):
                 "img1": person1.profile_picture,
                 "full_name2": person2.full_name,
                 "img2": person2.profile_picture,
-                "start_date": relationship['start_date'].strftime("%d/%m/%Y")
+                "start_date": relationship['start_date'].strftime("%d/%m/%Y") if relationship['start_date'] else None,
             })
         return render(request, self.template_name, {'data': res})
 
