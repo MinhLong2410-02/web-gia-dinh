@@ -16,4 +16,6 @@ urlpatterns = [
     path('update-people/', update_people, name='update_people'),
     
     path('family/', FamilyView, name='family'),
+    path('birth-date/', BirthDateView.as_view(), name='birth_date'),
+    path('married-date/', MarriedDateView.as_view(), name='married_date'),
 ]
