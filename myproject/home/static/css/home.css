@@ -39,6 +39,17 @@
     align-items: center;
 }
 
+/* warp-item id has large text */
+.wrap-item {
+    height: 100%;
+    width: 60%;
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
 .img-family {
     height: 80%;
     padding: 10px;
