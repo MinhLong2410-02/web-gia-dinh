@@ -7,10 +7,6 @@
     <div class="banner">
         <div class="banner-image">
             <img src="{% static 'images/we_are_aatholics.png' %}" alt="Hình Ảnh">
-            <form method="post" action="{% url 'logout' %}">
-                {% csrf_token %}
-                <button type="submit">logout</button>
-            </form>
         </div>
         <div class = "wrap-textBanner">
             <p>Đức Tin Công Giáo</p>
