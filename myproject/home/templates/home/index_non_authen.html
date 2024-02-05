@@ -20,37 +20,16 @@
         <img src="{% static 'images/family.jpg' %}" alt="Hình Ảnh">
     </div>
     <div class="content">
-        <div class = "item">
-            <div class = "wrap-img">
-                <img class="img-family" src="{% static 'images/we_are_aatholics.png' %}" alt="Hình Ảnh">
+        {% for family in families %}
+            <div class = "item">
+                <div class = "wrap-img">
+                    <img class="img-family" src="{% static 'images/we_are_aatholics.png' %}" alt="Hình Ảnh">
+                </div>
+                <div class = "wrap-text"> 
+                    <h2 class="name">{{family.family_name}}</h2>
+                </div>
             </div>
-            <div class = "wrap-text"> 
-                <h2 class="name">Gia dinh hanh phuc</h2>
-            </div>
-        </div>
-        <div class = "item">
-            <div class = "wrap-img">
-                <img class="img-family" src="{% static 'images/we_are_aatholics.png' %}" alt="Hình Ảnh">
-            </div>
-            <div class = "wrap-text"> 
-                <h2 class="name">Gia dinh hanh phuc</h2>
-            </div>
-        </div>
-        <div class = "item">
-            <div class = "wrap-img">
-                <img class="img-family" src="{% static 'images/we_are_aatholics.png' %}" alt="Hình Ảnh">
-            </div>
-            <div class = "wrap-text"> 
-                <h2 class="name">Gia dinh hanh phuc</h2>
-            </div>
-        </div>
-        <div class = "item">
-            <div class = "wrap-img">
-                <img class="img-family" src="{% static 'images/we_are_aatholics.png' %}" alt="Hình Ảnh">
-            </div>
-            <div class = "wrap-text"> 
-                <h2 class="name">Gia dinh hanh phuc</h2>
-            </div>
-        </div>
+        {% endfor %}
+        
     </div>
 {% endblock %}
