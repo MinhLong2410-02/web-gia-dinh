@@ -1,19 +1,76 @@
-{% extends 'base.html' %}
+{% extends '../base.html' %}
+
 {% load static %}
 
 {% block title %}Trang Chủ{% endblock %}
 {% block content %}
-    <link rel="stylesheet" href="{% static 'css/home.css' %}">
-    <div class="banner">
-        <div class="banner-image">
-            <img src="{% static 'images/we_are_aatholics.png' %}" alt="Hình Ảnh">
-        </div>
-        <div class = "wrap-textBanner">
-            <p>A</p>
-            <p>Nền Tảng Gia Đình</p>
-            <p>Tự Hào Huyết Thống</p>
-            <p>Vẻ Vang Dòng Tộc</p>
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/genealogy.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/family.css' %}">
+<div class="banner">
+    <div class="banner-image">
+        <img src="{% static 'images/we_are_aatholics.png' %}" alt="Hình Ảnh">
+    </div>
+    <div class = "wrap-textBanner">
+        <p>Đức Tin Công Giáo</p>
+        <p>Nền Tảng Gia Đình</p>
+        <p>Tự Hào Huyết Thống</p>
+        <p>Vẻ Vang Dòng Tộc</p>
+    </div>
+</div>
+<div class="genealogy-tree"> 
+    <div class="generation root">
+        <div class="child">father</div>
+    </div>
+    <div class="generation">
+        <div class="wrap-family">
+            <div class="family">
+                <div class="child">father</div>
+                <div class="child">mother</div>
+            </div>
+            <div class="family">
+                <div class="child">father</div>
+                <div class="child">mother</div>
+            </div>
         </div>
     </div>
-    
+    <div class="generation">
+        <div class="wrap-family">
+            <div class="family">
+                <div class="child">mother</div>
+                <!-- <div class="child disable">mother</div> -->
+            </div>
+            <div class="family">
+                <div class="child">father</div>
+            </div>
+            <div class="family">
+                <div class="child">mother</div>
+            </div>
+            <div class="family">
+                <div class="child">mother</div>
+                <!-- <div class="child">father</div> -->
+
+            </div>
+        </div>
+    </div>
+    <div class="generation">
+        <div class="wrap-family">
+            <div class="family">
+                <div class="child">mother</div>
+                <div class="child">mother</div>
+            </div>
+            <div class="family">
+                <div class="child">father</div>
+            </div>
+            <div class="family">
+                <div class="child">father</div>
+                <div class="child">mother</div>
+            </div>
+            <div class="family">
+                <div class="child">father</div>
+                <div class="child">mother</div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

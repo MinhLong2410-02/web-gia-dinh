@@ -1,0 +1,78 @@
+.genealogy-tree {
+    height: calc(100vh - 320px);
+    display: flex;
+    flex-direction: column;
+    margin-top: 100px;
+}
+
+.generation {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin: 20px 3px;
+    padding: 15px 0;
+}
+.disable {
+    background-color: white;
+
+}
+
+.wrap-family {
+    padding-top: 20px;
+    border-top: 2px solid red;
+    display: flex;
+    justify-content: flex-end;
+    position: relative;
+    min-width: 120px;
+}
+
+.wrap-family::before {
+    content: '';
+    width: 2px;
+    height: 80px;
+    background-color: red;
+    position: absolute;
+    top: -80px;
+    left: 50%;
+    right: 0;
+    z-index: -1;
+    position: absolute;
+}
+
+.family {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin: 20px;
+    position: relative;
+    border: 1px solid;
+}
+.family::before {
+    content: '';
+    width: 2px;
+    height: 50px;
+    background-color: red;
+    position: absolute;
+    top: -41px;
+    left: 50%;
+    right: 0;
+    z-index: -1;
+    position: absolute;
+}
+
+.wrap-family .family:first-child {
+    margin-left: -80px;
+}
+
+.wrap-family .family:last-child {
+    margin-right: -78px;
+}
+
+.child {
+    background-color: aqua;
+    margin: 3px 7px;
+    width: 65px;
+    height: 100px;
+    border-radius: 1rem;
+    text-align: center;
+}
