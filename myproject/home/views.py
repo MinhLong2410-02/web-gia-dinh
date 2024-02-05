@@ -41,6 +41,8 @@ def convert_vietnamese_accent_to_english(text):
 
 def index(request):
     return render(request, 'home/index.html')  
+def FamilyView(request):
+    return render(request, 'home/family.html')  
 
 class Login(LoginView):
     template_name = 'home/login.html'
@@ -52,19 +54,24 @@ class Login(LoginView):
     #     class_name = class_.class_name if class_ else False
     #     return reverse_lazy('home', kwargs={'class_name': class_name})
 
-class HomeView(LoginRequiredMixin, ListView):
-    template_name = 'home/index.html'
-    # model = People
-    # context_object_name = 'people'
-    
-    def get_queryset(self):
-        return People.objects.all()
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['API_URL'] = API_URL
-        # context['current_link'] = 'home'
-        return context
+class HomeView(View):
+    template_name_authenticated = 'home/index_authenticated.html'
+    template_name_non_authenticated = 'home/index_non_authenticated.html'
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return self.authenticated_user(request)
+        else:
+            return self.non_authenticated_user(request)
+
+    def authenticated_user(self, request):
+        people = People.objects.all()
+        context = {'API_URL': API_URL, 'people': people}
+        return render(request, self.template_name_authenticated, context)
+
+    def non_authenticated_user(self, request):
+        context = {'API_URL': API_URL}
+        return render(request, self.template_name_non_authenticated, context)
 
 @api_view(['GET'])
 def find_people(request: request.Request):
