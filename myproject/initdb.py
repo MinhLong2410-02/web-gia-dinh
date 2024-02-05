@@ -1,7 +1,7 @@
 from myproject.wsgi import *
 from home.models import *
 from django.utils import timezone
-
+from django.contrib.auth.hashers import make_password
 def convert_vietnamese_accent_to_english(text):
     """
     Convert Vietnamese accents to English
@@ -35,6 +35,7 @@ user = CustomUser.objects.create(
     is_staff = True,
     is_active = True,
     is_superuser = True,
+    password = make_password('123'),
 )
 
 families = [{'id': 1,

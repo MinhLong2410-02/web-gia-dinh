@@ -8,13 +8,13 @@ from rest_framework.response import Response
 from .forms import PeopleForm, LoginForm
 from .models import People, Relationships
 from rest_framework import status, request
-from django.contrib.auth.views import (LoginView)
+from django.contrib.auth.views import (LoginView, LogoutView)
 from django.conf import settings
 from django.urls import reverse_lazy
 from django.utils import timezone
 from PIL import Image
 from io import BytesIO
-
+from django.views import View
 API_URL = settings.API_URL
 def convert_vietnamese_accent_to_english(text):
     """
@@ -49,14 +49,14 @@ class Login(LoginView):
     fields = ['username', 'password']
     redirect_authenticated_user = True
     form_class = LoginForm
-    # def get_success_url(self):
-    #     class_ = University_class.objects.filter(teacher=self.request.user, is_active=True).first()
-    #     class_name = class_.class_name if class_ else False
-    #     return reverse_lazy('home', kwargs={'class_name': class_name})
-
+    
+    def get_success_url(self):
+        return reverse_lazy('home')
+# class Logout(LogoutView):
+#     next_page = reverse_lazy('login')
 class HomeView(View):
-    template_name_authenticated = 'home/index_authenticated.html'
-    template_name_non_authenticated = 'home/index_non_authenticated.html'
+    template_name_authenticated = 'home/index_authen.html'
+    template_name_non_authenticated = 'home/index_non_authen.html'
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -65,13 +65,11 @@ class HomeView(View):
             return self.non_authenticated_user(request)
 
     def authenticated_user(self, request):
-        people = People.objects.all()
-        context = {'API_URL': API_URL, 'people': people}
-        return render(request, self.template_name_authenticated, context)
+        
+        return render(request, self.template_name_authenticated)
 
     def non_authenticated_user(self, request):
-        context = {'API_URL': API_URL}
-        return render(request, self.template_name_non_authenticated, context)
+        return render(request, self.template_name_non_authenticated)
 
 @api_view(['GET'])
 def find_people(request: request.Request):
