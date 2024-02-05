@@ -19,7 +19,18 @@
     </div>
 </div>
 <div class="genealogy-tree"> 
-    <div class="generation root">
+    {% for person in people %}
+        <div class="generation">
+            <div class="wrap-family">
+                <div class="family">
+                    <img class="img-family" src="{{% person.profile_picture %}}" alt="Hình Ảnh">
+                    <div class="child">{{person.full_name}}</div>
+                    <div class="child">{{person.birth_date}}</div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <!-- <div class="generation root">
         <div class="child">father</div>
     </div>
     <div class="generation">
@@ -71,6 +82,6 @@
                 <div class="child">mother</div>
             </div>
         </div>
-    </div>
+    </div> -->
 </div>
 {% endblock %}

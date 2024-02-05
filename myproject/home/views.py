@@ -6,7 +6,7 @@ from django.views.generic.list import ListView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .forms import LoginForm
-from .models import People, Relationships
+from .models import *
 from rest_framework import status, request
 from django.contrib.auth.views import (LoginView)
 from django.conf import settings
@@ -41,8 +41,11 @@ def convert_vietnamese_accent_to_english(text):
     return text
 
 
-def FamilyView(request):
-    return render(request, 'home/family.html')  
+def FamilyView(request, family_id):
+    family = Families.objects.get(family_id=family_id)
+    people = People.objects.filter(family=family).values('full_name', 'birth_date', 'profile_picture')
+
+    return render(request, 'home/family.html', {'people': list(people)})  
 
 class Login(LoginView):
     template_name = 'home/login.html'
@@ -101,16 +104,17 @@ class HomeView(View):
     template_name_non_authenticated = 'home/index_non_authen.html'
 
     def get(self, request, *args, **kwargs):
+        families = Families.objects.all().values('family_id', 'family_name')
         if request.user.is_authenticated:
-            return self.authenticated_user(request)
+            return self.authenticated_user(request, list(families))
         else:
-            return self.non_authenticated_user(request)
+            return self.non_authenticated_user(request, list(families))
 
-    def authenticated_user(self, request):
-        return render(request, self.template_name_authenticated)
+    def authenticated_user(self, request, families):
+        return render(request, self.template_name_authenticated, {'families': families})
 
-    def non_authenticated_user(self, request):
-        return render(request, self.template_name_non_authenticated)
+    def non_authenticated_user(self, request, families):
+        return render(request, self.template_name_non_authenticated, {'families': families})
 
 @api_view(['GET'])
 def find_people(request: request.Request):

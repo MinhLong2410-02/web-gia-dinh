@@ -30,7 +30,10 @@
     display: flex;
     justify-content: space-between;
 }
-
+.item a {
+    display: flex;
+    justify-content: space-between;
+}
 .wrap-img{
     height: 100%;
     width: 40%;

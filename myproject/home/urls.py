@@ -15,7 +15,7 @@ urlpatterns = [
     path('find-people/', find_people, name='find_people'),
     path('update-people/', update_people, name='update_people'),
     
-    path('family/', FamilyView, name='family'),
+    path('family/<int:family_id>', FamilyView, name='family'),
     path('birth-date/', BirthDateView.as_view(), name='birth_date'),
     path('married-date/', MarriedDateView.as_view(), name='married_date'),
 ]
