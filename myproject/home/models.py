@@ -29,7 +29,7 @@ class Families(models.Model):
     family_tree_link = models.TextField(null=True)
     class Meta:
         db_table = "Families"
-        verbose_name = "Families"
+        # verbose_name = "Families"
 class People(models.Model):
     people_id = models.AutoField(primary_key=True)
     full_name = models.CharField(max_length=255)
@@ -56,7 +56,7 @@ class People(models.Model):
     
     class Meta:
         db_table = "People"
-        verbose_name = "People"
+        # verbose_name = "People"
 class Relationships(models.Model):
     relationship_id = models.AutoField(primary_key=True)
     person1 = models.ForeignKey(People, on_delete=models.CASCADE, related_name='person1_relationships')
@@ -66,4 +66,4 @@ class Relationships(models.Model):
     end_date = models.DateField(null=True, blank=True)
     class Meta:
         db_table = "Relationships"
-        verbose_name = "Relationships"
+        # verbose_name = "Relationships"
