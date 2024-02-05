@@ -52,6 +52,20 @@ class Login(LoginView):
     def get_success_url(self):
         return reverse_lazy('home')
 
+class BirthDateView(View):
+    template_name = 'home/birth_date.html'
+    
+    def get(self, request, *args, **kwargs):
+        # get the current time
+        return render(request, self.template_name)
+
+class MarriedDateView(View):
+    template_name = 'home/married_date.html'
+    
+    def get(self, request, *args, **kwargs):
+        # get the current time
+        return render(request, self.template_name)
+
 class HomeView(View):
     template_name_authenticated = 'home/index_authen.html'
     template_name_non_authenticated = 'home/index_non_authen.html'
