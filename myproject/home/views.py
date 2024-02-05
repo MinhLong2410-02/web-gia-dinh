@@ -14,6 +14,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models.functions import ExtractDay, ExtractMonth
 
 API_URL = settings.API_URL
 def convert_vietnamese_accent_to_english(text):
@@ -56,15 +57,44 @@ class BirthDateView(View):
     template_name = 'home/birth_date.html'
     
     def get(self, request, *args, **kwargs):
-        # get the current time
-        return render(request, self.template_name)
+        # get the current date
+        current_date = timezone.now().date()
+        res = []
+        people = People.objects.all().order_by(ExtractMonth('birth_date'), ExtractDay('birth_date'))
+        for person in people:
+            if person.birth_date.month > current_date.month:
+                res.append({
+                    "full_name": person.full_name, 
+                    "birth_date": person.birth_date.strftime("%d/%m/%Y"), 
+                    "img": person.profile_picture,
+                })
+            elif person.birth_date.month == current_date.month:
+                if person.birth_date.day >= current_date.day:
+                    res.append({
+                        "full_name": person.full_name, 
+                        "birth_date": person.birth_date.strftime("%d/%m/%Y"), 
+                        "img": person.profile_picture,
+                    })
+        print(res)
+        return render(request, self.template_name, {'data': res})
 
 class MarriedDateView(View):
     template_name = 'home/married_date.html'
-    
     def get(self, request, *args, **kwargs):
-        # get the current time
-        return render(request, self.template_name)
+        relationships = Relationships.objects.filter(relationship_type__in=['Vợ', 'Chồng']).values('person1', 'person2', 
+                                                                                                   'start_date')
+        res = []
+        for relationship in relationships:
+            person1 = People.objects.get(people_id=relationship['person1'])
+            person2 = People.objects.get(people_id=relationship['person2'])
+            res.append({
+                "full_name": person1.full_name, 
+                "img1": person1.profile_picture,
+                "full_name2": person2.full_name,
+                "img2": person2.profile_picture,
+                "start_date": relationship['start_date'].strftime("%d/%m/%Y")
+            })
+        return render(request, self.template_name, {'data': res})
 
 class HomeView(View):
     template_name_authenticated = 'home/index_authen.html'
