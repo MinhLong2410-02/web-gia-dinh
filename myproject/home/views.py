@@ -41,11 +41,6 @@ def convert_vietnamese_accent_to_english(text):
     return text
 
 
-def FamilyView(request, family_id):
-    family = Families.objects.get(family_id=family_id)
-    people = People.objects.filter(family=family).values('full_name', 'birth_date', 'profile_picture')
-
-    return render(request, 'home/family.html', {'people': list(people)})  
 
 class Login(LoginView):
     template_name = 'home/login.html'
@@ -56,6 +51,12 @@ class Login(LoginView):
     def get_success_url(self):
         return reverse_lazy('home')
 
+def FamilyView(request, family_id):
+    family = Families.objects.get(family_id=family_id)
+    people = People.objects.filter(family=family).values('full_name', 'birth_date', 'profile_picture')
+    # code tiếp ở đây
+    
+    return render(request, 'home/family.html', {'people': list(people)})  
 class BirthDateView(View):
     template_name = 'home/birth_date.html'
     
