@@ -103,6 +103,20 @@ body {
     border: 1px solid #000000; /* Black border for buttons */
 }
 
+
+.update-button {
+    background-color: #adadad;
+    padding: 8px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    bottom: 170px;
+    right: 20px;
+}
+
 footer {
     background-color: #adadad; 
     position: fixed;
