@@ -41,11 +41,6 @@ def convert_vietnamese_accent_to_english(text):
     return text
 
 
-def FamilyView(request, family_id):
-    family = Families.objects.get(family_id=family_id)
-    people = People.objects.filter(family=family).values('full_name', 'birth_date', 'profile_picture')
-
-    return render(request, 'home/family.html', {'people': list(people)})  
 
 class Login(LoginView):
     template_name = 'home/login.html'
@@ -56,6 +51,12 @@ class Login(LoginView):
     def get_success_url(self):
         return reverse_lazy('home')
 
+def FamilyView(request, family_id):
+    family = Families.objects.get(family_id=family_id)
+    people = People.objects.filter(family=family).values('full_name', 'birth_date', 'profile_picture')
+    # code tiếp ở đây
+    
+    return render(request, 'home/family.html', {'people': list(people)})  
 class BirthDateView(View):
     template_name = 'home/birth_date.html'
     
@@ -87,24 +88,9 @@ class DeathDateView(View):
     
     def get(self, request, *args, **kwargs):
         # get the current date
-        current_date = timezone.now().date()
         res = []
-        people = People.objects.all().order_by(ExtractMonth('birth_date'), ExtractDay('birth_date'))
-        for person in people:
-            if person.birth_date is None: continue
-            if person.birth_date.month > current_date.month:
-                res.append({
-                    "full_name": person.full_name, 
-                    "birth_date": person.birth_date.strftime("%d/%m/%Y"), 
-                    "img": person.profile_picture,
-                })
-            elif person.birth_date.month == current_date.month:
-                if person.birth_date.day >= current_date.day:
-                    res.append({
-                        "full_name": person.full_name, 
-                        "birth_date": person.birth_date.strftime("%d/%m/%Y"), 
-                        "img": person.profile_picture,
-                    })
+        people = People.objects.filter(death_date__isnull=False).order_by('death_date')
+        res = people.values('full_name', 'death_date', 'profile_picture')
         return render(request, self.template_name, {'data': res})
 
 class MarriedDateView(View):
@@ -242,3 +228,18 @@ def update_people(request: request.Request):
 def import_info(request):
     context = {'API_URL': API_URL}
     return render(request, 'home/import_info.html', context)
+
+class UpdateInfoView(View):
+    template_name = 'home/update_people.html'
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+    
+    # def post(self, request, *args, **kwargs):
+    #     status_code = status.HTTP_400_BAD_REQUEST
+    #     try:
+    #         day = timezone.datetime.strptime(request.POST.get('birth_date'), '%Y-%m-%d').date()
+    #         people = People.objects.create(
+    #             full_name_vn=request.POST.get('full_name'),
+    #             full_name=convert_vietnamese_accent_to_english(request.POST.get('full_name')),
+    #             birth_date=day,
+                
