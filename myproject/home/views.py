@@ -105,6 +105,7 @@ class HomeView(View):
 
     def get(self, request, *args, **kwargs):
         families = Families.objects.all().values('family_id', 'family_name', 'family_img')
+        print(families)
         if request.user.is_authenticated:
             return self.authenticated_user(request, list(families))
         else:
