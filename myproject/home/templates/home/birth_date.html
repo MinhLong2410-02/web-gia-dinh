@@ -1,7 +1,6 @@
 {% include request.user.is_authenticated|yesno:"base_authen.html,base_non_authen.html" %}
 {% load static %}
 
-{% block title %}Trang Chủ{% endblock %}
 {% block content %}
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
     <div class="banner">
