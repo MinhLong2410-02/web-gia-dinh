@@ -87,24 +87,9 @@ class DeathDateView(View):
     
     def get(self, request, *args, **kwargs):
         # get the current date
-        current_date = timezone.now().date()
         res = []
-        people = People.objects.all().order_by(ExtractMonth('birth_date'), ExtractDay('birth_date'))
-        for person in people:
-            if person.birth_date is None: continue
-            if person.birth_date.month > current_date.month:
-                res.append({
-                    "full_name": person.full_name, 
-                    "birth_date": person.birth_date.strftime("%d/%m/%Y"), 
-                    "img": person.profile_picture,
-                })
-            elif person.birth_date.month == current_date.month:
-                if person.birth_date.day >= current_date.day:
-                    res.append({
-                        "full_name": person.full_name, 
-                        "birth_date": person.birth_date.strftime("%d/%m/%Y"), 
-                        "img": person.profile_picture,
-                    })
+        people = People.objects.filter(death_date__isnull=False).order_by('death_date')
+        res = people.values('full_name', 'death_date', 'profile_picture')
         return render(request, self.template_name, {'data': res})
 
 class MarriedDateView(View):
