@@ -98,7 +98,7 @@ class MarriedDateView(View):
                 "img2": person2.profile_picture,
                 "start_date": relationship['start_date'].strftime("%d/%m/%Y") if relationship['start_date'] else None,
             })
-        return render(request, self.template_name, {'data': res})
+        return render(request, self.template_name, {'data': res, })
 
 class HomeView(View):
     template_name_authenticated = 'home/index_authen.html'
