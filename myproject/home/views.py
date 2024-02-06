@@ -65,6 +65,7 @@ class BirthDateView(View):
         res = []
         people = People.objects.all().order_by(ExtractMonth('birth_date'), ExtractDay('birth_date'))
         for person in people:
+            if person.birth_date is None: continue
             if person.birth_date.month > current_date.month:
                 res.append({
                     "full_name": person.full_name, 
@@ -105,7 +106,7 @@ class HomeView(View):
 
     def get(self, request, *args, **kwargs):
         families = Families.objects.all().values('family_id', 'family_name', 'family_img')
-        print(families)
+        # print(families)
         if request.user.is_authenticated:
             return self.authenticated_user(request, list(families))
         else:
