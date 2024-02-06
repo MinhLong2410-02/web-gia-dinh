@@ -18,4 +18,5 @@ urlpatterns = [
     path('family/<int:family_id>', FamilyView, name='family'),
     path('birth-date/', BirthDateView.as_view(), name='birth_date'),
     path('married-date/', MarriedDateView.as_view(), name='married_date'),
+    path('death-date/', DeathDateView.as_view(), name='death_date'),
 ]
