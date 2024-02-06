@@ -228,3 +228,18 @@ def update_people(request: request.Request):
 def import_info(request):
     context = {'API_URL': API_URL}
     return render(request, 'home/import_info.html', context)
+
+class UpdateInfoView(View):
+    template_name = 'home/update_people.html'
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+    
+    # def post(self, request, *args, **kwargs):
+    #     status_code = status.HTTP_400_BAD_REQUEST
+    #     try:
+    #         day = timezone.datetime.strptime(request.POST.get('birth_date'), '%Y-%m-%d').date()
+    #         people = People.objects.create(
+    #             full_name_vn=request.POST.get('full_name'),
+    #             full_name=convert_vietnamese_accent_to_english(request.POST.get('full_name')),
+    #             birth_date=day,
+                
