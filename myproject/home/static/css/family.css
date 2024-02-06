@@ -1,0 +1,65 @@
+/* Style for the treeview */
+.treeview {
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    margin-top: 50px;
+}
+/* 
+.treeview li {
+    overflow: hidden;
+} */
+
+.treeview ul {
+    list-style-type: none;
+    padding-left: 20px;
+}
+
+.treeview .name {
+    font-size: 30px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.family-name {
+    font-size: 50px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+/* Style for the folder icons */
+.treeview img {
+    width: 80px;
+    height: 80px;
+    vertical-align: middle;
+    border-radius: 15px;
+    background-color: #f2f2f2;
+    margin: 20px;
+}
+
+
+
+
+.rotate {
+    transform: rotate(90deg);
+}
+
+/* Style for nested folders */
+.treeview .nested {
+    max-height: 0;
+    padding-left: 20px;
+    overflow: hidden;
+}
+
+/* Style for folder text */
+.treeview span {
+    cursor: pointer;
+}
+
+/* Style for the folder icon when folder is opened */
+.treeview .active {
+    transform: rotate(90deg);
+}
+
+
+
+/* Điều chỉnh các kiểu khác theo nhu cầu */

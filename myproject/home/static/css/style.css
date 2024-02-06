@@ -4,7 +4,7 @@ body, h1, h2, input, a, span {
     padding: 0;
     border: 0;
     font-size: 100%;
-    font: inherit;
+    /* font: inherit; */
     vertical-align: baseline;
     text-decoration: none;
 }
