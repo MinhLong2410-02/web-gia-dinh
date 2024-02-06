@@ -23,7 +23,7 @@
             <div class = "item">
                 <a href="family/{{family.family_id}}">
                     <div class = "wrap-img">
-                        <img class="img-family" src="{% static 'images/we_are_aatholics.png' %}" alt="Hình Ảnh">
+                        <img class="img-family" src="{{ family.family_img }}" alt="Hình Ảnh">
                     </div>
                     <div class = "wrap-text">
                         <h2 class="name">{{family.family_name}}</h2>

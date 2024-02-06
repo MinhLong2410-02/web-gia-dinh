@@ -27,6 +27,7 @@ class Families(models.Model):
     family_history = models.TextField(null=True)
     important_events = models.TextField(null=True)
     family_tree_link = models.TextField(null=True)
+    family_img = models.CharField(max_length=255, null=True)
     class Meta:
         db_table = "families"
         # verbose_name = "Families"

@@ -104,7 +104,7 @@ class HomeView(View):
     template_name_non_authenticated = 'home/index_non_authen.html'
 
     def get(self, request, *args, **kwargs):
-        families = Families.objects.all().values('family_id', 'family_name')
+        families = Families.objects.all().values('family_id', 'family_name', 'family_img')
         if request.user.is_authenticated:
             return self.authenticated_user(request, list(families))
         else:
