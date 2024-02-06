@@ -1,7 +1,6 @@
 {% include request.user.is_authenticated|yesno:"base_authen.html,base_non_authen.html" %}
 {% load static %}
 
-{% block title %}Trang Chủ{% endblock %}
 {% block content %}
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
     <div class="banner">
@@ -24,7 +23,8 @@
                 </div>
                 <div class = "wrap-text"> 
                     <h2 class="name">{{ family.full_name }}</h2>
-                    <p>{{ family.birth_date }}</p>    
+                    <p>Từ trần: {{ family.birth_date }}</p>
+                    <p>Tuổi: {{ family.death_date }}</p>    
                 </div>
             </div>
         {% endfor %}
