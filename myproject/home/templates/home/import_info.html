@@ -165,7 +165,7 @@
         })
 
         search.addEventListener('keyup', function() {
-            fetch(`${BE_HOST}home/find-people/?name=` + search.value)
+            fetch(`${BE_HOST}home/api/find-people/?name=` + search.value)
             .then(response => response.json())
             .then(data => {
                 const wrapItem = document.querySelector('#warp-item');
@@ -239,7 +239,7 @@
             }
             
 
-            fetch(`${BE_HOST}home/update-people/`, {
+            fetch(`${BE_HOST}home/api/update-people/`, {
                 method: 'POST',
                 body: formData
             }).then(res => {
