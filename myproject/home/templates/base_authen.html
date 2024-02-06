@@ -32,6 +32,12 @@
             </a>
             <span class="icon-text">Ngày Cưới</span>
         </div>
+        <div class="footer-section">
+            <a href="{% url 'login' %}" class="icon-button">
+                <img src="{% static 'images/info.png' %}" alt="Ngày Mất">
+            </a>     
+            <span class="icon-text">Ngày Mất</span>
+        </div>        
         <div class="footer-section" onclick="document.getElementById('myform').submit();" >
             <form id="myform" method="post" action="{% url 'logout' %}">
                 {% csrf_token %}

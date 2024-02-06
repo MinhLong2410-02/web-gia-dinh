@@ -1,4 +1,4 @@
-{% extends 'base_authen.html' %}
+{% include request.user.is_authenticated|yesno:"base_authen.html,base_non_authen.html" %}
 {% load static %}
 
 {% block title %}Trang Chủ{% endblock %}
