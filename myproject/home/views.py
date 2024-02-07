@@ -15,30 +15,8 @@ from django.utils import timezone
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models.functions import ExtractDay, ExtractMonth
-
+from .utils import *
 API_URL = settings.API_URL
-def convert_vietnamese_accent_to_english(text):
-    """
-    Convert Vietnamese accents to English
-    """
-    vietnamese_accents = {
-        'à': 'a', 'á': 'a', 'ả': 'a', 'ã': 'a', 'ạ': 'a',
-        'ă': 'a', 'ằ': 'a', 'ắ': 'a', 'ẳ': 'a', 'ẵ': 'a', 'ặ': 'a',
-        'â': 'a', 'ầ': 'a', 'ấ': 'a', 'ẩ': 'a', 'ẫ': 'a', 'ậ': 'a',
-        'đ': 'd',
-        'è': 'e', 'é': 'e', 'ẻ': 'e', 'ẽ': 'e', 'ẹ': 'e',
-        'ê': 'e', 'ề': 'e', 'ế': 'e', 'ể': 'e', 'ễ': 'e', 'ệ': 'e',
-        'ì': 'i', 'í': 'i', 'ỉ': 'i', 'ĩ': 'i', 'ị': 'i',
-        'ò': 'o', 'ó': 'o', 'ỏ': 'o', 'õ': 'o', 'ọ': 'o',
-        'ô': 'o', 'ồ': 'o', 'ố': 'o', 'ổ': 'o', 'ỗ': 'o', 'ộ': 'o',
-        'ơ': 'o', 'ờ': 'o', 'ớ': 'o', 'ở': 'o', 'ỡ': 'o', 'ợ': 'o',
-        'ù': 'u', 'ú': 'u', 'ủ': 'u', 'ũ': 'u', 'ụ': 'u',
-        'ư': 'u', 'ừ': 'u', 'ứ': 'u', 'ử': 'u', 'ữ': 'u', 'ự': 'u',
-        'ỳ': 'y', 'ý': 'y', 'ỷ': 'y', 'ỹ': 'y', 'ỵ': 'y'
-    }
-    for k, v in vietnamese_accents.items():
-        text = text.replace(k, v)
-    return text
 
 
 
@@ -52,11 +30,12 @@ class Login(LoginView):
         return reverse_lazy('home')
 
 def FamilyView(request, family_id):
-    family = Families.objects.get(family_id=family_id)
-    people = People.objects.filter(family=family).values('full_name', 'birth_date', 'profile_picture')
-    # code tiếp ở đây
+    head_family = get_head_family_tree_by_family_id(family_id)
+    res = get_husband_wife_by_id(head_family[0])
     
-    return render(request, 'home/family.html', {'people': list(people)})  
+    return render(request, 'home/family.html', {'data': res})  
+
+
 class BirthDateView(View):
     template_name = 'home/birth_date.html'
     
@@ -129,6 +108,26 @@ class HomeView(View):
     def non_authenticated_user(self, request, families):
         return render(request, self.template_name_non_authenticated, {'families': families})
 
+@csrf_exempt
+def import_info(request):
+    context = {'API_URL': API_URL}
+    return render(request, 'home/import_info.html', context)
+
+class UpdateInfoView(View):
+    template_name = 'home/update_people.html'
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+    
+    # def post(self, request, *args, **kwargs):
+    #     status_code = status.HTTP_400_BAD_REQUEST
+    #     try:
+    #         day = timezone.datetime.strptime(request.POST.get('birth_date'), '%Y-%m-%d').date()
+    #         people = People.objects.create(
+    #             full_name_vn=request.POST.get('full_name'),
+    #             full_name=convert_vietnamese_accent_to_english(request.POST.get('full_name')),
+    #             birth_date=day,
+      
+'''API ENDPOINTS'''          
 @api_view(['GET'])
 def find_people(request: request.Request):
     name = request.GET.get('name')
@@ -185,61 +184,10 @@ def update_people(request: request.Request):
         'message': 'Updated successfully!',
     }, status=status_code)
 
-# class StudentView(LoginRequiredMixin, ListView):
-#     template_name = 'home/index.html'
-#     # model = Student
-#     # context_object_name = 'student'
-    
-#     def get_queryset(self):
-#         teacher = self.request.user
-#         return teacher
-    
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['teacher'] = self.request.user
-        
-#         context['classes'] = University_class.objects.filter(teacher=self.request.user)
-#         context['cached_class_name'] = cache.get('class_name')
-#         context['current_link'] = 'home'
-        
-#         student_id = self.kwargs['student_id']
-#         # context['student'] = Student.objects.get(student_id=student_id)
-#         # context['class'] = University_class.objects.get(class_name = context['student'].class_name)     
-        
-#         # # check if this class is possed by this teacher
-#         # if context['class'].teacher != self.request.user:
-#         #     raise Http404
-        
-#         # student_list = list(Student.objects.filter(class_name=context['class']).order_by('-score_10').values())
-#         # for i in range(len(student_list)):
-#         #     student_list[i]['ranking'] = i + 1
-#         # context['student_list'] = student_list
-        
-#         # subject = Subject_student.objects.filter(student_id=student_id)\
-#         #     .values("subject__subject_name", "subject__credit", "score_10")
-#         # context['subject_list'] = list(subject)
-        
-#         context['notes'] = Note_student.objects.filter(student_id=student_id)
-#         context['current_date'] = datetime.now().strftime("%d/%m/%Y")
-#         context['iframeUrl'] = get_iframe_url(3, student_id=student_id)
-#         return context 
-
-@csrf_exempt
-def import_info(request):
-    context = {'API_URL': API_URL}
-    return render(request, 'home/import_info.html', context)
-
-class UpdateInfoView(View):
-    template_name = 'home/update_people.html'
-    def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
-    
-    # def post(self, request, *args, **kwargs):
-    #     status_code = status.HTTP_400_BAD_REQUEST
-    #     try:
-    #         day = timezone.datetime.strptime(request.POST.get('birth_date'), '%Y-%m-%d').date()
-    #         people = People.objects.create(
-    #             full_name_vn=request.POST.get('full_name'),
-    #             full_name=convert_vietnamese_accent_to_english(request.POST.get('full_name')),
-    #             birth_date=day,
-                
+@api_view(['GET'])
+def find_people_with_relationship(request: request.Request):
+    res = []
+    person1_id = request.GET.get('id')
+    relationships = Relationships.objects.filter(person1_id=person1_id, relationship_type='Cha Con').values('person2_id')
+    res = [get_husband_wife_by_id(relationship['person2_id']) for relationship in relationships]
+    return Response({'data': res})

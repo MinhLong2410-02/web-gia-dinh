@@ -32,6 +32,7 @@ class Families(models.Model):
         db_table = "families"
         # verbose_name = "Families"
 class People(models.Model):
+    email = models.EmailField(_("email address"), unique=True, null=True)
     people_id = models.AutoField(primary_key=True)
     full_name = models.CharField(max_length=255)
     full_name_vn = models.CharField(max_length=255)
