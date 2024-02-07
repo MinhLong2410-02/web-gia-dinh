@@ -39,6 +39,14 @@ user = CustomUser.objects.create(
     password = make_password('123'),
 )
 
+user = CustomUser.objects.create(
+    email = 'a@gmail.com',
+    is_staff = True,
+    is_active = True,
+    is_superuser = True,
+    password = make_password('123'),
+)
+
 families = [{'family_id': 1,
   'family_name': 'Lê Hùng Bá',
   'origin': None,

@@ -27,26 +27,23 @@
             </a>
             <span class="icon-text">Gia Đình</span>
         </div>
-        <div class="footer-section">
+        <div class="footer-section birthdate">
             <a href="{% url 'birth_date' %}" class="icon-button">
                 <img src="{% static 'images/birthday.png' %}" alt="SINH NHẬT">
             </a>
             <span class="icon-text">Sinh Nhật</span>
-            <lable class="notification">99</lable>
         </div>
-        <div class="footer-section">
+        <div class="footer-section marrieddate">
             <a href="{% url 'married_date' %}" class="icon-button">
                 <img src="{% static 'images/anniversary.png' %}" alt="NGÀY CƯỚI">
             </a>
             <span class="icon-text">Ngày Cưới</span>
-            <lable class="notification">99</lable>
         </div>
-        <div class="footer-section">
+        <div class="footer-section deathdate">
             <a href="{% url 'death_date' %}" class="icon-button">
                 <img src="{% static 'images/info.png' %}" alt="Ngày Mất">
             </a>     
             <span class="icon-text">Ngày Mất</span>
-            <lable class="notification">99</lable>
         </div>        
         <div class="footer-section" onclick="document.getElementById('myform').submit();" >
             <form id="myform" method="post" action="{% url 'logout' %}">
@@ -60,5 +57,32 @@
             </form> 
         </div>
     </footer>
+    <script>
+        fetch('{% url "count_people" %}')
+        .then(response => response.json())
+        .then(data => {
+            if (data.data.birth_date_count > 0) {
+                document.querySelector('.birthdate').innerHTML = `<a href="{% url 'birth_date' %}" class="icon-button">
+                <img src="{% static 'images/birthday.png' %}" alt="SINH NHẬT">
+                </a>
+                <span class="icon-text">Sinh Nhật</span>
+                <label class="notification">${data.data.birth_date_count}</label>`;
+            }
+            if (data.data.married_date_count > 0) {
+                document.querySelector('.marrieddate').innerHTML = `<a href="{% url 'married_date' %}" class="icon-button">
+                <img src="{% static 'images/anniversary.png' %}" alt="NGÀY CƯỚI">
+                </a>
+                <span class="icon-text">Ngày Cưới</span>
+                <label class="notification">${data.data.married_date_count}</label>`;
+            }
+            if (data.data.death_date_count > 0) {
+                document.querySelector('.deathdate').innerHTML = `<a href="{% url 'death_date' %}" class="icon-button">
+                <img src="{% static 'images/info.png' %}" alt="Ngày Mất">
+                </a>
+                <span class="icon-text">Ngày Mất</span>
+                <label class="notification">${data.data.death_date_count}</label>`;
+            }
+        });
+    </script>
 </body>
 </html>

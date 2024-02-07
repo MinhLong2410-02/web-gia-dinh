@@ -161,22 +161,79 @@ def import_info(request):
 
 class UpdateInfoView(View):
     template_name = 'home/update_people.html'
+
     def get(self, request, *args, **kwargs):
-        person_id = request.GET.get('id')
+        people_id = request.GET.get('id')
+        person_email = request.user.email
 
-        # Retrieve person and related family in a single query
-        person = People.objects.select_related('family').get(people_id=person_id)
+        if people_id:
+            person = People.objects.select_related('family').get(people_id=people_id)
+            person2 = People.objects.select_related('family').get(email=person_email)
 
-        # Retrieve other people in the same family
-        people_in_family = People.objects.filter(
-            family_id=person.family_id
-        ).exclude(
-            people_id=person_id
-        ).values(
-            'people_id', 'full_name'
-        )
-        
-        return render(request, self.template_name)
+            relationship = Relationships.objects.filter(person1=person, person2=person2).exists()
+            relationship2 = Relationships.objects.filter(person1=person2, person2=person).exists()
+            
+            if relationship or relationship2:
+                people_in_family = People.objects.filter(
+                    family_id=person.family_id
+                ).values(
+                    'people_id', 'full_name_vn', 
+                )
+                return render(request, self.template_name, {
+                    'data': {
+                        'full_name': person.full_name_vn,
+                        'birth_date': person.birth_date,
+                        'profile_picture': person.profile_picture,
+                        'gender': person.gender,
+                        'phone_number': person.phone_number,
+                        'contact_address': person.contact_address,
+                        'nationality': person.nationality,
+                        'birth_place': person.birth_place,
+                        'marital_status': person.marital_status,
+                        'history': person.history,
+                        'achievement': person.achievement,
+                        'occupation': person.occupation,
+                        'education_level': person.education_level,
+                        'health_status': person.health_status,
+                        'death_date': person.death_date,
+                        'family_info': person.family_info,
+                        'hobbies_interests': person.hobbies_interests,
+                        'social_media_links': person.social_media_links,
+                        'people_in_family': list(people_in_family),
+                    }
+                })
+            else:
+                return render(request, 'home/permission_denied.html')
+        else:
+            person = People.objects.select_related('family').get(email=person_email)
+            people_in_family = People.objects.filter(
+                family_id=person.family_id
+            ).values(
+                'people_id', 'full_name_vn', 
+            )
+            return render(request, self.template_name, {
+                'data': {
+                    'full_name': person.full_name_vn,
+                    'birth_date': person.birth_date,
+                    'profile_picture': person.profile_picture,
+                    'gender': person.gender,
+                    'phone_number': person.phone_number,
+                    'contact_address': person.contact_address,
+                    'nationality': person.nationality,
+                    'birth_place': person.birth_place,
+                    'marital_status': person.marital_status,
+                    'history': person.history,
+                    'achievement': person.achievement,
+                    'occupation': person.occupation,
+                    'education_level': person.education_level,
+                    'health_status': person.health_status,
+                    'death_date': person.death_date,
+                    'family_info': person.family_info,
+                    'hobbies_interests': person.hobbies_interests,
+                    'social_media_links': person.social_media_links,
+                    'people_in_family': list(people_in_family),
+                }
+            })
     
     # def post(self, request, *args, **kwargs):
     #     status_code = status.HTTP_400_BAD_REQUEST
@@ -253,23 +310,30 @@ def find_people_with_relationship(request: request.Request):
     return JsonResponse({'data': res})
 
 @api_view(['GET'])
-def count_people(request: request.Request):
+def count_people(request):
     current_date = timezone.now().date()
+
+    start_date = current_date
+    end_date = current_date + timezone.timedelta(days=10)
+
     people_in_current_month_count = People.objects.filter(
-        birth_date__month=current_date.month
+        birth_date__gte=start_date,
+        birth_date__lte=end_date
     ).exclude(
         birth_date__isnull=True
     ).count()
     
     couples_in_current_month_count = Relationships.objects.filter(
         relationship_type='vợ chồng',
-        start_date__month=current_date.month
+        start_date__gte=start_date,
+        start_date__lte=end_date
     ).exclude(
         start_date__isnull=True
     ).count()
     
     passed_away_in_current_month_count = People.objects.filter(
-        death_date__month=current_date.month
+        death_date__gte=start_date,
+        death_date__lte=end_date
     ).exclude(
         death_date__isnull=True
     ).count()

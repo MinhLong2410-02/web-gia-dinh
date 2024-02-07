@@ -1,5 +1,7 @@
-{% include request.user.is_authenticated|yesno:"base_authen.html,base_non_authen.html" %}
+
 {% load static %}
+
+{% include request.user.is_authenticated|yesno:"base_authen.html,base_non_authen.html" %}
 
 {% block content %}
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
@@ -16,16 +18,13 @@
     </div>
   
     <div class="content">
-        {% for family in data %}
-            <div class = "item">
-                <div class = "wrap-img">
-                    <img class="img-family" src="{{ family.image }}" alt="Hình Ảnh">
-                </div>
-                <div class = "wrap-text"> 
-                    <h2 class="name">{{ family.full_name_vn }}</h2>
-                    <p>{{ family.birth_date }}</p>    
-                </div>
+        <div class="item">
+            <div class="wrap-img">
+                <img class="img-family" src="{% static 'images/permission_denied.png' %}" alt="Hình Ảnh">
             </div>
-        {% endfor %}
+            <div class="wrap-text"> 
+                <h2 class="name">Bạn không có quyền truy cập trang này</h2>
+            </div>
+        </div>
     </div>
 {% endblock %}
