@@ -5,11 +5,15 @@
 {% block title %}Trang Chủ{% endblock %}
 {% block content %}
 
-<link rel="stylesheet" type="text/css" href="{% static 'css/genealogy.css' %}">
+{% comment %} <link rel="stylesheet" type="text/css" href="{% static 'css/genealogy.css' %}"> {% endcomment %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/family.css' %}">
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+<script src="https://kit.fontawesome.com/5466b985c0.js" crossorigin="anonymous"></script>
+
+
 <div class="banner">
     <div class="banner-image">
-        <img src="{% static 'images/we_are_aatholics.png' %}" alt="Hình Ảnh">
+        <img alt="img" src="{% static 'images/we_are_aatholics.png' %}" alt="Hình Ảnh">
     </div>
     <div class = "wrap-textBanner">
         <p>Đức Tin Công Giáo</p>
@@ -19,69 +23,82 @@
     </div>
 </div>
 <div class="genealogy-tree"> 
-    {% for person in people %}
+    {% comment %} {% for person in people %}
         <div class="generation">
             <div class="wrap-family">
                 <div class="family">
-                    <img class="img-family" src="{{ person.profile_picture }}" alt="Hình Ảnh">
+                    <img src="" alt="img"mg class="img-family" src="{{ person.profile_picture }}" alt="Hình Ảnh">
                     <div class="child">{{person.full_name}}</div>
                     <div class="child">{{person.birth_date}}</div>
                 </div>
             </div>
         </div>
-    {% endfor %}
-    <!-- <div class="generation root">
-        <div class="child">father</div>
-    </div>
-    <div class="generation">
-        <div class="wrap-family">
-            <div class="family">
-                <div class="child">father</div>
-                <div class="child">mother</div>
-            </div>
-            <div class="family">
-                <div class="child">father</div>
-                <div class="child">mother</div>
-            </div>
-        </div>
-    </div>
-    <div class="generation">
-        <div class="wrap-family">
-            <div class="family">
-                <div class="child">mother</div>
-                <div class="child disable">mother</div>
-            </div>
-            <div class="family">
-                <div class="child">father</div>
-            </div>
-            <div class="family">
-                <div class="child">mother</div>
-            </div>
-            <div class="family">
-                <div class="child">mother</div>
-                <div class="child">father</div>
+    {% endfor %} {% endcomment %}
 
-            </div>
-        </div>
-    </div>
-    <div class="generation">
-        <div class="wrap-family">
-            <div class="family">
-                <div class="child">mother</div>
-                <div class="child">mother</div>
-            </div>
-            <div class="family">
-                <div class="child">father</div>
-            </div>
-            <div class="family">
-                <div class="child">father</div>
-                <div class="child">mother</div>
-            </div>
-            <div class="family">
-                <div class="child">father</div>
-                <div class="child">mother</div>
-            </div>
-        </div>
-    </div> -->
+    <div class="treeview w-20 border">
+        <h2 class="family-name pt-3 pl-3">Gia đình số 1</h2>
+        <ul class="mb-1 pl-3 pb-2">
+          <li>
+            <i class="fas fa-angle-right"></i>
+            <span><img src="" alt="" ></img><p class="name">Mail</p></span>
+            <ul class="nested" style="max-height:0px">
+              <li><img src="" alt="" ></img><p class="name">Offers</p></li>
+              <li><img src="" alt="" ></img><p class="name">Contacts</p></li>
+              <li><i class="fas fa-angle-right"></i>
+                <span><img src="" alt="" ></img><p class="name"></i>Calendar</p></span>
+                <ul class="nested" style="max-height:0px">
+                  <li><img src="" alt="" ></img><p class="name">Deadlines</p></li>
+                  <li><img src="" alt="" ></img><p class="name">Meetings</p></li>
+                  <li><img src="" alt="" ></img><p class="name">Workouts</p></li>
+                  <li><img src="" alt="" ></img><p class="name">Events</p></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <i class="fas fa-angle-right"></i>
+            <span><img src="" alt="" ></img><p class="name">Inbox</p></span>
+            <ul class="nested" style="max-height:0px">
+              <li><img src="" alt="" ></img><p class="name">Admin</p></li>
+              <li><img src="" alt="" ></img><p class="name">Corporate</p></li>
+              <li><img src="" alt="" ></img><p class="name">Finance</p></li>
+              <li><img src="" alt="" ></img><p class="name">Other</p></li>
+            </ul>
+          </li>
+          <li>
+            <i class="fas fa-angle-right"></i>
+            <span><img  src="" alt=""></img><p class="name">Favourites</p></span>
+            <ul class="nested" style="max-height:0px">
+                <li><img  src="" alt="" ></img><p class="name">Restaurants</p></li>
+                <li><img  src="" alt="" ></img><p class="name">Places</p></li>
+                <li><img  src="" alt="" ></img><p class="name">Games</p></li>
+                <li><img  src="" alt="" ></img><p class="name">Coctails</p></li>
+                <li><img  src="" alt="" ></img><p class="name">Food</p></li>
+              </ul>
+          </li>
+          <li><img  src="" alt="" ></img><p class="name">Notes</p></li>
+          <li><img  src="" alt="" ></img><p class="name">Settings</p></li>
+          <li><img  src="" alt="" ></img><p class="name">Devices</p></li>
+          <li><img  src="" alt="" ></img><p class="name">Deleted Items</p></li>
+        </ul>
+      </div>
+
+      <script>
+        var treeviewSpanElements = document.querySelectorAll('.treeview span');
+        treeviewSpanElements.forEach(function(spanElement) {
+            spanElement.addEventListener('click', function() {
+                var ulElement = this.nextElementSibling;
+                if (ulElement) {
+                    ulElement.style.transition = 'height 1s';
+                    ulElement.style.maxHeight = (ulElement.style.maxHeight === '0px') ? `100vh` : '0px';
+                }
+    
+                var iconElement = this.querySelector('i');
+                if (iconElement) {
+                    iconElement.classList.toggle('rotate');
+                }
+            });
+        });
+      </script>
 </div>
 {% endblock %}
