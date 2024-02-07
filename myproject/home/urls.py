@@ -14,9 +14,9 @@ urlpatterns = [
     path('birth-date/', BirthDateView.as_view(), name='birth_date'),
     path('married-date/', MarriedDateView.as_view(), name='married_date'),
     path('death-date/', DeathDateView.as_view(), name='death_date'),
+    path('update-info/', UpdateInfoView.as_view(), name='update_info'),
     
     # api
-    path('api/update-info/', UpdateInfoView.as_view(), name='update_info'),
     path('api/find-people/', find_people, name='find_people'),
     path('api/update-people/', update_people, name='update_people'),
     path('api/find-people-in-family/', find_people_with_relationship, name='find_people_with_relationship'),

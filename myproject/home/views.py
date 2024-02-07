@@ -161,20 +161,79 @@ def import_info(request):
 
 class UpdateInfoView(View):
     template_name = 'home/update_people.html'
-    def get(self, request, *args, **kwargs):
-        person_email = request.user.email
-        print(person_email)
-        # Retrieve person and related family in a single query
-        person = People.objects.select_related('family').get(email=person_email)
 
-        # Retrieve other people in the same family
-        people_in_family = People.objects.filter(
-            family_id=person.family_id
-        ).values(
-            'people_id', 'full_name'
-        )
-        print(people_in_family)
-        return render(request, self.template_name)
+    def get(self, request, *args, **kwargs):
+        people_id = request.GET.get('id')
+        person_email = request.user.email
+
+        if people_id:
+            person = People.objects.select_related('family').get(people_id=people_id)
+            person2 = People.objects.select_related('family').get(email=person_email)
+
+            relationship = Relationships.objects.filter(person1=person, person2=person2).exists()
+            relationship2 = Relationships.objects.filter(person1=person2, person2=person).exists()
+            
+            if relationship or relationship2:
+                people_in_family = People.objects.filter(
+                    family_id=person.family_id
+                ).values(
+                    'people_id', 'full_name_vn', 
+                )
+                return render(request, self.template_name, {
+                    'data': {
+                        'full_name': person.full_name_vn,
+                        'birth_date': person.birth_date,
+                        'profile_picture': person.profile_picture,
+                        'gender': person.gender,
+                        'phone_number': person.phone_number,
+                        'contact_address': person.contact_address,
+                        'nationality': person.nationality,
+                        'birth_place': person.birth_place,
+                        'marital_status': person.marital_status,
+                        'history': person.history,
+                        'achievement': person.achievement,
+                        'occupation': person.occupation,
+                        'education_level': person.education_level,
+                        'health_status': person.health_status,
+                        'death_date': person.death_date,
+                        'family_info': person.family_info,
+                        'hobbies_interests': person.hobbies_interests,
+                        'social_media_links': person.social_media_links,
+                        'people_in_family': list(people_in_family),
+                    }
+                })
+            else:
+                return render(request, 'home/permission_denied.html')
+        else:
+            person = People.objects.select_related('family').get(email=person_email)
+            people_in_family = People.objects.filter(
+                family_id=person.family_id
+            ).values(
+                'people_id', 'full_name_vn', 
+            )
+            return render(request, self.template_name, {
+                'data': {
+                    'full_name': person.full_name_vn,
+                    'birth_date': person.birth_date,
+                    'profile_picture': person.profile_picture,
+                    'gender': person.gender,
+                    'phone_number': person.phone_number,
+                    'contact_address': person.contact_address,
+                    'nationality': person.nationality,
+                    'birth_place': person.birth_place,
+                    'marital_status': person.marital_status,
+                    'history': person.history,
+                    'achievement': person.achievement,
+                    'occupation': person.occupation,
+                    'education_level': person.education_level,
+                    'health_status': person.health_status,
+                    'death_date': person.death_date,
+                    'family_info': person.family_info,
+                    'hobbies_interests': person.hobbies_interests,
+                    'social_media_links': person.social_media_links,
+                    'people_in_family': list(people_in_family),
+                }
+            })
     
     # def post(self, request, *args, **kwargs):
     #     status_code = status.HTTP_400_BAD_REQUEST

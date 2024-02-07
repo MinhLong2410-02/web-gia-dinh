@@ -6,7 +6,7 @@
 {% block content %}
 
 <link rel="stylesheet" type="text/css" href="{% static 'css/genealogy.css' %}">
-<link rel="stylesheet" type="text/css" href="{% static 'css/family.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/update-people.css' %}">
 <div class="banner">
     <div class="banner-image">
         <img src="{% static 'images/we_are_aatholics.png' %}" alt="Hình Ảnh">
@@ -18,5 +18,104 @@
         <p>Vẻ Vang Dòng Tộc</p>
     </div>
 </div>
+    <form method="post" enctype="multipart/form-data">
+        <div class="form-group" style = "padding : 0 7%">
+            <label for="relationship">Thông tin họ hàng:</label>
+            <select id="relationship" name="relationship">
+                {% for person in data.people_in_family %}
+                    <option href="/home/update-people/?id={{ person.people_id }}">{{ person.full_name_vn }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">        
+            <input type="text" id="full_name" name="full_name" placeholder="Nhập họ và tên">
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="birth_date">Ngày Sinh:</label>
+                <input type="date" id="birth_date" name="birth_date">
+            </div>
+        
+            <div class="form-group sex">
+                <label>Giới Tính:</label>
+                <div class="gender-options">
+                    <label class="checkbox-inline">
+                        <input type="radio" name="gender" value="true" checked> Nam
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="radio" name="gender" value="false">Nữ
+                    </label>
+                </div>
+            </div>
+        
+            <div class="form-group">
+                <label for="death_date">Ngày Mất (nếu có):</label>
+                <input type="date" id="death_date" name="death_date">
+            </div>
+        </div>
+        <div class="form-group wrap-search">
+            <input type="text" id="search" name="search" placeholder="Nhập tên người cần tìm kiếm">
+            <div class="recommend">
+                <ul id="warp-item">
+                </ul>
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="tel" id="phone_number" name="phone_number" placeholder="Nhập số điện thoại">
+        </div>
+
+        <div class="form-group">
+            <input type="text" id="contact_address" name="contact_address" placeholder="Nhập địa chỉ liên hệ">
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="birth_place">Nơi Sinh:</label>
+                <input type="text" id="birth_place" name="birth_place" placeholder="Nhập nơi sinh">
+            </div>
+            <div class="form-group">
+                <label for="nationality">Quốc Tịch:</label>
+                <select id="nationality" name="nationality">
+                    <option value="">Chọn quốc tịch</option>
+                    <option value="vietnam">Vietnam</option>
+                    <option value="usa">Mỹ</option>
+                    <option value="canada">Canada</option>
+                    <option value="australia">Úc</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <input type="text" id="occupation" name="occupation" placeholder="Nghề nghiệp hiện tại">
+        </div>        
+        <div class="form-group">
+            <textarea id="history" name="history" placeholder="lịch sử cá nhân"></textarea>
+        </div>
+
+
+        <div class="form-group">
+            <input type="text" id="education_level" name="education_level" placeholder="Học vấn">
+        </div>
+
+        <div class="form-group">
+            <textarea id="hobbies_interests" name="hobbies_interests" placeholder="Sở thích "></textarea>
+        </div>
+
+        <div class="form-group">
+            <input type="text" id="social_media_links" name="social_media_links" placeholder="mạng xã hội">
+        </div>
+        
+        <div class="form-group">
+            <label for="profile_picture">Ảnh Đại Diện:</label>
+            <input type="file" id="profile_picture" name="profile_picture" class="file-input">
+            {% comment %} <button type="button" id="upload_button" class="submit-btn">Upload Ảnh</button> {% endcomment %}
+        </div>
+        
+        <div class="action-buttons">
+            <button type="submit" class="submit-btn">ĐỒNG Ý</button>
+            <button type="button" class="cancel-btn">HỦY</button>
+            {% comment %} 
+            const sex = document.querySelector('input[name="gender"]:checked').value {% endcomment %}
+        </div>
+    </form>
 </div>
 {% endblock %}

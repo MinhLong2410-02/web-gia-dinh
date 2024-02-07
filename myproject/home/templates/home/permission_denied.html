@@ -1,0 +1,30 @@
+
+{% load static %}
+
+{% include request.user.is_authenticated|yesno:"base_authen.html,base_non_authen.html" %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <div class="banner">
+        <div class="banner-image">
+            <img src="{% static 'images/we_are_aatholics.png' %}" alt="Hình Ảnh">
+        </div>
+        <div class = "wrap-textBanner">
+            <p>Đức Tin Công Giáo</p>
+            <p>Nền Tảng Gia Đình</p>
+            <p>Tự Hào Huyết Thống</p>
+            <p>Vẻ Vang Dòng Tộc</p>
+        </div>
+    </div>
+  
+    <div class="content">
+        <div class="item">
+            <div class="wrap-img">
+                <img class="img-family" src="{% static 'images/permission_denied.png' %}" alt="Hình Ảnh">
+            </div>
+            <div class="wrap-text"> 
+                <h2 class="name">Bạn không có quyền truy cập trang này</h2>
+            </div>
+        </div>
+    </div>
+{% endblock %}
