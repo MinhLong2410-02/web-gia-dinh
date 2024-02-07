@@ -10,7 +10,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Q
+from django.db.models import Q, F, ExpressionWrapper, IntegerField, TimeField
 from .utils import *
 API_URL = settings.API_URL
 
@@ -81,11 +81,28 @@ class DeathDateView(View):
     template_name = 'home/death_date.html'
     
     def get(self, request, *args, **kwargs):
-        # get the current date
-        res = []
-        people = People.objects.filter(death_date__isnull=False).order_by('death_date')
-        res = people.values('full_name', 'death_date', 'profile_picture')
-        return render(request, self.template_name, {'data': res})
+        age_at_death = ExpressionWrapper(
+            F('death_date') - F('birth_date'),
+            output_field=TimeField()
+        )
+
+        people = People.objects.filter(
+            death_date__isnull=False,
+            birth_date__isnull=False
+        ).annotate(
+            age_at_death=age_at_death
+        ).order_by('death_date')
+        
+        data = []
+        for person in people:
+            age_years = person.age_at_death.days // 365 if person.age_at_death else None
+            data.append({
+                "full_name": person.full_name_vn,
+                "death_date": person.death_date.strftime("%d/%m/%Y"),
+                "profile_picture": person.profile_picture,
+                "age_at_death": age_years
+            })
+        return render(request, self.template_name, {'data': data})
 
 class MarriedDateView(View):
     template_name = 'home/married_date.html'
