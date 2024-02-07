@@ -23,7 +23,7 @@
             <label for="relationship">Thông tin họ hàng:</label>
             <select id="relationship" name="relationship">
                 {% for person in data.people_in_family %}
-                    <option href="/home/update-people/?id={{ person.people_id }}">{{ person.full_name_vn }}</option>
+                    <option value="/home/update-people/?id={{ person.people_id }}">{{ person.full_name_vn }}</option>
                 {% endfor %}
             </select>
         </div>
