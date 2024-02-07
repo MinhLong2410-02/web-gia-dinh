@@ -19,89 +19,100 @@
     </div>
 </div>
     <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
         <div class="form-group" style = "padding : 0 7%">
             <label for="relationship">Thông tin họ hàng:</label>
             <select id="relationship" name="relationship">
                 {% for person in data.people_in_family %}
-                    <option value="/home/update-people/?id={{ person.people_id }}">{{ person.full_name_vn }}</option>
+                    <div>
+                        <option value="/home/update-info/?id={{ person.people_id }}">{{ person.full_name_vn }}</option>
+                    </div>
                 {% endfor %}
             </select>
         </div>
         <div class="form-group">        
-            <input type="text" id="full_name" name="full_name" placeholder="Nhập họ và tên">
+            <label for="relationship">Họ và tên:</label>
+            <input type="text" id="full_name" value="{{data.full_name}}" name="full_name" placeholder="Nhập họ và tên">
         </div>
         <div class="form-row">
             <div class="form-group">
                 <label for="birth_date">Ngày Sinh:</label>
-                <input type="date" id="birth_date" name="birth_date">
+                <input type="date"  id="birth_date" name="birth_date" value="{{data.birth_date}}">
             </div>
         
             <div class="form-group sex">
                 <label>Giới Tính:</label>
                 <div class="gender-options">
                     <label class="checkbox-inline">
-                        <input type="radio" name="gender" value="true" checked> Nam
+                        <input type="radio" name="gender" value="true" {% if gender %} checked {% endif %} > Nam
                     </label>
                     <label class="checkbox-inline">
-                        <input type="radio" name="gender" value="false">Nữ
+                        <input type="radio" name="gender" value="false" {% if gender == false %} checked {% endif %}>Nữ
                     </label>
                 </div>
             </div>
         
             <div class="form-group">
                 <label for="death_date">Ngày Mất (nếu có):</label>
-                <input type="date" id="death_date" name="death_date">
+                <input type="date" id="death_date" name="death_date" {% if data.death_date %} value="{{data.death_date}}" {% endif %}>
             </div>
         </div>
-        <div class="form-group wrap-search">
-            <input type="text" id="search" name="search" placeholder="Nhập tên người cần tìm kiếm">
+        {% comment %} <div class="form-group wrap-search">
+            <input type="text" id="search" name="search" placeholder="Nhập tên người cần tìm kiếm"  >
             <div class="recommend">
                 <ul id="warp-item">
                 </ul>
             </div>
-        </div>
+        </div> {% endcomment %}
         <div class="form-group">
-            <input type="tel" id="phone_number" name="phone_number" placeholder="Nhập số điện thoại">
+            <label for="relationship">Số điện thoại:</label>
+            <input type="tel" id="phone_number" name="phone_number" placeholder="Nhập số điện thoại" value="{{data.phone_number}}">
         </div>
 
         <div class="form-group">
-            <input type="text" id="contact_address" name="contact_address" placeholder="Nhập địa chỉ liên hệ">
+            <label for="relationship">Địa chỉ liên hệ</label>
+            <input type="text" id="contact_address" name="contact_address" placeholder="Nhập địa chỉ liên hệ" value="{{data.contact_address}}">
         </div>
         <div class="form-row">
             <div class="form-group">
                 <label for="birth_place">Nơi Sinh:</label>
-                <input type="text" id="birth_place" name="birth_place" placeholder="Nhập nơi sinh">
+                <input type="text" id="birth_place" name="birth_place" placeholder="Nhập nơi sinh" value="{{data.birth_place}}">
             </div>
             <div class="form-group">
                 <label for="nationality">Quốc Tịch:</label>
                 <select id="nationality" name="nationality">
                     <option value="">Chọn quốc tịch</option>
-                    <option value="vietnam">Vietnam</option>
-                    <option value="usa">Mỹ</option>
-                    <option value="canada">Canada</option>
-                    <option value="australia">Úc</option>
+                    <option value="vietnam"{% if data.nationality == 'Vietnam' %} selected {% endif %}>Vietnam</option>
+                    <option value="usa"{% if data.nationality == 'Mỹ' %} selected {% endif %}>Mỹ</option>
+                    <option value="canada"{% if data.nationality == 'Canada' %} selected {% endif %}>Canada</option>
+                    <option value="australia"{% if data.nationality == 'Úc' %} selected {% endif %}>Úc</option>
                 </select>
             </div>
         </div>
 
         <div class="form-group">
-            <input type="text" id="occupation" name="occupation" placeholder="Nghề nghiệp hiện tại">
+            <label for="relationship">Nghề nghiệp hiện tại:</label>
+            <input type="text" id="occupation" name="occupation" placeholder="Nghề nghiệp hiện tại" value="{{data.marital_status}}">
         </div>        
         <div class="form-group">
-            <textarea id="history" name="history" placeholder="lịch sử cá nhân"></textarea>
+            <label for="relationship">Lịch sử cá nhân:</label>
+            <textarea id="history" name="history" placeholder="lịch sử cá nhân" value="{{data.history}}"></textarea>
         </div>
 
 
         <div class="form-group">
-            <input type="text" id="education_level" name="education_level" placeholder="Học vấn">
+            <label for="relationship">Học vấn:</label>
+            <input type="text" id="education_level" name="education_level" placeholder="Học vấn" value="{{data.achievement}}">
         </div>
 
         <div class="form-group">
-            <textarea id="hobbies_interests" name="hobbies_interests" placeholder="Sở thích "></textarea>
+            <label for="relationship">Sở thích:</label>
+            <textarea id="hobbies_interests" name="hobbies_interests" placeholder="Sở thích" value="{{data.hobbies_interests}}"></textarea>
         </div>
 
         <div class="form-group">
-            <input type="text" id="social_media_links" name="social_media_links" placeholder="mạng xã hội">
+            <label for="relationship">Mạng xã hội:</label>
+            <input type="text" id="social_media_links" name="social_media_links" placeholder="mạng xã hội" value="{{data.social_media_links}}">
         </div>
         
         <div class="form-group">
@@ -111,11 +122,85 @@
         </div>
         
         <div class="action-buttons">
-            <button type="submit" class="submit-btn">ĐỒNG Ý</button>
+            <button type="submit" class="submit-btn">CẬP NHẬT</button>
             <button type="button" class="cancel-btn">HỦY</button>
             {% comment %} 
             const sex = document.querySelector('input[name="gender"]:checked').value {% endcomment %}
         </div>
     </form>
+
+    <script>
+        const selectElement = document.getElementById('relationship');
+        
+        selectElement.addEventListener('change', function() {
+            const selectedValue = this.value;
+            window.location.href = selectedValue;
+        });
+
+
+        {% comment %} const BE_HOST = {{ API_URL|safe }}; {% endcomment %}
+        const form = document.querySelector('form');
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            const formData = new FormData(form);
+
+            let option1Radios = document.querySelectorAll('input[name="option1"]'); 
+            let option
+            option1Radios.forEach(radio => {
+                if (radio.checked) {
+                    option = radio.value;
+                }
+            })
+
+            let sexRadio = document.querySelectorAll('input[name="gender"]')
+            let sex
+            sexRadio.forEach(radio => {
+                if(radio.checked){
+                    sex = radio.value;
+                }
+            })
+
+            const full_name = document.getElementById('full_name').value;
+            const birth_date = document.querySelector("#birth_date").value;
+            const death_date = document.querySelector("#death_date").value;
+            const relationship = document.getElementById('relationship').value;
+            const phone_number = document.getElementById('phone_number').value;
+            const contact_address = document.getElementById('contact_address').value;
+            const birth_place = document.querySelector("#birth_place").value;
+            const nationality = document.querySelector("#nationality").value
+            const occupation = document.querySelector("#occupation").value
+            const history = document.querySelector("#history").value
+            const education_level = document.querySelector("#education_level").value
+            const hobbies_interests = document.querySelector("#hobbies_interests").value
+            const social_media_links = document.querySelector("#social_media_links").value
+            let profile_picture = document.querySelector("#profile_picture").files[0]
+            if (profile_picture === undefined) {
+                profile_picture = null
+            }
+            else {
+                var reader = new FileReader();
+                reader.onloadend = function() {
+                    formData.profile_picture = reader.result
+                }
+                reader.readAsDataURL(profile_picture);
+            }
+            
+            let id = {{ id | safe }};
+
+            fetch(`${BE_HOST}home/api/update-people/?id=${id}`, {
+                method: 'POST',
+                body: formData
+            }).then(res => {
+                return res.json(); 
+            }).then(data => {
+                alert('Thêm thông tin thành công!');
+            }).catch(err => {
+                alert('Lỗi! Kiểm tra lại thông tin nhập vào!');
+            });   
+
+        })
+
+
+    </script>
 </div>
 {% endblock %}

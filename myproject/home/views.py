@@ -181,9 +181,12 @@ class UpdateInfoView(View):
                 )
                 return render(request, self.template_name, {
                     'data': {
+                        'id': people_id,
                         'full_name': person.full_name_vn,
-                        'birth_date': timezone.datetime.strptime(person.birth_date, '%m-%d-%Y') if person.birth_date else None,
-                        'death_date': timezone.datetime.strptime(person.death_date, '%m-%d-%Y') if person.death_date else None,
+
+                        'birth_date': timezone.datetime.strftime(person.birth_date, '%Y-%m-%d') if person.birth_date else None,
+                        'death_date': timezone.datetime.strftime(person.death_date, '%Y-%m-%d') if person.death_date else None,
+
                         'profile_picture': person.profile_picture,
                         'gender': person.gender,
                         'phone_number': person.phone_number,
@@ -211,11 +214,15 @@ class UpdateInfoView(View):
             ).values(
                 'people_id', 'full_name_vn', 
             )
+                
+            
             return render(request, self.template_name, {
                 'data': {
+                    'id': person.people_id,
                     'full_name': person.full_name_vn,
-                    'birth_date': timezone.datetime.strptime(person.birth_date, '%m-%d-%Y') if person.birth_date else None,
-                    'death_date': timezone.datetime.strptime(person.death_date, '%m-%d-%Y') if person.death_date else None,
+                    'birth_date': timezone.datetime.strftime(person.birth_date, '%Y-%m-%d') if person.birth_date else None,
+                    'death_date': timezone.datetime.strftime(person.death_date, '%Y-%m-%d') if person.death_date else None,
+
                     'profile_picture': person.profile_picture,
                     'gender': person.gender,
                     'phone_number': person.phone_number,
