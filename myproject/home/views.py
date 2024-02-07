@@ -162,7 +162,7 @@ def import_info(request):
 
 class UpdateInfoView(View):
     template_name = 'home/update_people.html'
-
+    
     def get(self, request, *args, **kwargs):
         people_id = request.GET.get('id')
         person_email = request.user.email

@@ -25,7 +25,7 @@
             <select id="relationship" name="relationship">
                 {% for person in data.people_in_family %}
                     <div>
-                        <option value="/home/update-info/?id={{ person.people_id }}">{{ person.full_name_vn }}</option>
+                        <option value="{{ person.people_id }}">{{ person.full_name_vn }}</option>
                     </div>
                 {% endfor %}
             </select>
