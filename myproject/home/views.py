@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
-from rest_framework.response import Response
+from django.http import JsonResponse
 from .forms import LoginForm
 from .models import *
 from rest_framework import status, request
@@ -173,7 +173,7 @@ def find_people(request: request.Request):
     #         "full_name": person.full_name,
     #         "people_id": person.people_id,
     #         })
-    return Response({'data': list(res)})
+    return JsonResponse({'data': list(res)})
 
 @api_view(['POST'])
 def update_people(request: request.Request):
@@ -187,7 +187,7 @@ def update_people(request: request.Request):
             gender=bool(request.data.get('gender')),
         )
     except:
-        return Response({
+        return JsonResponse({
             'message': 'Kiểm tra dữ liệu nhập bị lỗi',
         }, status=status_code)
     
@@ -207,7 +207,7 @@ def update_people(request: request.Request):
     )
     
     status_code = status.HTTP_201_CREATED
-    return Response({
+    return JsonResponse({
         'message': 'Updated successfully!',
     }, status=status_code)
 
@@ -217,7 +217,7 @@ def find_people_with_relationship(request: request.Request):
     person1_id = request.GET.get('id')
     relationships = Relationships.objects.filter(person1_id=person1_id, relationship_type='Cha Con').values('person2_id')
     res = [get_husband_wife_by_id(relationship['person2_id']) for relationship in relationships]
-    return Response({'data': res})
+    return JsonResponse({'data': res})
 
 @api_view(['GET'])
 def count_people(request: request.Request):
@@ -241,7 +241,7 @@ def count_people(request: request.Request):
         death_date__isnull=True
     ).count()
     
-    return Response({'data': {
+    return JsonResponse({'data': {
         'birth_date_count': people_in_current_month_count,
         'married_date_count': couples_in_current_month_count,
         'death_date_count': passed_away_in_current_month_count,
