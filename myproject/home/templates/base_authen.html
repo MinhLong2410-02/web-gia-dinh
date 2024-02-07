@@ -31,18 +31,21 @@
                 <img src="{% static 'images/birthday.png' %}" alt="SINH NHẬT">
             </a>
             <span class="icon-text">Sinh Nhật</span>
+            <lable class="notification">99</lable>
         </div>
         <div class="footer-section">
             <a href="{% url 'married_date' %}" class="icon-button">
                 <img src="{% static 'images/anniversary.png' %}" alt="NGÀY CƯỚI">
             </a>
             <span class="icon-text">Ngày Cưới</span>
+            <lable class="notification">99</lable>
         </div>
         <div class="footer-section">
             <a href="{% url 'death_date' %}" class="icon-button">
                 <img src="{% static 'images/info.png' %}" alt="Ngày Mất">
             </a>     
             <span class="icon-text">Ngày Mất</span>
+            <lable class="notification">99</lable>
         </div>        
         <div class="footer-section" onclick="document.getElementById('myform').submit();" >
             <form id="myform" method="post" action="{% url 'logout' %}">

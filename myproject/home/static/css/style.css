@@ -179,3 +179,31 @@ footer {
     padding: 10px 20px; /* Tăng kích thước nút */
     /* Thêm các quy tắc khác để thay đổi kiểu dáng nếu cần */
 }
+
+
+.footer-section {
+    position: relative;
+}
+
+
+.notification {
+    background-color: #5ee83f; /* Màu nền */
+    color: #333333; /* Màu chữ */
+    text-align: center; /* Căn giữa chữ */
+    padding: 15px 0; /* Thêm padding trên và dưới */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Bóng đổ nhẹ */
+    font-family: 'Oswald', sans-serif; /* Phông chữ */
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    width: 30px;
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    border-radius: 10px;
+}
+
+
