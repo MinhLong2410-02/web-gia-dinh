@@ -32,21 +32,21 @@
                 <img src="{% static 'images/birthday.png' %}" alt="SINH NHẬT">
             </a>
             <span class="icon-text">Sinh Nhật</span>
-            <lable class="notification">99</lable>
+            <label class="notification birthdate">99</label>
         </div>
         <div class="footer-section">
             <a href="{% url 'married_date' %}" class="icon-button">
                 <img src="{% static 'images/anniversary.png' %}" alt="NGÀY CƯỚI">
             </a>
             <span class="icon-text">Ngày Cưới</span>
-            <lable class="notification">99</lable>
+            <label class="notification marrieddate">99</label>
         </div>
         <div class="footer-section">
             <a href="{% url 'death_date' %}" class="icon-button">
                 <img src="{% static 'images/info.png' %}" alt="Ngày Mất">
             </a>     
             <span class="icon-text">Ngày Mất</span>
-            <lable class="notification">99</lable>
+            <label class="notification deathdate">99</label>
         </div>        
         <div class="footer-section" onclick="document.getElementById('myform').submit();" >
             <form id="myform" method="post" action="{% url 'logout' %}">
@@ -60,5 +60,15 @@
             </form> 
         </div>
     </footer>
+    <script>
+        fetch('{% url "count_people" %}')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.data);
+            document.querySelector('.birthdate').innerText = data.data.birth_date_count;
+            document.querySelector('.marrieddate').innerText = data.data.married_date_count;
+            document.querySelector('.deathdate').innerText = data.data.death_date_count;
+        });
+    </script>
 </body>
 </html>
