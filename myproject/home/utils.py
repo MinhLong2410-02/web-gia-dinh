@@ -94,7 +94,7 @@ def get_husband_wife_by_id(husband_id):
     person = People.objects.get(people_id=husband_id)
     res = {'husband': {'name': person.full_name_vn, 'id': person.people_id ,'img': person.profile_picture}}
     
-    wife = Relationships.objects.filter(person1_id=husband_id, relationship_type='vợ chồng')
+    wife = Relationships.objects.filter(person1_id=husband_id, relationship_type='Vợ Chồng')
     if wife.exists():
         wife = wife.values('person2_id') 
         wife = People.objects.get(people_id=wife[0]['person2_id'])

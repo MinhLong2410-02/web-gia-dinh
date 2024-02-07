@@ -115,6 +115,7 @@ for family in families:
     ))
 Families.objects.bulk_create(families_to_create)
 
+
 # read people.json
 with open('people.json', 'r') as file:
     people = json.load(file)
@@ -147,7 +148,9 @@ for person in people:
         family_id=Families.objects.get(family_id=person['family_id']).family_id if person['family_id'] is not None else None,
     ))
 People.objects.bulk_create(people_to_create)
-
+people = People.objects.get(full_name='Le Hung Ba')
+people.email = 'a@gmail.com'
+people.save()
 
 with open('relationships.json', 'r') as file:
     relationships = json.load(file)

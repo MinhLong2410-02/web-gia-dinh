@@ -111,7 +111,7 @@ class MarriedDateView(View):
     
     def get(self, request, *args, **kwargs):
         relationships = Relationships.objects.filter(
-            relationship_type='vợ chồng'
+            relationship_type='Vợ Chồng'
         ).select_related(
             'person1', 'person2'
         ).values(
@@ -324,7 +324,7 @@ def count_people(request):
     ).count()
     
     couples_in_current_month_count = Relationships.objects.filter(
-        relationship_type='vợ chồng',
+        relationship_type='Vợ Chồng',
         start_date__gte=start_date,
         start_date__lte=end_date
     ).exclude(
