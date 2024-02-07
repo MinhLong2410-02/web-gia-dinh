@@ -1,5 +1,7 @@
 from django.db import connection
 from .models import People, Relationships
+from django.conf import settings
+DATABASES = settings.DATABASES['default']
 def convert_vietnamese_accent_to_english(text):
     """
     Convert Vietnamese accents to English
@@ -25,12 +27,13 @@ def convert_vietnamese_accent_to_english(text):
 
 def get_head_family_tree_by_family_id(family_id):
     with connection.cursor() as cursor:
-        cursor.execute("""
+        if DATABASES['ENGINE'] == 'django.db.backends.sqlite3':
+            cursor.execute("""
             WITH RECURSIVE FamilyTree AS (
                 SELECT
                     people_id,
                     full_name,
-                    NULL::INTEGER as parent_id,
+                    NULL as parent_id,
                     0 as level
                 FROM
                     People
@@ -54,6 +57,36 @@ def get_head_family_tree_by_family_id(family_id):
             SELECT people_id, full_name
             FROM FamilyTree LIMIT 1;
         """, [family_id, family_id])
+        else:
+            cursor.execute("""
+                WITH RECURSIVE FamilyTree AS (
+                    SELECT
+                        people_id,
+                        full_name,
+                        NULL::INTEGER as parent_id,
+                        0 as level
+                    FROM
+                        People
+                    WHERE
+                        family_id = %s
+                    UNION ALL
+                    SELECT
+                        p.people_id,
+                        p.full_name,
+                        r.person1_id as parent_id,
+                        ft.level + 1 as level
+                    FROM
+                        Relationships r
+                    JOIN
+                        People p ON r.person2_id = p.people_id
+                    JOIN
+                        FamilyTree ft ON r.person1_id = ft.people_id
+                    WHERE
+                        p.family_id = %s
+                )
+                SELECT people_id, full_name
+                FROM FamilyTree LIMIT 1;
+            """, [family_id, family_id])
         rows = cursor.fetchone()
     return rows
 
