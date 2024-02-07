@@ -20,4 +20,5 @@ urlpatterns = [
     path('api/find-people/', find_people, name='find_people'),
     path('api/update-people/', update_people, name='update_people'),
     path('api/find-people-in-family/', find_people_with_relationship, name='find_people_with_relationship'),
+    path('api/count-people/', count_people, name='count_people'),
 ]
