@@ -18,7 +18,7 @@
         <p>Vẻ Vang Dòng Tộc</p>
     </div>
 </div>
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" action="/home/api/update-people/?id={{data.id}}">
         {% csrf_token %}
         <div class="form-group" style = "padding : 0 7%">
             <label for="relationship">Thông tin họ hàng:</label>
@@ -138,7 +138,7 @@
         });
 
 
-        {% comment %} const BE_HOST = {{ API_URL|safe }}; {% endcomment %}
+        const BE_HOST = "{{ API_URL|safe }}";
         const form = document.querySelector('form');
         form.addEventListener('submit', e => {
             e.preventDefault();
@@ -185,9 +185,9 @@
                 reader.readAsDataURL(profile_picture);
             }
             
-            let id = {{ id | safe }};
+            {% comment %} let id = {{ id | safe }}; {% endcomment %}
 
-            fetch(`${BE_HOST}home/api/update-people/?id=${id}`, {
+            {% comment %} fetch(`${BE_HOST}home/api/update-people/?id=${id}`, {
                 method: 'POST',
                 body: formData
             }).then(res => {
@@ -196,8 +196,15 @@
                 alert('Thêm thông tin thành công!');
             }).catch(err => {
                 alert('Lỗi! Kiểm tra lại thông tin nhập vào!');
-            });   
+            });    {% endcomment %}
 
+            e.target.submit();
+            setTimeout(() => {
+                window.location.href = '/home';
+                alert('Thêm thông tin thành công!');
+            }, 1000)
+
+            
         })
 
 

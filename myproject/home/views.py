@@ -203,7 +203,8 @@ class UpdateInfoView(View):
                         'hobbies_interests': person.hobbies_interests,
                         'social_media_links': person.social_media_links,
                         'people_in_family': list(people_in_family),
-                    }
+                    },
+                    'API_URL': API_URL,
                 })
             else:
                 return render(request, 'home/permission_denied.html')
@@ -239,11 +240,10 @@ class UpdateInfoView(View):
                     'hobbies_interests': person.hobbies_interests,
                     'social_media_links': person.social_media_links,
                     'people_in_family': list(people_in_family),
-                }
+                },
+                'API_URL': API_URL,
             })
-    
-                
-
+        
       
 '''API ENDPOINTS'''          
 @api_view(['GET'])
@@ -300,9 +300,7 @@ def update_people(request: request.Request):
         )
         
         status_code = status.HTTP_201_CREATED
-        return JsonResponse({
-            'message': 'Updated successfully!',
-        }, status=status_code)
+        return reverse_lazy('home')
     else:
         status_code = status.HTTP_400_BAD_REQUEST
         people_id = request.GET.get('id')
