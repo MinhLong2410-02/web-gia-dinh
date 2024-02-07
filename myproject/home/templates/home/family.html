@@ -23,25 +23,15 @@
     </div>
 </div>
 <div class="genealogy-tree"> 
-    {% comment %} {% for person in people %}
-        <div class="generation">
-            <div class="wrap-family">
-                <div class="family">
-                    <img src="" alt="img"mg class="img-family" src="{{ person.profile_picture }}" alt="Hình Ảnh">
-                    <div class="child">{{person.full_name}}</div>
-                    <div class="child">{{person.birth_date}}</div>
-                </div>
-            </div>
-        </div>
-    {% endfor %} {% endcomment %}
-
     <div class="treeview w-20 border">
-        <h2 class="family-name pt-3 pl-3">Gia đình số 1</h2>
-        <ul class="mb-1 pl-3 pb-2">
           <li>
             <i class="fas fa-angle-right iconRight"></i>
-            <span><img src="" alt="" ></img><p class="name">Cha</p><p class="heart">&#10084;</p><p class="name">Mẹ</p><img src="" alt="" ></img></span>
-            <ul class="nested animated" style="max-height:0px">
+            <span data-id={{data.husband.id}}><img src="{{data.husband.img}}" alt="imgHusband" ></img><p class="name">{{ data.husband.name }}</p>
+              {% if data.wife  %} 
+              <p class="heart">&#10084;</p><p class="name">{{ data.wife.name }}</p><img src="{{data.wife.img}}" alt="imgWife" ></img></span>
+              {% endif %}
+             {% comment %} { {{ data.wife.name }} ? <p class="heart">&#10084;</p><p class="name">{{ data.wife.name }}</p><img src="{{data.wife.img}}" alt="imgWife" ></img></span> : null} {% endcomment %}
+            {% comment %} <ul class="nested animated" style="max-height:0px">
               <li><img src="" alt="" ></img><p class="name">Con thứ 1</p></li>
               <li><img src="" alt="" ></img><p class="name">Con thứ 2</p></li>
               <li><i class="fas fa-angle-right iconRight"></i>
@@ -60,7 +50,7 @@
                   </li>
                 </ul>
               </li>
-            </ul>
+            </ul> {% endcomment %}
           </li>
         </ul>
       </div>
@@ -69,19 +59,60 @@
         var treeviewSpanElements = document.querySelectorAll('.treeview span');
         treeviewSpanElements.forEach(function(spanElement) {
             spanElement.addEventListener('click', function() {
-                var ulElement = this.nextElementSibling;
-                if (ulElement) {
-                    ulElement.style.transition = 'height 1s';
-                    ulElement.style.maxHeight = (ulElement.style.maxHeight === '0px') ? `100vh` : '0px';
-                    {% comment %} ulElement.classList.toggle('animated'); {% endcomment %}
-                }
+                fetch(`http://127.0.0.1:8080/home/api/find-people-in-family/?id=${spanElement.dataset.id}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const ulElement = document.createElement('ul');
+                    ulElement.classList.add('nested');
+                    ulElement.classList.add('animated');
+                    ulElement.style.maxHeight = '0px';
     
-                var iconElement = this.querySelector('i');
-                if (iconElement) {
-                    iconElement.classList.toggle('rotate');
-                }
+                    console.log(data.data);
+                    data.data.forEach(person => {
+                        const liElement = document.createElement('li');
+                        liElement.dataset.id = person.husband.id;
+                        liElement.innerHTML = `<i class="fas fa-angle-right iconRight"></i><span>
+                            <img src="${person.husband.img}" alt="img">
+                            <p class="name">${person.husband.name}</p>
+                        </span>`;
+                        if(person.wife){
+                          liElement.innerHTML += `<p class="heart">&#10084;</p><span data-id="${person.wife.id}">
+                            <p class="name">${person.wife.name}</p>
+                            <img src="${person.wife.img}" alt="img">`
+                        }
+                        ulElement.appendChild(liElement);
+                    });
+    
+                    if (spanElement.nextElementSibling) {
+                        spanElement.nextElementSibling.remove();
+                    } else {
+                        spanElement.parentNode.appendChild(ulElement);
+                    }
+    
+                    ulElement.style.maxHeight = (ulElement.style.maxHeight === '0px') ? `100vh` : '0px';
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
             });
+        })
+
+        const observer = new MutationObserver(mutationsList => {
+          console.log('DOM đã thay đổi');
         });
-      </script>
+        
+        const observerOptions = {
+            childList: true, // Sự thay đổi trong nội dung con của phần tử
+            subtree: true, // Theo dõi sự thay đổi trong tất cả các phần tử con, cháu, vv.
+        };
+        observer.observe(document.body, observerOptions);
+      
+    </script>
+    
 </div>
 {% endblock %}
