@@ -30,7 +30,7 @@ def get_head_family_tree_by_family_id(family_id):
                 SELECT
                     people_id,
                     full_name,
-                    NULL as parent_id,
+                    NULL::INTEGER as parent_id,
                     0 as level
                 FROM
                     People
