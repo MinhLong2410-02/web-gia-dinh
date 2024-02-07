@@ -1,10 +1,6 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from django.template import loader
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.list import ListView
+from django.shortcuts import render
 from rest_framework.decorators import api_view
-from rest_framework.response import Response
+from django.http import JsonResponse
 from .forms import LoginForm
 from .models import *
 from rest_framework import status, request
@@ -14,7 +10,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models.functions import ExtractDay, ExtractMonth
+from django.db.models import Q
 from .utils import *
 API_URL = settings.API_URL
 
@@ -40,28 +36,47 @@ class BirthDateView(View):
     template_name = 'home/birth_date.html'
     
     def get(self, request, *args, **kwargs):
-        # get the current date
         current_date = timezone.now().date()
-        res = []
-        people = People.objects.all().order_by(ExtractMonth('birth_date'), ExtractDay('birth_date'))
-        for person in people:
-            if person.birth_date is None: continue
-            if person.birth_date.month > current_date.month:
-                res.append({
-                    "full_name": person.full_name, 
-                    "birth_date": person.birth_date.strftime("%d/%m/%Y"), 
-                    "img": person.profile_picture,
-                })
-            elif person.birth_date.month == current_date.month:
-                if person.birth_date.day >= current_date.day:
-                    res.append({
-                        "full_name": person.full_name, 
-                        "birth_date": person.birth_date.strftime("%d/%m/%Y"), 
-                        "img": person.profile_picture,
-                    })
-        print(res)
-        return render(request, self.template_name, {'data': res})
 
+        # Filter people whose birthdays are after the current date
+        people = People.objects.filter(
+            birth_date__month__gt=current_date.month
+        ).exclude(
+            birth_date__isnull=True
+        ).order_by(
+            'birth_date__month', 'birth_date__day'
+        ).values(
+            'full_name', 'birth_date', 'profile_picture'
+        )
+
+        # For people born in the current month, filter those whose birthdays are after or equal to the current day
+        people_in_current_month = People.objects.filter(
+            birth_date__month=current_date.month,
+            birth_date__day__gte=current_date.day
+        ).exclude(
+            birth_date__isnull=True
+        ).order_by(
+            'birth_date__month', 'birth_date__day'
+        ).values(
+            'full_name', 'birth_date', 'profile_picture'
+        )
+
+        # Combine the queryset results
+        people = list(people) + list(people_in_current_month)
+        
+        # Format the data
+        data = [
+            {
+                "full_name": person['full_name'], 
+                "birth_date": person['birth_date'].strftime("%d/%m/%Y"), 
+                "img": person['profile_picture']
+            }
+            for person in people
+        ]
+        
+        return render(request, self.template_name, {
+            'data': data,
+        })
 class DeathDateView(View):
     template_name = 'home/death_date.html'
     
@@ -74,21 +89,33 @@ class DeathDateView(View):
 
 class MarriedDateView(View):
     template_name = 'home/married_date.html'
+    
     def get(self, request, *args, **kwargs):
-        relationships = Relationships.objects.filter(relationship_type__in=['Vợ', 'Chồng']).values('person1', 'person2', 
-                                                                                                   'start_date')
-        res = []
-        for relationship in relationships:
-            person1 = People.objects.get(people_id=relationship['person1'])
-            person2 = People.objects.get(people_id=relationship['person2'])
-            res.append({
-                "full_name": person1.full_name, 
-                "img1": person1.profile_picture,
-                "full_name2": person2.full_name,
-                "img2": person2.profile_picture,
+        relationships = Relationships.objects.filter(
+            relationship_type='vợ chồng'
+        ).select_related(
+            'person1', 'person2'
+        ).values(
+            'person1__full_name', 'person1__profile_picture',
+            'person2__full_name', 'person2__profile_picture',
+            'start_date'
+        )
+
+        # Format the data
+        data = [
+            {
+                "full_name": relationship['person1__full_name'], 
+                "img1": relationship['person1__profile_picture'],
+                "full_name2": relationship['person2__full_name'],
+                "img2": relationship['person2__profile_picture'],
                 "start_date": relationship['start_date'].strftime("%d/%m/%Y") if relationship['start_date'] else None,
-            })
-        return render(request, self.template_name, {'data': res, })
+            }
+            for relationship in relationships
+        ]
+        
+        return render(request, self.template_name, {
+            'data': data,
+        })
 
 class HomeView(View):
     template_name_authenticated = 'home/index_authen.html'
@@ -146,7 +173,7 @@ def find_people(request: request.Request):
     #         "full_name": person.full_name,
     #         "people_id": person.people_id,
     #         })
-    return Response({'data': list(res)})
+    return JsonResponse({'data': list(res)})
 
 @api_view(['POST'])
 def update_people(request: request.Request):
@@ -160,7 +187,7 @@ def update_people(request: request.Request):
             gender=bool(request.data.get('gender')),
         )
     except:
-        return Response({
+        return JsonResponse({
             'message': 'Kiểm tra dữ liệu nhập bị lỗi',
         }, status=status_code)
     
@@ -180,7 +207,7 @@ def update_people(request: request.Request):
     )
     
     status_code = status.HTTP_201_CREATED
-    return Response({
+    return JsonResponse({
         'message': 'Updated successfully!',
     }, status=status_code)
 
@@ -190,4 +217,32 @@ def find_people_with_relationship(request: request.Request):
     person1_id = request.GET.get('id')
     relationships = Relationships.objects.filter(person1_id=person1_id, relationship_type='Cha Con').values('person2_id')
     res = [get_husband_wife_by_id(relationship['person2_id']) for relationship in relationships]
-    return Response({'data': res})
+    return JsonResponse({'data': res})
+
+@api_view(['GET'])
+def count_people(request: request.Request):
+    current_date = timezone.now().date()
+    people_in_current_month_count = People.objects.filter(
+        birth_date__month=current_date.month
+    ).exclude(
+        birth_date__isnull=True
+    ).count()
+    
+    couples_in_current_month_count = Relationships.objects.filter(
+        relationship_type='vợ chồng',
+        start_date__month=current_date.month
+    ).exclude(
+        start_date__isnull=True
+    ).count()
+    
+    passed_away_in_current_month_count = People.objects.filter(
+        death_date__month=current_date.month
+    ).exclude(
+        death_date__isnull=True
+    ).count()
+    
+    return JsonResponse({'data': {
+        'birth_date_count': people_in_current_month_count,
+        'married_date_count': couples_in_current_month_count,
+        'death_date_count': passed_away_in_current_month_count,
+    }})
