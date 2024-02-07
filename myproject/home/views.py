@@ -48,7 +48,7 @@ class BirthDateView(View):
         ).order_by(
             'birth_date__month', 'birth_date__day'
         ).values(
-            'full_name', 'birth_date', 'profile_picture'
+            'full_name_vn', 'birth_date', 'profile_picture'
         )
 
         # For people born in the current month, filter those whose birthdays are after or equal to the current day
@@ -60,16 +60,15 @@ class BirthDateView(View):
         ).order_by(
             'birth_date__month', 'birth_date__day'
         ).values(
-            'full_name', 'birth_date', 'profile_picture'
+            'full_name_vn', 'birth_date', 'profile_picture'
         )
-
         # Combine the queryset results
-        people = list(people) + list(people_in_current_month)
+        people = list(people_in_current_month) + list(people)
         
         # Format the data
         data = [
             {
-                "full_name": person['full_name'], 
+                "full_name_vn": person['full_name_vn'], 
                 "birth_date": person['birth_date'].strftime("%d/%m/%Y"), 
                 "img": person['profile_picture']
             }
