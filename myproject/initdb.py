@@ -72,11 +72,19 @@ for person in people:
         person['birth_date'] = timezone.datetime.strptime(person['birth_date'], '%Y-%m-%d').date()
     else:
         person['birth_date'] = None
+    if person['death_date'] != 'None':
+        try:
+            person['death_date'] = timezone.datetime.strptime(person['death_date'], '%Y-%m-%d').date()
+        except:
+            person['death_date'] = None
+    else:
+        person['death_date'] = None
     people_to_create.append(People(
         people_id=person['people_id'],
         full_name_vn=person['full_name'],
         full_name=convert_vietnamese_accent_to_english(person['full_name']),
         birth_date=person['birth_date'],
+        death_date=person['death_date'],
         phone_number=person['phone_number'],
         hobbies_interests=person['hobbies_interests'],
         occupation=person['occupation'],
@@ -92,6 +100,7 @@ for person in people:
         family_info=person['family_info'],
         profile_picture=person['profile_picture'],
         social_media_links=person['social_media_links'],
+        cause_of_death=person['cause_of_death'],
         family_id=Families.objects.get(family_id=person['family_id']).family_id if person['family_id'] is not None else None,
     ))
 People.objects.bulk_create(people_to_create)

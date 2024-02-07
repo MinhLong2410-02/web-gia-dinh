@@ -53,7 +53,7 @@ class People(models.Model):
     profile_picture = models.CharField(max_length=255, null=True)  # Modified field
     hobbies_interests = models.TextField(null=True)
     social_media_links = models.TextField(null=True)
-
+    cause_of_death = models.TextField(null=True)
     family = models.ForeignKey('Families', on_delete=models.CASCADE, related_name='people_families', null=True)
     
     class Meta:

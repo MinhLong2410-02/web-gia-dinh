@@ -104,6 +104,7 @@ class DeathDateView(View):
                 "profile_picture": person.profile_picture,
                 "age_at_death": age_years
             })
+
         return render(request, self.template_name, {'data': data})
 
 class MarriedDateView(View):
@@ -181,8 +182,8 @@ class UpdateInfoView(View):
                 return render(request, self.template_name, {
                     'data': {
                         'full_name': person.full_name_vn,
-                        'birth_date': timezone.datetime.strptime(person.birth_date, '%m-%d-%Y').date() if person.birth_date else None,
-                        'death_date': timezone.datetime.strptime(person.death_date, '%m-%d-%Y').date() if person.death_date else None,
+                        'birth_date': timezone.datetime.strptime(person.birth_date, '%m-%d-%Y') if person.birth_date else None,
+                        'death_date': timezone.datetime.strptime(person.death_date, '%m-%d-%Y') if person.death_date else None,
                         'profile_picture': person.profile_picture,
                         'gender': person.gender,
                         'phone_number': person.phone_number,
@@ -213,8 +214,8 @@ class UpdateInfoView(View):
             return render(request, self.template_name, {
                 'data': {
                     'full_name': person.full_name_vn,
-                    'birth_date': timezone.datetime.strptime(person.birth_date, '%m-%d-%Y').date() if person.birth_date else None,
-                    'death_date': timezone.datetime.strptime(person.death_date, '%m-%d-%Y').date() if person.death_date else None,
+                    'birth_date': timezone.datetime.strptime(person.birth_date, '%m-%d-%Y') if person.birth_date else None,
+                    'death_date': timezone.datetime.strptime(person.death_date, '%m-%d-%Y') if person.death_date else None,
                     'profile_picture': person.profile_picture,
                     'gender': person.gender,
                     'phone_number': person.phone_number,
@@ -234,7 +235,68 @@ class UpdateInfoView(View):
                 }
             })
     
-    def post(self, request, *args, **kwargs):
+                
+
+      
+'''API ENDPOINTS'''          
+@api_view(['GET'])
+def find_people(request: request.Request):
+    name = request.GET.get('name')
+    name = name.strip().lower()
+    name = name.split()
+    for i in range(len(name)):
+        name[i] = convert_vietnamese_accent_to_english(name[i]).capitalize()
+    name = ' '.join(name)  
+    people = People.objects.filter(full_name__icontains=name)
+    res = [{"full_name": person.full_name, "people_id": person.people_id,} for person in people]
+    # for person in people:
+    #     res.append({"full_name": person.full_name, "people_id": person.people_id,})
+    # people = People.objects.raw(f"SELECT * FROM people WHERE full_name LIKE %s", f"%{name}%")
+    # for person in people:
+    #     res.add({
+    #         "full_name": person.full_name,
+    #         "people_id": person.people_id,
+    #         })
+    return JsonResponse({'data': list(res)})
+
+@api_view(['POST'])
+def update_people(request: request.Request):
+    people_id = request.GET.get('id')
+    if people_id is None:
+        status_code = status.HTTP_400_BAD_REQUEST
+        try:
+            day = timezone.datetime.strptime(request.data.get('birth_date'), '%Y-%m-%d').date()
+            people = People.objects.create(
+                full_name_vn=request.data.get('full_name'),
+                full_name=convert_vietnamese_accent_to_english(request.data.get('full_name')),
+                birth_date=day,
+                gender=bool(request.data.get('gender')),
+            )
+        except:
+            return JsonResponse({
+                'message': 'Kiểm tra dữ liệu nhập bị lỗi',
+            }, status=status_code)
+        
+        if bool(request.data.get('profile_picture')):
+            profile_picture = request.data.get('profile_picture')
+            with open(f'./static/profile_pictures/{people.people_id}.jpg', 'wb+') as destination:
+                for chunk in profile_picture.chunks():
+                    destination.write(chunk)
+            people.profile_picture = f'{API_URL}/static/profile_pictures/{people.people_id}.jpg'
+            people.save()
+            
+        people2 = People.objects.get(full_name=request.data.get('search'))
+        Relationships.objects.create(
+            person1=people2,
+            person2=people,
+            relationship_type=request.data.get('relationship'),
+        )
+        
+        status_code = status.HTTP_201_CREATED
+        return JsonResponse({
+            'message': 'Updated successfully!',
+        }, status=status_code)
+    else:
         status_code = status.HTTP_400_BAD_REQUEST
         people_id = request.GET.get('id')
         request_data = request.POST
@@ -274,65 +336,6 @@ class UpdateInfoView(View):
             return JsonResponse({
                 'message': 'Kiểm tra dữ liệu nhập bị lỗi',
             }, status=status_code)
-                
-
-      
-'''API ENDPOINTS'''          
-@api_view(['GET'])
-def find_people(request: request.Request):
-    name = request.GET.get('name')
-    name = name.strip().lower()
-    name = name.split()
-    for i in range(len(name)):
-        name[i] = convert_vietnamese_accent_to_english(name[i]).capitalize()
-    name = ' '.join(name)  
-    people = People.objects.filter(full_name__icontains=name)
-    res = [{"full_name": person.full_name, "people_id": person.people_id,} for person in people]
-    # for person in people:
-    #     res.append({"full_name": person.full_name, "people_id": person.people_id,})
-    # people = People.objects.raw(f"SELECT * FROM people WHERE full_name LIKE %s", f"%{name}%")
-    # for person in people:
-    #     res.add({
-    #         "full_name": person.full_name,
-    #         "people_id": person.people_id,
-    #         })
-    return JsonResponse({'data': list(res)})
-
-@api_view(['POST'])
-def update_people(request: request.Request):
-    status_code = status.HTTP_400_BAD_REQUEST
-    try:
-        day = timezone.datetime.strptime(request.data.get('birth_date'), '%Y-%m-%d').date()
-        people = People.objects.create(
-            full_name_vn=request.data.get('full_name'),
-            full_name=convert_vietnamese_accent_to_english(request.data.get('full_name')),
-            birth_date=day,
-            gender=bool(request.data.get('gender')),
-        )
-    except:
-        return JsonResponse({
-            'message': 'Kiểm tra dữ liệu nhập bị lỗi',
-        }, status=status_code)
-    
-    if bool(request.data.get('profile_picture')):
-        profile_picture = request.data.get('profile_picture')
-        with open(f'./static/profile_pictures/{people.people_id}.jpg', 'wb+') as destination:
-            for chunk in profile_picture.chunks():
-                destination.write(chunk)
-        people.profile_picture = f'{API_URL}/static/profile_pictures/{people.people_id}.jpg'
-        people.save()
-        
-    people2 = People.objects.get(full_name=request.data.get('search'))
-    Relationships.objects.create(
-        person1=people2,
-        person2=people,
-        relationship_type=request.data.get('relationship'),
-    )
-    
-    status_code = status.HTTP_201_CREATED
-    return JsonResponse({
-        'message': 'Updated successfully!',
-    }, status=status_code)
 
 @api_view(['GET'])
 def find_people_with_relationship(request: request.Request):
