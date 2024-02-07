@@ -162,20 +162,18 @@ def import_info(request):
 class UpdateInfoView(View):
     template_name = 'home/update_people.html'
     def get(self, request, *args, **kwargs):
-        person_id = request.GET.get('id')
-
+        person_email = request.user.email
+        print(person_email)
         # Retrieve person and related family in a single query
-        person = People.objects.select_related('family').get(people_id=person_id)
+        person = People.objects.select_related('family').get(email=person_email)
 
         # Retrieve other people in the same family
         people_in_family = People.objects.filter(
             family_id=person.family_id
-        ).exclude(
-            people_id=person_id
         ).values(
             'people_id', 'full_name'
         )
-        
+        print(people_in_family)
         return render(request, self.template_name)
     
     # def post(self, request, *args, **kwargs):
@@ -253,23 +251,30 @@ def find_people_with_relationship(request: request.Request):
     return JsonResponse({'data': res})
 
 @api_view(['GET'])
-def count_people(request: request.Request):
+def count_people(request):
     current_date = timezone.now().date()
+
+    start_date = current_date
+    end_date = current_date + timezone.timedelta(days=10)
+
     people_in_current_month_count = People.objects.filter(
-        birth_date__month=current_date.month
+        birth_date__gte=start_date,
+        birth_date__lte=end_date
     ).exclude(
         birth_date__isnull=True
     ).count()
     
     couples_in_current_month_count = Relationships.objects.filter(
         relationship_type='vợ chồng',
-        start_date__month=current_date.month
+        start_date__gte=start_date,
+        start_date__lte=end_date
     ).exclude(
         start_date__isnull=True
     ).count()
     
     passed_away_in_current_month_count = People.objects.filter(
-        death_date__month=current_date.month
+        death_date__gte=start_date,
+        death_date__lte=end_date
     ).exclude(
         death_date__isnull=True
     ).count()
