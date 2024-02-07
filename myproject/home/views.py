@@ -100,6 +100,7 @@ class DeathDateView(View):
             data.append({
                 "full_name": person.full_name_vn,
                 "death_date": person.death_date.strftime("%d/%m/%Y"),
+                "birth_date": person.birth_date.strftime("%d/%m/%Y"),
                 "profile_picture": person.profile_picture,
                 "age_at_death": age_years
             })
@@ -168,11 +169,10 @@ class UpdateInfoView(View):
         if people_id:
             person = People.objects.select_related('family').get(people_id=people_id)
             person2 = People.objects.select_related('family').get(email=person_email)
-
             relationship = Relationships.objects.filter(person1=person, person2=person2).exists()
             relationship2 = Relationships.objects.filter(person1=person2, person2=person).exists()
             
-            if relationship or relationship2:
+            if relationship or relationship2 or person.people_id == person2.people_id:
                 people_in_family = People.objects.filter(
                     family_id=person.family_id
                 ).values(
@@ -181,7 +181,8 @@ class UpdateInfoView(View):
                 return render(request, self.template_name, {
                     'data': {
                         'full_name': person.full_name_vn,
-                        'birth_date': person.birth_date,
+                        'birth_date': timezone.datetime.strptime(person.birth_date, '%m-%d-%Y').date() if person.birth_date else None,
+                        'death_date': timezone.datetime.strptime(person.death_date, '%m-%d-%Y').date() if person.death_date else None,
                         'profile_picture': person.profile_picture,
                         'gender': person.gender,
                         'phone_number': person.phone_number,
@@ -194,7 +195,6 @@ class UpdateInfoView(View):
                         'occupation': person.occupation,
                         'education_level': person.education_level,
                         'health_status': person.health_status,
-                        'death_date': person.death_date,
                         'family_info': person.family_info,
                         'hobbies_interests': person.hobbies_interests,
                         'social_media_links': person.social_media_links,
@@ -213,7 +213,8 @@ class UpdateInfoView(View):
             return render(request, self.template_name, {
                 'data': {
                     'full_name': person.full_name_vn,
-                    'birth_date': person.birth_date,
+                    'birth_date': timezone.datetime.strptime(person.birth_date, '%m-%d-%Y').date() if person.birth_date else None,
+                    'death_date': timezone.datetime.strptime(person.death_date, '%m-%d-%Y').date() if person.death_date else None,
                     'profile_picture': person.profile_picture,
                     'gender': person.gender,
                     'phone_number': person.phone_number,
@@ -226,7 +227,6 @@ class UpdateInfoView(View):
                     'occupation': person.occupation,
                     'education_level': person.education_level,
                     'health_status': person.health_status,
-                    'death_date': person.death_date,
                     'family_info': person.family_info,
                     'hobbies_interests': person.hobbies_interests,
                     'social_media_links': person.social_media_links,
@@ -234,14 +234,48 @@ class UpdateInfoView(View):
                 }
             })
     
-    # def post(self, request, *args, **kwargs):
-    #     status_code = status.HTTP_400_BAD_REQUEST
-    #     try:
-    #         day = timezone.datetime.strptime(request.POST.get('birth_date'), '%Y-%m-%d').date()
-    #         people = People.objects.create(
-    #             full_name_vn=request.POST.get('full_name'),
-    #             full_name=convert_vietnamese_accent_to_english(request.POST.get('full_name')),
-    #             birth_date=day,
+    def post(self, request, *args, **kwargs):
+        status_code = status.HTTP_400_BAD_REQUEST
+        people_id = request.GET.get('id')
+        request_data = request.POST
+        try:
+            if bool(request.data.get('profile_picture')):
+                profile_picture = request.data.get('profile_picture')
+                with open(f'./static/profile_pictures/{people_id}.jpg', 'wb+') as destination:
+                    for chunk in profile_picture.chunks():
+                        destination.write(chunk)
+            day = timezone.datetime.strptime(request_data.get('birth_date'), '%Y-%m-%d').date()
+            People.objects.filter(people_id=people_id).update(
+                full_name_vn=request_data.get('full_name'),
+                full_name=convert_vietnamese_accent_to_english(request_data.get('full_name')),
+                birth_date=day,
+                gender=True if request_data.get('gender') == "Nam" else False,
+                phone_number=request_data.get('phone_number'),
+                hobbies_interests=request_data.get('hobbies_interests'),
+                occupation=request_data.get('occupation'),
+                contact_address=request_data.get('contact_address'),
+                nationality = request_data.get('nationality'),
+                birth_place = request_data.get('birth_place'),
+                marital_status = request_data.get('marital_status'),
+                history = request_data.get('history'),
+                achievement = request_data.get('achievement'),
+                education_level = request_data.get('education_level'),
+                health_status = request_data.get('health_status'),
+                family_info = request_data.get('family_info'),
+                social_media_links = request_data.get('social_media_links'),
+                profile_picture = f'{API_URL}/static/profile_pictures/{people_id}.jpg',
+            )
+            status_code = status.HTTP_201_CREATED
+            
+            return JsonResponse({
+                'message': 'Updated successfully!',
+            }, status=status_code)
+        except:
+            return JsonResponse({
+                'message': 'Kiểm tra dữ liệu nhập bị lỗi',
+            }, status=status_code)
+                
+
       
 '''API ENDPOINTS'''          
 @api_view(['GET'])
