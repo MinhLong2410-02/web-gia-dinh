@@ -27,6 +27,8 @@ class Login(LoginView):
 
 def FamilyView(request, family_id):
     head_family = get_head_family_tree_by_family_id(family_id)
+    if head_family is None:
+        return render(request, 'home/family.html', {'data': []})
     res = get_husband_wife_by_id(head_family[0])
     
     return render(request, 'home/family.html', {'data': res})  
@@ -160,6 +162,8 @@ def import_info(request):
 class UpdateInfoView(View):
     template_name = 'home/update_people.html'
     def get(self, request, *args, **kwargs):
+        # Families.objects request.user.email
+        
         return render(request, self.template_name)
     
     # def post(self, request, *args, **kwargs):
