@@ -12,12 +12,20 @@
 .treeview ul {
     list-style-type: none;
     padding-left: 20px;
+    margin-left: 20px;
 }
 
 .treeview .name {
     font-size: 30px;
     font-weight: bold;
     display: inline-block;
+}
+.heart {
+    font-size: 30px;
+    font-weight: bold;
+    display: inline-flex;
+    justify-content: center;
+    padding: 0 10px;
 }
 
 .family-name {
@@ -36,6 +44,9 @@
     margin: 20px;
 }
 
+.iconRight {
+    margin-left: 20px;
+}
 
 
 
@@ -63,3 +74,17 @@
 
 
 /* Điều chỉnh các kiểu khác theo nhu cầu */
+
+.animated {
+    animation: slideDown 0.5s ease-in-out;
+}
+
+/* animation slide down */
+@keyframes slideDown {
+    0% {
+        height: 0 !important;
+    }
+    100% {
+        height: 100vh !important;
+    }
+}

@@ -39,47 +39,29 @@
         <h2 class="family-name pt-3 pl-3">Gia đình số 1</h2>
         <ul class="mb-1 pl-3 pb-2">
           <li>
-            <i class="fas fa-angle-right"></i>
-            <span><img src="" alt="" ></img><p class="name">Mail</p></span>
-            <ul class="nested" style="max-height:0px">
-              <li><img src="" alt="" ></img><p class="name">Offers</p></li>
-              <li><img src="" alt="" ></img><p class="name">Contacts</p></li>
-              <li><i class="fas fa-angle-right"></i>
-                <span><img src="" alt="" ></img><p class="name"></i>Calendar</p></span>
-                <ul class="nested" style="max-height:0px">
-                  <li><img src="" alt="" ></img><p class="name">Deadlines</p></li>
-                  <li><img src="" alt="" ></img><p class="name">Meetings</p></li>
-                  <li><img src="" alt="" ></img><p class="name">Workouts</p></li>
-                  <li><img src="" alt="" ></img><p class="name">Events</p></li>
+            <i class="fas fa-angle-right iconRight"></i>
+            <span><img src="" alt="" ></img><p class="name">Cha</p><p class="heart">&#10084;</p><p class="name">Mẹ</p><img src="" alt="" ></img></span>
+            <ul class="nested animated" style="max-height:0px">
+              <li><img src="" alt="" ></img><p class="name">Con thứ 1</p></li>
+              <li><img src="" alt="" ></img><p class="name">Con thứ 2</p></li>
+              <li><i class="fas fa-angle-right iconRight"></i>
+                <span><img src="" alt="" ></img><p class="name">Con thứ 3</p><p class="heart">&#10084;</p><p class="name">Vợ thứ 3</p><img src="" alt="" ></img></span>
+                <ul class="nested animated" style="max-height:0px">
+                  <li><img src="" alt="" ></img><p class="name">Cháu 1</p></li>
+                  <li><img src="" alt="" ></img><p class="name">Cháu 2</p></li>
+                  <li><img src="" alt="" ></img><p class="name">Cháu 3</p></li>
+                  <li><i class="fas fa-angle-right iconRight"></i>
+                    <span><img src="" alt="" ></img><p class="name">Cháu thứ 4</p><p class="heart">&#10084;</p><p class="name">Vợ cháu 4</p><img src="" alt="" ></img></span>
+                    <ul class="nested animated" style="max-height:0px">
+                      <li><img src="" alt="" ></img><p class="name">Cháu 4.1</p></li>
+                      <li><img src="" alt="" ></img><p class="name">Cháu 4.2</p></li>
+                      <li><img src="" alt="" ></img><p class="name">Cháu 4.3</p></li>
+                    </ul>
+                  </li>
                 </ul>
               </li>
             </ul>
           </li>
-          <li>
-            <i class="fas fa-angle-right"></i>
-            <span><img src="" alt="" ></img><p class="name">Inbox</p></span>
-            <ul class="nested" style="max-height:0px">
-              <li><img src="" alt="" ></img><p class="name">Admin</p></li>
-              <li><img src="" alt="" ></img><p class="name">Corporate</p></li>
-              <li><img src="" alt="" ></img><p class="name">Finance</p></li>
-              <li><img src="" alt="" ></img><p class="name">Other</p></li>
-            </ul>
-          </li>
-          <li>
-            <i class="fas fa-angle-right"></i>
-            <span><img  src="" alt=""></img><p class="name">Favourites</p></span>
-            <ul class="nested" style="max-height:0px">
-                <li><img  src="" alt="" ></img><p class="name">Restaurants</p></li>
-                <li><img  src="" alt="" ></img><p class="name">Places</p></li>
-                <li><img  src="" alt="" ></img><p class="name">Games</p></li>
-                <li><img  src="" alt="" ></img><p class="name">Coctails</p></li>
-                <li><img  src="" alt="" ></img><p class="name">Food</p></li>
-              </ul>
-          </li>
-          <li><img  src="" alt="" ></img><p class="name">Notes</p></li>
-          <li><img  src="" alt="" ></img><p class="name">Settings</p></li>
-          <li><img  src="" alt="" ></img><p class="name">Devices</p></li>
-          <li><img  src="" alt="" ></img><p class="name">Deleted Items</p></li>
         </ul>
       </div>
 
@@ -91,6 +73,7 @@
                 if (ulElement) {
                     ulElement.style.transition = 'height 1s';
                     ulElement.style.maxHeight = (ulElement.style.maxHeight === '0px') ? `100vh` : '0px';
+                    {% comment %} ulElement.classList.toggle('animated'); {% endcomment %}
                 }
     
                 var iconElement = this.querySelector('i');
