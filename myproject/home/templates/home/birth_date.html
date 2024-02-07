@@ -16,14 +16,14 @@
     </div>
   
     <div class="content">
-        {% for family in data %}
+        {% for person in data %}
             <div class = "item">
                 <div class = "wrap-img">
-                    <img class="img-family" src="{{ family.image }}" alt="Hình Ảnh">
+                    <img class="img-family" src="{{ person.image }}" alt="Hình Ảnh">
                 </div>
                 <div class = "wrap-text"> 
-                    <h2 class="name">{{ family.full_name_vn }}</h2>
-                    <p>{{ family.birth_date }}</p>    
+                    <h2 class="name">{{ person.full_name_vn }}</h2>
+                    <p>{{ person.birth_date }}</p>    
                 </div>
             </div>
         {% endfor %}
