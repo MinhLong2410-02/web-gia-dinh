@@ -162,7 +162,19 @@ def import_info(request):
 class UpdateInfoView(View):
     template_name = 'home/update_people.html'
     def get(self, request, *args, **kwargs):
-        # Families.objects request.user.email
+        person_id = request.GET.get('id')
+
+        # Retrieve person and related family in a single query
+        person = People.objects.select_related('family').get(people_id=person_id)
+
+        # Retrieve other people in the same family
+        people_in_family = People.objects.filter(
+            family_id=person.family_id
+        ).exclude(
+            people_id=person_id
+        ).values(
+            'people_id', 'full_name'
+        )
         
         return render(request, self.template_name)
     
