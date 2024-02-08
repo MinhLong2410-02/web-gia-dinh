@@ -96,7 +96,7 @@ if os.environ['STATUS'] == 'PRODUCTION':
             'PORT': '5432',       # Cổng mặc định của PostgreSQL
         }
     }
-    API_URL = 'lehungba.com'
+    # API_URL = 'lehungba.com'
 else:
     DATABASES = {
         'default': {
@@ -104,7 +104,7 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }   
     }
-    API_URL = 'http://127.0.0.1:80'
+API_URL = 'http://127.0.0.1:80'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

@@ -15,6 +15,7 @@ urlpatterns = [
     path('married-date/', MarriedDateView.as_view(), name='married_date'),
     path('death-date/', DeathDateView.as_view(), name='death_date'),
     path('update-info/', UpdateInfoView.as_view(), name='update_info'),
+    path('profile/', ProfileView.as_view(), name='profile'),
     
     # api
     path('api/find-people/', find_people, name='find_people'),
