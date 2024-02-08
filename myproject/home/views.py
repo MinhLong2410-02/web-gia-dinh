@@ -417,9 +417,10 @@ def update_people(request: request.Request):
             return JsonResponse({
                 'message': 'Updated successfully!',
             }, status=status_code)
-        except:
+        except Exception as e:
             return JsonResponse({
                 'message': 'Kiểm tra dữ liệu nhập bị lỗi',
+                'error': f'{e}',
             }, status=status_code)
 
 @api_view(['GET'])
