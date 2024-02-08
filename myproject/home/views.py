@@ -104,7 +104,8 @@ class DeathDateView(View):
                 "death_date": person.death_date.strftime("%d/%m/%Y"),
                 "birth_date": person.birth_date.strftime("%d/%m/%Y"),
                 "profile_picture": person.profile_picture,
-                "age_at_death": age_years
+                "age_at_death": age_years,
+                                "cause_of_death": person.cause_of_death if person.cause_of_death else "Không rõ nguyên nhân"
             })
 
         return render(request, self.template_name, {'data': data})
