@@ -33,11 +33,7 @@ def FamilyTreeView(request, family_id):
     head_family = People.objects.get(people_id=head_family)
     if head_family is None:
         return render(request, 'home/family.html', {'data': []})
-    # res = get_husband_wife_by_id(head_family[0])
-    res = {
-        'id': head_family.people_id,
-        'full_name': head_family.full_name_vn,
-    }
+    res = get_husband_wife_by_id(head_family.people_id)
     return render(request, 'home/family.html', {'data': res, 'API_URL': API_URL})  
 
 
