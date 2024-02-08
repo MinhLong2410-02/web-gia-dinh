@@ -104,7 +104,7 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }   
     }
-API_URL = 'http://127.0.0.1:80'
+API_URL = 'http://127.0.0.1:8080'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
