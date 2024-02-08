@@ -27,7 +27,7 @@ class Login(LoginView):
     def get_success_url(self):
         return reverse_lazy('home')
 
-def FamilyView(request, family_id):
+def FamilyTreeView(request, family_id):
     head_family = get_head_family_tree_by_family_id(family_id)
     if head_family is None:
         return render(request, 'home/family.html', {'data': []})
@@ -301,6 +301,7 @@ class ProfileView(View):
                     },
                     'API_URL': API_URL,
                 })
+
 '''API ENDPOINTS'''          
 @api_view(['GET'])
 def find_people(request: request.Request):
