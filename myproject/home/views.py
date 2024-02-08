@@ -197,6 +197,9 @@ class UpdateInfoView(View):
             relationship = Relationships.objects.filter(person1=person, person2=person2).exists()
             relationship2 = Relationships.objects.filter(person1=person2, person2=person).exists()
             
+            is_married = Relationships.objects.filter(
+                Q(person1_id=person.people_id, relationship_type='Vợ Chồng') | Q(person2_id=person.people_id, relationship_type='Vợ Chồng')
+            ).exists()
             if relationship or relationship2 or person.people_id == person2.people_id:
                 people_in_family = People.objects.filter(
                     family_id=person.family_id
@@ -227,6 +230,7 @@ class UpdateInfoView(View):
                         'hobbies_interests': person.hobbies_interests,
                         'social_media_links': person.social_media_links,
                         'people_in_family': list(people_in_family),
+                        'is_married': is_married,
                     },
                     'API_URL': API_URL,
                 })
@@ -239,7 +243,9 @@ class UpdateInfoView(View):
             ).values(
                 'people_id', 'full_name_vn', 
             )
-                
+            is_married = Relationships.objects.filter(
+                Q(person1_id=person.people_id, relationship_type='Vợ Chồng') | Q(person2_id=person.people_id, relationship_type='Vợ Chồng')
+            ).exists()
             
             return render(request, self.template_name, {
                 'data': {
@@ -264,6 +270,7 @@ class UpdateInfoView(View):
                     'hobbies_interests': person.hobbies_interests,
                     'social_media_links': person.social_media_links,
                     'people_in_family': list(people_in_family),
+                    'is_married': is_married,
                 },
                 'API_URL': API_URL,
             })
