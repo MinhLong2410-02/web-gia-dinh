@@ -27,7 +27,7 @@ class Login(LoginView):
     def get_success_url(self):
         return reverse_lazy('home')
 
-def FamilyView(request, family_id):
+def FamilyTreeView(request, family_id):
     head_family = get_head_family_tree_by_family_id(family_id)
     if head_family is None:
         return render(request, 'home/family.html', {'data': []})
@@ -268,7 +268,40 @@ class UpdateInfoView(View):
                 'API_URL': API_URL,
             })
         
-      
+ 
+class ProfileView(View):
+    template_name = 'home/profile.html'
+    
+    def get(self, request, *args, **kwargs):
+        people_id = request.GET.get('id')
+        person = People.objects.get(people_id=people_id)
+        return render(request, self.template_name, {
+                    'data': {
+                        'id': people_id,
+                        'full_name': person.full_name_vn,
+
+                        'birth_date': timezone.datetime.strftime(person.birth_date, '%Y-%m-%d') if person.birth_date else None,
+                        'death_date': timezone.datetime.strftime(person.death_date, '%Y-%m-%d') if person.death_date else None,
+
+                        'profile_picture': person.profile_picture,
+                        'gender': person.gender,
+                        'phone_number': person.phone_number,
+                        'contact_address': person.contact_address,
+                        'nationality': person.nationality,
+                        'birth_place': person.birth_place,
+                        'marital_status': person.marital_status,
+                        'history': person.history,
+                        'achievement': person.achievement,
+                        'occupation': person.occupation,
+                        'education_level': person.education_level,
+                        'health_status': person.health_status,
+                        'family_info': person.family_info,
+                        'hobbies_interests': person.hobbies_interests,
+                        'social_media_links': person.social_media_links,
+                    },
+                    'API_URL': API_URL,
+                })
+
 '''API ENDPOINTS'''          
 @api_view(['GET'])
 def find_people(request: request.Request):

@@ -10,11 +10,12 @@ urlpatterns = [
 
     path('', HomeView.as_view(), name='home'),
     path('import-info/', import_info, name='import_info'),
-    path('family/<int:family_id>', FamilyView, name='family'),
+    path('family/<int:family_id>', FamilyTreeView, name='family'),
     path('birth-date/', BirthDateView.as_view(), name='birth_date'),
     path('married-date/', MarriedDateView.as_view(), name='married_date'),
     path('death-date/', DeathDateView.as_view(), name='death_date'),
     path('update-info/', UpdateInfoView.as_view(), name='update_info'),
+    path('profile/', ProfileView.as_view(), name='profile'),
     
     # api
     path('api/find-people/', find_people, name='find_people'),
