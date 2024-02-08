@@ -351,10 +351,7 @@ def update_people(request: request.Request):
         
         if bool(request.data.get('profile_picture')):
             profile_picture = request.data.get('profile_picture')
-            with open(f'./static/profile_pictures/{people.people_id}.jpg', 'wb+') as destination:
-                for chunk in profile_picture.chunks():
-                    destination.write(chunk)
-            people.profile_picture = f'{API_URL}/static/profile_pictures/{people.people_id}.jpg'
+            people.profile_picture = upload_image(f'./static/profile_pictures/{people.people_id}.jpg', profile_picture)
             people.save()
         
         people2 = People.objects.get(full_name=request.data.get('search'))
@@ -382,7 +379,7 @@ def update_people(request: request.Request):
                 full_name=convert_vietnamese_accent_to_english(request_data.get('full_name')),
                 birth_date=day,
                 gender=True if request_data.get('gender') == "Nam" else False,
-                phone_number=request_data.get('phone_number'),
+                phone_number=None if request_data.get('phone_number') == 'None' else request_data.get('phone_number'),
                 hobbies_interests=request_data.get('hobbies_interests'),
                 occupation=request_data.get('occupation'),
                 contact_address=request_data.get('contact_address'),
@@ -417,9 +414,10 @@ def update_people(request: request.Request):
             return JsonResponse({
                 'message': 'Updated successfully!',
             }, status=status_code)
-        except:
+        except Exception as e:
             return JsonResponse({
                 'message': 'Kiểm tra dữ liệu nhập bị lỗi',
+                'error': f'{e}',
             }, status=status_code)
 
 @api_view(['GET'])

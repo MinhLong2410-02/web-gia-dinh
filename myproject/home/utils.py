@@ -106,3 +106,9 @@ def get_husband_wife_by_id(partner_id):
             wife = People.objects.get(people_id=wife[0]['person1_id'])
             res['wife']= {'name': wife.full_name_vn, 'img': wife.profile_picture, 'id': wife.people_id}
     return res
+
+def upload_image(path, file):
+    with open(path, 'wb+') as destination:
+        for chunk in file.chunks():
+            destination.write(chunk)
+    return path
