@@ -61,7 +61,7 @@
           event.stopPropagation();
           const li = document.getElementById(id);
           console.log(li);
-          fetch(`{BE_HOST}/home/api/find-people-in-family/?id=${id}`)
+          fetch(`${BE_HOST}/home/api/find-people-in-family/?id=${id}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
