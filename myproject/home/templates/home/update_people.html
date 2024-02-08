@@ -44,10 +44,10 @@
                 <label>Giới Tính:</label>
                 <div class="gender-options">
                     <label class="checkbox-inline">
-                        <input type="radio" name="gender" value="true" {% if gender %} checked {% endif %} > Nam
+                        <input type="radio" name="gender" value="true" {% if data.gender %} checked {% endif %} > Nam
                     </label>
                     <label class="checkbox-inline">
-                        <input type="radio" name="gender" value="false" {% if gender == false %} checked {% endif %}>Nữ
+                        <input type="radio" name="gender" value="false" {% if data.gender == False %} checked {% endif %}>Nữ
                     </label>
                 </div>
             </div>
