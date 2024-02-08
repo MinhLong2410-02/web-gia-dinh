@@ -20,6 +20,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 class Families(models.Model):
     family_id = models.AutoField(primary_key=True)
+    leader = models.IntegerField(null=True)
     # person = models.ForeignKey(People, on_delete=models.CASCADE, related_name='person_families')
     # Families table is one to many with People table
     family_name = models.CharField(max_length=255)
@@ -30,7 +31,6 @@ class Families(models.Model):
     family_img = models.CharField(max_length=255, null=True)
     class Meta:
         db_table = "families"
-        # verbose_name = "Families"
 class People(models.Model):
     email = models.EmailField(_("email address"), unique=True, null=True)
     people_id = models.AutoField(primary_key=True)
@@ -54,11 +54,10 @@ class People(models.Model):
     hobbies_interests = models.TextField(null=True)
     social_media_links = models.TextField(null=True)
     cause_of_death = models.TextField(null=True)
-    family = models.ForeignKey('Families', on_delete=models.CASCADE, related_name='people_families', null=True)
+    family = models.ForeignKey('families', on_delete=models.CASCADE, related_name='people_families', null=True)
     
     class Meta:
         db_table = "people"
-        # verbose_name = "People"
 class Relationships(models.Model):
     relationship_id = models.AutoField(primary_key=True)
     person1 = models.ForeignKey(People, on_delete=models.CASCADE, related_name='person1_relationships')
@@ -68,4 +67,3 @@ class Relationships(models.Model):
     end_date = models.DateField(null=True, blank=True)
     class Meta:
         db_table = "relationships"
-        # verbose_name = "Relationships"

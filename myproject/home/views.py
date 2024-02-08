@@ -12,6 +12,8 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q, F, ExpressionWrapper, IntegerField, TimeField
 from .utils import *
+from django.db.models import Case, When, Value, IntegerField
+from django.db.models.functions import Cast
 API_URL = settings.API_URL
 
 
@@ -102,7 +104,8 @@ class DeathDateView(View):
                 "death_date": person.death_date.strftime("%d/%m/%Y"),
                 "birth_date": person.birth_date.strftime("%d/%m/%Y"),
                 "profile_picture": person.profile_picture,
-                "age_at_death": age_years
+                "age_at_death": age_years,
+                                "cause_of_death": person.cause_of_death if person.cause_of_death else "Không rõ nguyên nhân"
             })
 
         return render(request, self.template_name, {'data': data})
@@ -142,7 +145,28 @@ class HomeView(View):
     template_name_non_authenticated = 'home/index_non_authen.html'
 
     def get(self, request, *args, **kwargs):
-        families = Families.objects.all().values('family_id', 'family_name', 'family_img')
+        leader_ids = list(Families.objects.all().exclude(leader__isnull=True).values_list('leader', flat=True))
+        leader_ids_list = list(People.objects.filter(people_id__in=leader_ids)\
+            .order_by('birth_date')\
+            .values_list('people_id', flat=True))
+        # sort Family by people_leader_ids list using leader field
+        leader_id_index = {leader_id: index for index, leader_id in enumerate(leader_ids_list)}
+            
+        # Annotate the Families queryset with the index of each leader_id in the list
+        annotated_families = Families.objects.annotate(
+            leader_int=Cast('leader', output_field=IntegerField())
+        ).annotate(
+            leader_id_index=Case(
+                *[When(leader_int=leader_id, then=Value(leader_id_index[leader_id])) for leader_id in leader_ids_list],
+                default=Value(len(leader_ids_list)),
+                output_field=IntegerField()
+            )
+        )
+
+        # Sort the annotated queryset based on the index
+        families = annotated_families.order_by('leader_id_index').values()
+        
+
         # print(families)
         if request.user.is_authenticated:
             return self.authenticated_user(request, list(families))
@@ -203,7 +227,8 @@ class UpdateInfoView(View):
                         'hobbies_interests': person.hobbies_interests,
                         'social_media_links': person.social_media_links,
                         'people_in_family': list(people_in_family),
-                    }
+                    },
+                    'API_URL': API_URL,
                 })
             else:
                 return render(request, 'home/permission_denied.html')
@@ -239,11 +264,10 @@ class UpdateInfoView(View):
                     'hobbies_interests': person.hobbies_interests,
                     'social_media_links': person.social_media_links,
                     'people_in_family': list(people_in_family),
-                }
+                },
+                'API_URL': API_URL,
             })
-    
-                
-
+        
       
 '''API ENDPOINTS'''          
 @api_view(['GET'])
@@ -300,9 +324,7 @@ def update_people(request: request.Request):
         )
         
         status_code = status.HTTP_201_CREATED
-        return JsonResponse({
-            'message': 'Updated successfully!',
-        }, status=status_code)
+        return reverse_lazy('home')
     else:
         status_code = status.HTTP_400_BAD_REQUEST
         people_id = request.GET.get('id')
