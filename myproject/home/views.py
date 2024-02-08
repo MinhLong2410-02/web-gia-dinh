@@ -105,7 +105,7 @@ class DeathDateView(View):
                 "birth_date": person.birth_date.strftime("%d/%m/%Y"),
                 "profile_picture": person.profile_picture,
                 "age_at_death": age_years,
-                                "cause_of_death": person.cause_of_death if person.cause_of_death else "Không rõ nguyên nhân"
+                "cause_of_death": person.cause_of_death if person.cause_of_death else "Không rõ nguyên nhân"
             })
 
         return render(request, self.template_name, {'data': data})
@@ -121,7 +121,7 @@ class MarriedDateView(View):
         ).values(
             'person1__full_name', 'person1__profile_picture',
             'person2__full_name', 'person2__profile_picture',
-            'start_date'
+            'start_date', 'relationship_img'
         )
 
         # Format the data
@@ -132,6 +132,7 @@ class MarriedDateView(View):
                 "full_name2": relationship['person2__full_name'],
                 "img2": relationship['person2__profile_picture'],
                 "start_date": relationship['start_date'].strftime("%d/%m/%Y") if relationship['start_date'] else None,
+                "relationship_img": relationship['relationship_img']
             }
             for relationship in relationships
         ]
@@ -197,6 +198,9 @@ class UpdateInfoView(View):
             relationship = Relationships.objects.filter(person1=person, person2=person2).exists()
             relationship2 = Relationships.objects.filter(person1=person2, person2=person).exists()
             
+            is_married = Relationships.objects.filter(
+                Q(person1_id=person.people_id, relationship_type='Vợ Chồng') | Q(person2_id=person.people_id, relationship_type='Vợ Chồng')
+            ).exists()
             if relationship or relationship2 or person.people_id == person2.people_id:
                 people_in_family = People.objects.filter(
                     family_id=person.family_id
@@ -227,6 +231,7 @@ class UpdateInfoView(View):
                         'hobbies_interests': person.hobbies_interests,
                         'social_media_links': person.social_media_links,
                         'people_in_family': list(people_in_family),
+                        'is_married': is_married,
                     },
                     'API_URL': API_URL,
                 })
@@ -239,7 +244,9 @@ class UpdateInfoView(View):
             ).values(
                 'people_id', 'full_name_vn', 
             )
-                
+            is_married = Relationships.objects.filter(
+                Q(person1_id=person.people_id, relationship_type='Vợ Chồng') | Q(person2_id=person.people_id, relationship_type='Vợ Chồng')
+            ).exists()
             
             return render(request, self.template_name, {
                 'data': {
@@ -264,6 +271,7 @@ class UpdateInfoView(View):
                     'hobbies_interests': person.hobbies_interests,
                     'social_media_links': person.social_media_links,
                     'people_in_family': list(people_in_family),
+                    'is_married': is_married,
                 },
                 'API_URL': API_URL,
             })
@@ -348,7 +356,7 @@ def update_people(request: request.Request):
                     destination.write(chunk)
             people.profile_picture = f'{API_URL}/static/profile_pictures/{people.people_id}.jpg'
             people.save()
-            
+        
         people2 = People.objects.get(full_name=request.data.get('search'))
         Relationships.objects.create(
             person1=people2,
@@ -389,6 +397,21 @@ def update_people(request: request.Request):
                 social_media_links = request_data.get('social_media_links'),
                 profile_picture = f'{API_URL}/static/profile_pictures/{people_id}.jpg',
             )
+            
+            if request.data.get('is_married') == 'true' or (request.data.get('is_married') == True and request.data.get('is_married') != 'false'):
+                if bool(request.data.get('profile_picture')):
+                    profile_picture = request.data.get('married_picture')
+                    relationship = Relationships.objects.get(
+                        Q(person1_id=people_id, relationship_type='Vợ Chồng') | Q(person2_id=people_id, relationship_type='Vợ Chồng')
+                    )
+                    with open(f'./static/profile_pictures/relationships/{relationship.relationship_id}.jpg', 'wb+') as destination:
+                        for chunk in profile_picture.chunks():
+                            destination.write(chunk)
+                    relationship.relationship_img = f'./static/profile_pictures/relationships/{relationship.relationship_id}.jpg'
+                    relationship.save()
+                people = People.objects.get(people_id=people_id)
+                people.marital_status = "Đã kết hôn"   
+                people.save()
             status_code = status.HTTP_201_CREATED
             
             return JsonResponse({

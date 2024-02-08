@@ -65,5 +65,6 @@ class Relationships(models.Model):
     relationship_type = models.CharField(max_length=100)
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True, blank=True)
+    relationship_img = models.CharField(max_length=255, null=True)
     class Meta:
         db_table = "relationships"

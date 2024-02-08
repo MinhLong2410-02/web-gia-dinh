@@ -120,6 +120,16 @@
             <input type="file" id="profile_picture" name="profile_picture" class="file-input">
             {% comment %} <button type="button" id="upload_button" class="submit-btn">Upload Ảnh</button> {% endcomment %}
         </div>
+
+        
+        {% if data.is_married %}
+        <div class="form-group">
+            <label for="married_picture">Ảnh Cuới:</label>
+            <input type="file" id="married_picture" name="married_picture" class="file-input">
+            <input type="text" id="is_married" name="is_married" value = "{{data.is_married}}" hidden>
+            {% comment %} <button type="button" id="upload_button" class="submit-btn">Upload Ảnh</button> {% endcomment %}
+        </div>
+        {% endif %}
         
         <div class="action-buttons">
             <button type="submit" class="submit-btn">CẬP NHẬT</button>
@@ -137,7 +147,7 @@
             window.location.href = selectedValue;
         });
 
-
+        const isMarried = "{{ data.is_married }}";
         const BE_HOST = "{{ API_URL|safe }}";
         const form = document.querySelector('form');
         form.addEventListener('submit', e => {
