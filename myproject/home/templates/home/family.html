@@ -56,7 +56,7 @@
       </div>
 
       <script>
-        const BE_HOST = {{ API_URL|safe }};
+        const BE_HOST = "{{ API_URL|safe }}";
         function showUl(id) {
           event.stopPropagation();
           const li = document.getElementById(id);
