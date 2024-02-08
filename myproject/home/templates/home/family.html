@@ -58,6 +58,7 @@
       <script>
 
         function showUl(id) {
+          event.stopPropagation();
           const li = document.getElementById(id);
           console.log(li);
           fetch(`http://127.0.0.1:8080/home/api/find-people-in-family/?id=${id}`)
@@ -92,13 +93,17 @@
 
                   ulElement.innerHTML = arr;
                   
+                  let checkUl = li.querySelector('ul');
 
-                  if (li.nextElementSibling) {
-                      li.appendChild(ulElement);
+                  console.log(checkUl);
+
+                  if (checkUl) {
+                    checkUl.remove();
                   } else {
-                      li.appendChild(ulElement);
+                    li.appendChild(ulElement);
                   }
-  
+                  
+
                   {% comment %} ulElement.style.maxHeight = (ulElement.style.maxHeight === '0px') ? `100vh` : '0px'; {% endcomment %}
                 });
 
@@ -121,7 +126,6 @@
                     ulElement.classList.add('animated');
                     {% comment %} ulElement.style.maxHeight = '0px'; {% endcomment %}
     
-                    console.log(data.data);
                     let arr = ""
                     data.data.forEach(person => {
                         let liElement = `<li id="${person.husband.id}" onclick="showUl(${person.husband.id})" data-set="${person.husband.id}"><i class="fas fa-angle-right iconRight"></i><span">
