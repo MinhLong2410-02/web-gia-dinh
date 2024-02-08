@@ -105,7 +105,7 @@ class DeathDateView(View):
                 "birth_date": person.birth_date.strftime("%d/%m/%Y"),
                 "profile_picture": person.profile_picture,
                 "age_at_death": age_years,
-                                "cause_of_death": person.cause_of_death if person.cause_of_death else "Không rõ nguyên nhân"
+                "cause_of_death": person.cause_of_death if person.cause_of_death else "Không rõ nguyên nhân"
             })
 
         return render(request, self.template_name, {'data': data})
@@ -355,7 +355,7 @@ def update_people(request: request.Request):
                     destination.write(chunk)
             people.profile_picture = f'{API_URL}/static/profile_pictures/{people.people_id}.jpg'
             people.save()
-            
+        
         people2 = People.objects.get(full_name=request.data.get('search'))
         Relationships.objects.create(
             person1=people2,
@@ -396,6 +396,21 @@ def update_people(request: request.Request):
                 social_media_links = request_data.get('social_media_links'),
                 profile_picture = f'{API_URL}/static/profile_pictures/{people_id}.jpg',
             )
+            
+            if request.data.get('is_married') == 'true' or (request.data.get('is_married') == True and request.data.get('is_married') != 'false'):
+                if bool(request.data.get('profile_picture')):
+                    profile_picture = request.data.get('married_picture')
+                    relationship = Relationships.objects.get(
+                        Q(person1_id=people_id, relationship_type='Vợ Chồng') | Q(person2_id=people_id, relationship_type='Vợ Chồng')
+                    )
+                    with open(f'./static/profile_pictures/relationships/{relationship.relationship_id}.jpg', 'wb+') as destination:
+                        for chunk in profile_picture.chunks():
+                            destination.write(chunk)
+                    relationship.relationship_img = f'./static/profile_pictures/relationships/{relationship.relationship_id}.jpg'
+                    relationship.save()
+                people = People.objects.get(people_id=people_id)
+                people.marital_status = "Đã kết hôn"   
+                people.save()
             status_code = status.HTTP_201_CREATED
             
             return JsonResponse({
