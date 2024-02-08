@@ -26,9 +26,9 @@
     <div class="treeview w-20 border">
           <li>
             <i class="fas fa-angle-right iconRight"></i>
-            <span data-id={{data.husband.id}}><img src="{{data.husband.img}}" alt="imgHusband" ></img><p class="name">{{ data.husband.name }}</p>
+            <span data-id={{data.husband.id}}><a href="/home"><img src="{{data.husband.img}}" alt="imgHusband" ></img></a><p class="name">{{ data.husband.name }}</p>
               {% if data.wife  %} 
-              <p class="heart">&#10084;</p><p class="name">{{ data.wife.name }}</p><img src="{{data.wife.img}}" alt="imgWife" ></img></span>
+              <p class="heart">&#10084;</p><p class="name">{{ data.wife.name }}</p><a href="/home"><img src="{{data.wife.img}}" alt="imgWife" ></img></a></span>
               {% endif %}
              {% comment %} { {{ data.wife.name }} ? <p class="heart">&#10084;</p><p class="name">{{ data.wife.name }}</p><img src="{{data.wife.img}}" alt="imgWife" ></img></span> : null} {% endcomment %}
             {% comment %} <ul class="nested animated" style="max-height:0px">
@@ -56,6 +56,60 @@
       </div>
 
       <script>
+
+        function showUl(id) {
+          event.stopPropagation();
+          const li = document.getElementById(id);
+          console.log(li);
+          fetch(`http://127.0.0.1:8080/home/api/find-people-in-family/?id=${id}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                  console.log(data.data);
+                  const ulElement = document.createElement('ul');
+                  ulElement.classList.add('nested');
+                  ulElement.classList.add('animated');
+                  {% comment %} ulElement.style.maxHeight = '0px'; {% endcomment %}
+
+                  let arr = ""
+                  data.data.forEach(person => {
+                      let liElement = `<li id="${person.husband.id}" onclick="showUl(${person.husband.id})" data-set="${person.husband.id}"><i class="fas fa-angle-right iconRight"></i><span">
+                          <a href="/home"><img src="${person.husband.img}" alt="img"></a>
+                          <p class="name">${person.husband.name}</p>
+                      </span>`
+                      
+                      if(person.wife){
+                        liElement += `<p class="heart">&#10084;</p><span data-id="${person.wife.id}">
+                          <p class="name">${person.wife.name}</p>
+                          <a href="/home"><img src="${person.wife.img}" alt="img"></a>`
+                      }
+                      
+                      arr += liElement + "</li>";
+                  });
+
+                  ulElement.innerHTML = arr;
+                  
+                  let checkUl = li.querySelector('ul');
+
+                  console.log(checkUl);
+
+                  if (checkUl) {
+                    checkUl.remove();
+                  } else {
+                    li.appendChild(ulElement);
+                  }
+                  
+
+                  {% comment %} ulElement.style.maxHeight = (ulElement.style.maxHeight === '0px') ? `100vh` : '0px'; {% endcomment %}
+                });
+
+            
+        }
+
         var treeviewSpanElements = document.querySelectorAll('.treeview span');
         treeviewSpanElements.forEach(function(spanElement) {
             spanElement.addEventListener('click', function() {
@@ -70,23 +124,26 @@
                     const ulElement = document.createElement('ul');
                     ulElement.classList.add('nested');
                     ulElement.classList.add('animated');
-                    ulElement.style.maxHeight = '0px';
+                    {% comment %} ulElement.style.maxHeight = '0px'; {% endcomment %}
     
-                    console.log(data.data);
+                    let arr = ""
                     data.data.forEach(person => {
-                        const liElement = document.createElement('li');
-                        liElement.dataset.id = person.husband.id;
-                        liElement.innerHTML = `<i class="fas fa-angle-right iconRight"></i><span>
-                            <img src="${person.husband.img}" alt="img">
+                        let liElement = `<li id="${person.husband.id}" onclick="showUl(${person.husband.id})" data-set="${person.husband.id}"><i class="fas fa-angle-right iconRight"></i><span">
+                            <a href="/home"><img src="${person.husband.img}" alt="img"></a>
                             <p class="name">${person.husband.name}</p>
-                        </span>`;
+                        </span>`
+                        
                         if(person.wife){
-                          liElement.innerHTML += `<p class="heart">&#10084;</p><span data-id="${person.wife.id}">
+                          liElement += `<p class="heart">&#10084;</p><span data-id="${person.wife.id}">
                             <p class="name">${person.wife.name}</p>
-                            <img src="${person.wife.img}" alt="img">`
+                            <a href="/home"><img src="${person.wife.img}" alt="img"></a>`
                         }
-                        ulElement.appendChild(liElement);
+                        
+                        {% comment %} ulElement.appendChild(liElement); {% endcomment %}
+                        arr += liElement + "</li>";
                     });
+
+                    ulElement.innerHTML = arr;
     
                     if (spanElement.nextElementSibling) {
                         spanElement.nextElementSibling.remove();
@@ -94,15 +151,15 @@
                         spanElement.parentNode.appendChild(ulElement);
                     }
     
-                    ulElement.style.maxHeight = (ulElement.style.maxHeight === '0px') ? `100vh` : '0px';
+                    {% comment %} ulElement.style.maxHeight = (ulElement.style.maxHeight === '0px') ? `100vh` : '0px'; {% endcomment %}
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
                 });
             });
         })
-
-        const observer = new MutationObserver(mutationsList => {
+        {% comment %} const observer = new MutationObserver(mutationsList => {
+          treeviewSpanElements = document.querySelectorAll('.treeview span');
           console.log('DOM đã thay đổi');
         });
         
@@ -110,7 +167,7 @@
             childList: true, // Sự thay đổi trong nội dung con của phần tử
             subtree: true, // Theo dõi sự thay đổi trong tất cả các phần tử con, cháu, vv.
         };
-        observer.observe(document.body, observerOptions);
+        observer.observe(document.body, observerOptions); {% endcomment %}
       
     </script>
     
