@@ -98,11 +98,11 @@ def get_husband_wife_by_id(partner_id):
     if wife.exists():
         wife = wife.values('person2_id') 
         wife = People.objects.get(people_id=wife[0]['person2_id'])
-        res['wife']= {'name': wife.full_name_vn, 'img': wife.profile_picture}
+        res['wife']= {'name': wife.full_name_vn, 'img': wife.profile_picture, 'id': wife.people_id}
     else:
         wife = Relationships.objects.filter(person2_id=partner_id, relationship_type='Vợ Chồng')
         if wife.exists():
             wife = wife.values('person1_id') 
             wife = People.objects.get(people_id=wife[0]['person1_id'])
-            res['wife']= {'name': wife.full_name_vn, 'img': wife.profile_picture}
+            res['wife']= {'name': wife.full_name_vn, 'img': wife.profile_picture, 'id': wife.people_id}
     return res
