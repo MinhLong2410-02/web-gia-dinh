@@ -28,11 +28,16 @@ class Login(LoginView):
         return reverse_lazy('home')
 
 def FamilyTreeView(request, family_id):
-    head_family = get_head_family_tree_by_family_id(family_id)
+    # head_family = get_head_family_tree_by_family_id(family_id)
+    head_family = Families.objects.get(family_id=family_id).leader
+    head_family = People.objects.get(people_id=head_family)
     if head_family is None:
         return render(request, 'home/family.html', {'data': []})
-    res = get_husband_wife_by_id(head_family[0])
-    
+    # res = get_husband_wife_by_id(head_family[0])
+    res = {
+        'id': head_family.people_id,
+        'full_name': head_family.full_name_vn,
+    }
     return render(request, 'home/family.html', {'data': res, 'API_URL': API_URL})  
 
 
