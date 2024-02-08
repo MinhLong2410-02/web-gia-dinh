@@ -121,7 +121,7 @@ class MarriedDateView(View):
         ).values(
             'person1__full_name', 'person1__profile_picture',
             'person2__full_name', 'person2__profile_picture',
-            'start_date'
+            'start_date', 'relationship_img'
         )
 
         # Format the data
@@ -132,6 +132,7 @@ class MarriedDateView(View):
                 "full_name2": relationship['person2__full_name'],
                 "img2": relationship['person2__profile_picture'],
                 "start_date": relationship['start_date'].strftime("%d/%m/%Y") if relationship['start_date'] else None,
+                "relationship_img": relationship['relationship_img']
             }
             for relationship in relationships
         ]
