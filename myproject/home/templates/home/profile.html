@@ -1,0 +1,81 @@
+{% include request.user.is_authenticated|yesno:"base_authen.html,base_non_authen.html" %}
+{% load static %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+    <div class="banner">
+        <div class="banner-image">
+            <img src="{% static 'images/we_are_aatholics.png' %}" alt="Hình Ảnh">
+        </div>
+        <div class = "wrap-textBanner">
+            <p>Đức Tin Công Giáo</p>
+            <p>Nền Tảng Gia Đình</p>
+            <p>Tự Hào Huyết Thống</p>
+            <p>Vẻ Vang Dòng Tộc</p>
+        </div>
+    </div>
+  
+    <div class="content">
+        <img class="img" src="{{data.profile_picture}}"></img>
+        <h2 class="name">{{data.full_name}}</h2>
+        <div class="wrap-detail">
+            <div class="group">
+                <label>Giới tính:</label>
+                <p class="gender">{{data.gender}}</p>
+            </div>
+            <div class="group">
+                <label>Số điện thoại :</label>
+                <p>{{data.phone_number}}</p>
+            </div>
+            <div class="group">
+                <label>Địa chỉ liên hệ :</label>
+                <p>{{data.contact_address}}</p>
+            </div>
+            <div class="group">
+                <label>Quốc tịch :</label>
+                <p>{{data.nationality}}</p>
+            </div>
+            <div class="group">
+                <label>Nơi sinh :</label>
+                <p>{{data.birth_place}}</p>
+            </div>
+            <div class="group">
+                <label>marital_status :</label>
+                <p>{{data.marital_status}}</p>
+            </div>
+            <div class="group">
+                <label>Tiểu sử :</label>
+                <p>{{data.history}}</p>
+            </div>
+            <div class="group">
+                <label>Thành tựu  :</label>
+                <p>{{data.achievement}}</p>
+            </div>
+            <div class="group">
+                <label>Nghề nghiệp :</label>
+                <p>{{data.occupation}}</p>
+            </div>
+            <div class="group">
+                <label>Trình độ học vẫn :</label>
+                <p>{{data.education_level}}</p>
+            </div>
+            <div class="group">
+                <label>Tình trạng sức khỏe :</label>
+                <p>{{data.health_status}}</p>
+            </div>
+            <div class="group">
+                <label>Thông tin gia dình :</label>
+                <p>{{data.family_info}}</p>
+            </div>
+            <div class="group">
+                <label>Sở thích :</label>
+                <p>{{data.hobbies_interests}}</p>
+            </div>
+            <div class="group">
+                <label>Mạng xâ hội :</label>
+                <p>{{data.social_media_links}}</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

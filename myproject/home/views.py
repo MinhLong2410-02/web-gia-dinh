@@ -33,7 +33,7 @@ def FamilyTreeView(request, family_id):
         return render(request, 'home/family.html', {'data': []})
     res = get_husband_wife_by_id(head_family[0])
     
-    return render(request, 'home/family.html', {'data': res})  
+    return render(request, 'home/family.html', {'data': res, 'API_URL': API_URL})  
 
 
 class BirthDateView(View):
@@ -420,7 +420,7 @@ def count_people(request):
     ).exclude(
         birth_date__isnull=True
     ).count()
-    
+        
     couples_in_current_month_count = Relationships.objects.filter(
         relationship_type='Vợ Chồng',
         start_date__gte=start_date,

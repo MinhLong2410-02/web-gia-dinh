@@ -26,9 +26,9 @@
     <div class="treeview w-20 border">
           <li>
             <i class="fas fa-angle-right iconRight"></i>
-            <span data-id={{data.husband.id}}><a href="/home"><img src="{{data.husband.img}}" alt="imgHusband" ></img></a><p class="name">{{ data.husband.name }}</p>
+            <span data-id={{data.husband.id}}><a href="/home/profile/?id={{data.husband.id}}"><img src="{{data.husband.img}}" alt="imgHusband" ></img></a><p class="name">{{ data.husband.name }}</p>
               {% if data.wife  %} 
-              <p class="heart">&#10084;</p><p class="name">{{ data.wife.name }}</p><a href="/home"><img src="{{data.wife.img}}" alt="imgWife" ></img></a></span>
+              <p class="heart">&#10084;</p><p class="name">{{ data.wife.name }}</p><a href="/home/profile/?id={{ data.wife.id}}"><img src="{{data.wife.img}}" alt="imgWife" ></img></a></span>
               {% endif %}
              {% comment %} { {{ data.wife.name }} ? <p class="heart">&#10084;</p><p class="name">{{ data.wife.name }}</p><img src="{{data.wife.img}}" alt="imgWife" ></img></span> : null} {% endcomment %}
             {% comment %} <ul class="nested animated" style="max-height:0px">
@@ -56,12 +56,12 @@
       </div>
 
       <script>
-
+        const BE_HOST = {{ API_URL|safe }};
         function showUl(id) {
           event.stopPropagation();
           const li = document.getElementById(id);
           console.log(li);
-          fetch(`http://127.0.0.1:8080/home/api/find-people-in-family/?id=${id}`)
+          fetch(`{BE_HOST}/home/api/find-people-in-family/?id=${id}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -78,14 +78,14 @@
                   let arr = ""
                   data.data.forEach(person => {
                       let liElement = `<li id="${person.husband.id}" onclick="showUl(${person.husband.id})" data-set="${person.husband.id}"><i class="fas fa-angle-right iconRight"></i><span">
-                          <a href="/home"><img src="${person.husband.img}" alt="img"></a>
+                          <a href="/home/profile/?id=${person.husband.id}"><img src="${person.husband.img}" alt="img"></a>
                           <p class="name">${person.husband.name}</p>
                       </span>`
                       
                       if(person.wife){
                         liElement += `<p class="heart">&#10084;</p><span data-id="${person.wife.id}">
                           <p class="name">${person.wife.name}</p>
-                          <a href="/home"><img src="${person.wife.img}" alt="img"></a>`
+                          <a href="/home/profile/?id=${person.wife.id}"><img src="${person.wife.img}" alt="img"></a>`
                       }
                       
                       arr += liElement + "</li>";
@@ -129,14 +129,14 @@
                     let arr = ""
                     data.data.forEach(person => {
                         let liElement = `<li id="${person.husband.id}" onclick="showUl(${person.husband.id})" data-set="${person.husband.id}"><i class="fas fa-angle-right iconRight"></i><span">
-                            <a href="/home"><img src="${person.husband.img}" alt="img"></a>
+                            <a href="/home/profile/?id=${person.husband.id}"><img src="${person.husband.img}" alt="img"></a>
                             <p class="name">${person.husband.name}</p>
                         </span>`
                         
                         if(person.wife){
                           liElement += `<p class="heart">&#10084;</p><span data-id="${person.wife.id}">
                             <p class="name">${person.wife.name}</p>
-                            <a href="/home"><img src="${person.wife.img}" alt="img"></a>`
+                            <a href="/home/profile/?id=${person.wife.id}"><img src="${person.wife.img}" alt="img"></a>`
                         }
                         
                         {% comment %} ulElement.appendChild(liElement); {% endcomment %}
