@@ -118,29 +118,31 @@ body {
 }
 
 footer {
-    background-color: #adadad; 
+    background-color: #adadad;
     position: fixed;
     bottom: 0;
     width: 100%;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 10px 0;
-    flex-wrap: wrap; /* Allows buttons to wrap to new line on small screens */
+    padding: 5px 0; /* Giảm giá trị này để các button cận sát top nền xám hơn */
+    flex-wrap: wrap;
 }
+
 
 .icon-button {
     background-color: #ffffff; /* White background for buttons */
     color: #000000; /* Black text */
-    padding: 10px;
+    padding: 10px; /* Tùy chỉnh nếu cần */
+    margin: 10px; /* Giảm giá trị này để các button'*/
     display: flex;
     flex-direction: column; /* Stack image and text vertically */
     align-items: center;
     justify-content: center;
-    border-radius: 8px; /* Rounded corners */
-    width: 68px; /* Width for square appearance */
-    height: 68px; /* Height for square appearance */
-    margin: 10px;
+    border-radius: 30px; /* Rounded corners */
+    width: 130px; /* Width for square appearance */
+    height: 130px; /* Height for square appearance */
+    margin: 30px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition effect */
 }
@@ -158,7 +160,7 @@ footer {
 .icon-button img {
     width: 100%; /* Full width of button */
     height: auto; /* Maintain aspect ratio */
-    border-radius: 8px; /* Rounded corners for images */
+    border-radius: 20px; /* Rounded corners for images */
     pointer-events: none; /* Prevent image from reacting to mouse events */
 }
 
@@ -166,8 +168,8 @@ footer {
     display: block;
     width: 100%;
     text-align: center; /* Center the text */
-    margin-top: 5px; /* Space between button and text */
-    font-size: 0.75em; /* Adjust font size as needed */
+    margin-top: 10px; /* Space between button and text */
+    font-size: 1.60em; /* Adjust font size as needed */
     text-transform: uppercase; /* Viết hoa tất cả chữ */
 }
 .action-buttons {
@@ -183,6 +185,47 @@ footer {
 
 .footer-section {
     position: relative;
+}
+/* Căn giữa chữ "Từ Trần" và giá trị của nó, tạo khoảng cách 5px */
+.death-date-container {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+}
+
+.death-label, .death-value {
+    font-weight: bold;
+}
+
+.death-label {
+    margin-bottom: 15px; /* Tạo khoảng cách 5px giữa chữ "Từ Trần" và giá trị */
+}
+
+.death-value {
+    font-size: 33px; /* Làm cho giá trị này to hơn nếu bạn muốn */
+}
+
+/* Căn giữa chữ và giá trị của cả "Sinh" và "Từ Trần", tạo khoảng cách 5px */
+.date-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.date-label {
+    font-size: 15px; /* Thiết lập kích thước chữ cho "Sinh" và "Từ Trần" là 15px */
+    margin-bottom: 5px; /* Tạo khoảng cách 5px giữa chữ và giá trị */
+}
+
+.date-value {
+    font-size: 30px; /* Thiết lập kích thước chữ cho giá trị là 38px */
+    font-weight: bold; /* Làm mập giá trị */
+}
+
+.wrap-text .birth-date {
+    font-weight: bold; /* Làm mập chữ */
+    font-size: 30px; /* Tăng kích thước chữ */
 }
 
 
@@ -207,3 +250,43 @@ footer {
 }
 
 
+/* Reset và các quy định cơ bản không thay đổi */
+
+/* Điều chỉnh cho giao diện PC */
+@media (min-width: 1024px) { /* Giả định màn hình PC có độ rộng tối thiểu là 1024px */
+    footer {
+        background-color: #adadad;
+        position: fixed;
+        bottom: 0;
+        left: 0; /* Điều chỉnh để nằm ở bên trái */
+        height: 100vh; /* Chiều cao toàn màn hình */
+        width: 13vh; /* Chiều rộng tự động dựa vào nội dung */
+        display: flex;
+        flex-direction: column; /* Sắp xếp các thành phần theo cột */
+        align-items: left; /* Căn giữa các mục theo chiều ngang */
+        justify-content: start; /* Bắt đầu căn các mục từ phía trên */
+        padding: 10px 5px; /* Điều chỉnh khoảng cách lề */
+    }
+
+
+    .icon-button {
+        margin: 15px 0; /* Khoảng cách giữa các nút */
+        width: 80px; /* Giảm kích thước chiều rộng của nút */
+        height: 80px; /* Giảm kích thước chiều cao của nút */
+        display: flex;
+        flex-direction: column; /* Để xếp nội dung theo chiều dọc */
+        align-items: center; /* Căn giữa nội dung theo chiều ngang */
+        justify-content: center; /* Căn giữa nội dung theo chiều dọc */
+    }
+
+    .icon-button img {
+        width: 100%; /* Giảm kích thước hình ảnh xuống, phần trăm dựa trên kích thước nút */
+        height: auto; /* Giữ tỉ lệ của hình ảnh */
+    }
+
+    .icon-text {
+        font-size: 0.9em; /* Giảm kích thước phông chữ của văn bản */
+        text-align: center; /* Căn giữa văn bản */
+        margin-top: 10px; /* Khoảng cách từ hình ảnh đến văn bản */
+    }
+}

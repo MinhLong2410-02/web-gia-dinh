@@ -23,11 +23,17 @@
                 </div>
                 <div class = "wrap-text"> 
                     <h2 class="name">{{ person.full_name }}</h2>
-                    <p>Ngày sinh: {{ person.birth_date }}</p>
-                    <p>Ngày sinh: {{ person.death_date }}</p>
-                    <p>Hưởng dương: {{ person.age_at_death }} tuổi</p>
-                    <p>Nguyên nhân mất: {{ person.cause_of_death }} </p>    
-                </div>
+                    <div class="date-container birth-date-container">
+                        <span class="date-label">Sinh Ngày</span>
+                        <span class="date-value">{{ person.birth_date }}</span>
+                    </div>
+                    <div class="death-date-container">
+                        <span class="death-label">Từ Trần</span>
+                        <span class="death-value">{{ person.death_date }}</span>
+                    </div>
+                    <p class="highlight"> <span class="age-value">{{ person.age_at_death }} tuổi</span></p>
+                    <p class="cause-of-death">Nguyên nhân: {{ person.cause_of_death }}</p>   
+                </div>                
             </div>
         {% endfor %}
     </div>
