@@ -28,12 +28,26 @@ class Login(LoginView):
         return reverse_lazy('home')
 
 def FamilyTreeView(request, family_id):
-    # head_family = get_head_family_tree_by_family_id(family_id)
-    head_family = Families.objects.get(family_id=family_id).leader
-    head_family = People.objects.get(people_id=head_family)
-    if head_family is None:
-        return render(request, 'home/family.html', {'data': []})
-    res = get_husband_wife_by_id(head_family.people_id)
+    head_family = get_head_family_tree_by_family_id(family_id)
+    
+    print(head_family)
+    # head_family = Families.objects.get(family_id=family_id).leader
+    # if head_family is None:
+    #     head_family_id, head_family_fullname = get_head_family_tree_by_family_id(family_id)
+    #     print(head_family_id, head_family_fullname)
+    #     rel = Relationships.objects.filter(person1_id=head_family_id, relationship_type='Vợ Chồng')
+    #     if rel.exists():
+    #         res = get_husband_wife_by_id(head_family_id)
+    #     else:
+    #         rel = Relationships.objects.filter(person2_id=head_family_id, relationship_type='Vợ Chồng')
+    #         if rel.exists():
+    #             res = get_husband_wife_by_id(rel.first().person1_id)
+    #         else:
+    #             res = []
+    #     return render(request, 'home/family.html', {'data': []})
+    # print(head_family, family_id)
+    # head_family = People.objects.get(people_id=head_family)
+    res = get_husband_wife_by_id(head_family[0])
     return render(request, 'home/family.html', {'data': res, 'API_URL': API_URL})  
 
 
@@ -429,31 +443,34 @@ def find_people_with_relationship(request: request.Request):
     res = [get_husband_wife_by_id(relationship['person2_id']) for relationship in relationships]
     return JsonResponse({'data': res})
 
+from datetime import date, timedelta
 @api_view(['GET'])
 def count_people(request):
     current_date = timezone.now().date()
 
-    start_date = current_date
-    end_date = current_date + timezone.timedelta(days=10)
+    start_date = current_date.today()
 
+    # Calculate the date 10 days from today
+    end_date = start_date + timedelta(days=10)
+
+    # Filter the queryset to get people whose birthday falls within the range
     people_in_current_month_count = People.objects.filter(
-        birth_date__gte=start_date,
-        birth_date__lte=end_date
-    ).exclude(
-        birth_date__isnull=True
-    ).count()
+        birth_date__month=start_date.month,
+        birth_date__day__range=(start_date.day, end_date.day)
+    ).exclude(birth_date__isnull=True).count()
+
         
     couples_in_current_month_count = Relationships.objects.filter(
         relationship_type='Vợ Chồng',
-        start_date__gte=start_date,
-        start_date__lte=end_date
+        start_date__month=start_date.month,
+        start_date__day__range=(start_date.day, end_date.day)
     ).exclude(
         start_date__isnull=True
     ).count()
     
     passed_away_in_current_month_count = People.objects.filter(
-        death_date__gte=start_date,
-        death_date__lte=end_date
+        death_date__month=start_date.month,
+        death_date__day__range=(start_date.day, end_date.day)
     ).exclude(
         death_date__isnull=True
     ).count()
