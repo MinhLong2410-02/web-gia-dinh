@@ -28,27 +28,20 @@ class Login(LoginView):
         return reverse_lazy('home')
 
 def FamilyTreeView(request, family_id):
-    head_family = get_head_family_tree_by_family_id(family_id)
-    
-    print(head_family)
-    # head_family = Families.objects.get(family_id=family_id).leader
-    # if head_family is None:
-    #     head_family_id, head_family_fullname = get_head_family_tree_by_family_id(family_id)
-    #     print(head_family_id, head_family_fullname)
-    #     rel = Relationships.objects.filter(person1_id=head_family_id, relationship_type='Vợ Chồng')
-    #     if rel.exists():
-    #         res = get_husband_wife_by_id(head_family_id)
-    #     else:
-    #         rel = Relationships.objects.filter(person2_id=head_family_id, relationship_type='Vợ Chồng')
-    #         if rel.exists():
-    #             res = get_husband_wife_by_id(rel.first().person1_id)
-    #         else:
-    #             res = []
-    #     return render(request, 'home/family.html', {'data': []})
-    # print(head_family, family_id)
-    # head_family = People.objects.get(people_id=head_family)
-    res = get_husband_wife_by_id(head_family[0])
-    return render(request, 'home/family.html', {'data': res, 'API_URL': API_URL})  
+    res = dict()
+    head_family = People.objects.filter(family__family_id=family_id).first()
+    relationship = Relationships.objects.filter(person1=head_family, relationship_type='Vợ Chồng')
+    if not relationship.exists():
+        relationship = Relationships.objects.filter(person2=head_family, relationship_type='Vợ Chồng')
+    if not relationship.exists():
+        wife = None
+    else:
+        wife = relationship.first().person2
+        wife = People.objects.get(people=wife.people)
+        wife = {'name': wife.full_name_vn, 'id': wife.people, 'img': wife.profile_picture}
+    res['wife'] = wife
+    res['husband']= {'name': head_family.full_name_vn, 'id': head_family.people ,'img': head_family.profile_picture}
+    return render(request, 'home/family.html', {'data': res, 'API_URL': API_URL})
 
 
 class BirthDateView(View):
@@ -162,9 +155,9 @@ class HomeView(View):
 
     def get(self, request, *args, **kwargs):
         leader_ids = list(Families.objects.all().exclude(leader__isnull=True).values_list('leader', flat=True))
-        leader_ids_list = list(People.objects.filter(people_id__in=leader_ids)\
+        leader_ids_list = list(People.objects.filter(people__in=leader_ids)\
             .order_by('birth_date')\
-            .values_list('people_id', flat=True))
+            .values_list('people', flat=True))
         # sort Family by people_leader_ids list using leader field
         leader_id_index = {leader_id: index for index, leader_id in enumerate(leader_ids_list)}
             
@@ -181,7 +174,6 @@ class HomeView(View):
 
         # Sort the annotated queryset based on the index
         families = annotated_families.order_by('leader_id_index').values()
-        
 
         # print(families)
         if request.user.is_authenticated:
@@ -439,7 +431,7 @@ def update_people(request: request.Request):
 def find_people_with_relationship(request: request.Request):
     res = []
     person1_id = request.GET.get('id')
-    relationships = Relationships.objects.filter(person1_id=person1_id, relationship_type='Cha Con').values('person2_id')
+    relationships = Relationships.objects.filter(person1=person1_id, relationship_type='Cha Con').values('person2_id')
     res = [get_husband_wife_by_id(relationship['person2_id']) for relationship in relationships]
     return JsonResponse({'data': res})
 
