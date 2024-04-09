@@ -41,7 +41,6 @@ class People(models.Model):
     email = models.CharField(max_length=255, blank=True, null=True)
     full_name = models.CharField(max_length=255)
     full_name_vn = models.CharField(max_length=255, blank=True, null=True)
-    birth_date = models.DateField(blank=True, null=True)
     gender = models.BooleanField(blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     contact_address = models.CharField(max_length=255, blank=True, null=True)
@@ -52,9 +51,10 @@ class People(models.Model):
     occupation = models.CharField(max_length=100, blank=True, null=True)
     education_level = models.CharField(max_length=100, blank=True, null=True)
     health_status = models.CharField(max_length=255, blank=True, null=True)
+    birth_date = models.DateField(blank=True, null=True)
     death_date = models.DateField(blank=True, null=True)
     family_info = models.TextField(blank=True, null=True)
-    profile_picture = models.CharField(max_length=255, blank=True, null=True)
+    profile_picture = models.CharField(max_length=255, default='/home/media/profile_pictures/default.png')
     hobbies_interests = models.TextField(blank=True, null=True)
     social_media_links = models.TextField(blank=True, null=True)
     cause_of_death = models.TextField(blank=True, null=True)
@@ -65,6 +65,7 @@ class People(models.Model):
         db_table = "people"
 
 class Relationships(models.Model):
+    relationship_id = models.AutoField(primary_key=True, db_column='relationship_id')
     person1 = models.ForeignKey(People, on_delete=models.CASCADE, related_name='person1_relationships')
     person2 = models.ForeignKey(People, on_delete=models.CASCADE, related_name='person2_relationships')
     relationship_type = models.CharField(max_length=100)

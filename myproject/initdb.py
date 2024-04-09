@@ -88,7 +88,7 @@ for i in range(0, len(people)-1):
         education_level=person['education_level'],
         health_status=person['health_status'],
         family_info=person['family_info'],
-        profile_picture=person['profile_picture'],
+        # profile_picture=person['profile_picture'],
         social_media_links=person['social_media_links'],
         cause_of_death=person['cause_of_death'],
         family=f,
@@ -125,7 +125,7 @@ for relationship in relationships:
         else:
             relationship['end_date'] = None
         Relationships.objects.create(
-            id = relationship['relationship_id'],
+            relationship_id = relationship['relationship_id'],
             person1=person1,
             person2=person2,
             relationship_type=relationship['relationship_type'],

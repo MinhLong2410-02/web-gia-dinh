@@ -1,7 +1,8 @@
 from django.db import connection
-from .models import People, Relationships
+from .models import People, Relationships, Families
 from django.conf import settings
 DATABASES = settings.DATABASES['default']
+API_URL = settings.API_URL
 def convert_vietnamese_accent_to_english(text):
     """
     Convert Vietnamese accents to English
@@ -107,8 +108,28 @@ def get_husband_wife_by_id(partner_id):
             res['wife']= {'name': wife.full_name_vn, 'img': wife.profile_picture, 'id': wife.people}
     return res
 
-def upload_image(path, file):
+def upload_image(path, object_id, file):
+    if path == 'relationships':
+        path = './media/relationships/'
+    elif path == 'families':
+        path = './media/families/'
+    else:
+        path = './media/profile_pictures/'
+    path = path + str(object_id) + '.png'
     with open(path, 'wb+') as destination:
         for chunk in file.chunks():
             destination.write(chunk)
+    return '/home' + path[1:]
+
+def get_image_url(id: int, table: str) -> str:
+    if table == 'profile_pictures':
+        people = People.objects.get(people=id)
+        img = people.profile_picture
+    elif table == 'families':
+        family = Families.objects.get(family_id=id)
+        img = family.family_img
+    else:
+        img = Relationships.objects.get(relationship_id=id).relationship_img
+    path = API_URL + img
+    print(path)
     return path
