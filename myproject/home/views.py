@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
-from django.http import JsonResponse
+from rest_framework.views import APIView
+from django.http import HttpResponse, JsonResponse
 from .forms import LoginForm
 from .models import *
 from rest_framework import status, request
 from django.contrib.auth.views import (LoginView)
-from django.conf import settings
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import View
@@ -15,7 +15,7 @@ from django.db.models import Q, F, ExpressionWrapper, IntegerField, TimeField
 from .utils import *
 from django.db.models import Case, When, Value, IntegerField
 from django.db.models.functions import Cast
-
+from datetime import timedelta
 
 class Login(LoginView):
     template_name = 'home/login.html'
@@ -184,10 +184,10 @@ class HomeView(View):
     def non_authenticated_user(self, request, families):
         return render(request, self.template_name_non_authenticated, {'families': families})
 
-@csrf_exempt
-def import_info(request):
-    context = {'API_URL': API_URL}
-    return render(request, 'home/import_info.html', context)
+# @csrf_exempt
+# def import_info(request):
+#     context = {'API_URL': API_URL}
+#     return render(request, 'home/import_info.html', context)
 
 class UpdateInfoView(View, LoginRequiredMixin):
     template_name = 'home/update_people.html'
@@ -280,6 +280,7 @@ class UpdateInfoView(View, LoginRequiredMixin):
                 'API_URL': API_URL,
             })
         
+
  
 class ProfileView(View):
     template_name = 'home/profile.html'
@@ -314,7 +315,58 @@ class ProfileView(View):
                     'API_URL': API_URL,
                 })
 
-'''API ENDPOINTS'''          
+'''API ENDPOINTS'''    
+# from rest_framework.permissions import IsAuthenticated
+class PeopleImport(APIView, LoginRequiredMixin):
+    def get(self, request):
+        context = {'API_URL': API_URL}
+        return render(request, 'home/import_info.html', context)
+    
+    def post(self, request):
+        request_data = request.data
+        search = request_data['search']
+        relationship = request_data.get('relationship')
+        person = People.objects.get(full_name = search)
+        gender = person.gender
+        if relationship == 'Vợ Chồng':
+            people_id = person.people 
+            check_married = Relationships.objects.filter(person1_id=people_id, relationship_type='Vợ Chồng').exists() if gender else Relationships.objects.filter(person2_id=people_id, relationship_type='Vợ Chồng').exists()
+            if check_married:
+                return JsonResponse({'message': 'Đã kết hôn rồi'}, status=status.HTTP_400_BAD_REQUEST)
+        people = People.objects.create(
+            full_name_vn=request_data.get('full_name'),
+            full_name = convert_vietnamese_accent_to_english(request_data.get('full_name')),
+            # birth_date is DateField, so it should be save in appropriate format
+            birth_date = None if request_data.get('death_date') == '' else timezone.datetime.strftime(request_data.get('birth_date'), '%Y-%m-%d'),
+            death_date = None if request_data.get('death_date') == '' else timezone.datetime.strftime(request_data.get('death_date'), '%Y-%m-%d'),
+            gender = request_data.get(gender) == 'true',
+            phone_number = None if request_data.get('phone_number') == 'None' else request_data.get('phone_number'),
+            contact_address = request_data.get('contact_address'),
+            place_of_birth = request_data.get('birth_place'), 
+            nationality = request_data.get('nationality'),
+            occupation = request_data.get('occupation'),
+            history = request_data.get('history'),
+            education_level = request_data.get('education_level'),
+            health_status = request_data.get('health_status'),
+            hobbies_interests = request_data.get('hobbies_interests'),
+            social_media_links = request_data.get('social_media_links'),
+        )
+        if request_data.get('profile_picture') == '':
+            people.profile_picture = '/home/media/profile_pictures/default.png'
+            people.save()
+        else:
+            people.profile_picture = upload_image('profile_pictures', people.people, request_data.get('profile_picture'))
+            people.save()
+        
+        relationship = request_data['relationship']
+        Relationships.objects.create(
+            person2=person,
+            person1=people,
+            relationship_type=relationship,
+        )
+        
+        return JsonResponse({'message': 'Đã kết hôn rồi'})
+    
 @api_view(['GET'])
 def find_people(request: request.Request):
     name = request.GET.get('name')
@@ -324,15 +376,7 @@ def find_people(request: request.Request):
         name[i] = convert_vietnamese_accent_to_english(name[i]).capitalize()
     name = ' '.join(name)  
     people = People.objects.filter(full_name__icontains=name)
-    res = [{"full_name": person.full_name, "people_id": person.people_id,} for person in people]
-    # for person in people:
-    #     res.append({"full_name": person.full_name, "people_id": person.people_id,})
-    # people = People.objects.raw(f"SELECT * FROM people WHERE full_name LIKE %s", f"%{name}%")
-    # for person in people:
-    #     res.add({
-    #         "full_name": person.full_name,
-    #         "people_id": person.people_id,
-    #         })
+    res = [{"full_name": person.full_name, "people_id": person.people,} for person in people]
     return JsonResponse({'data': list(res)})
 
 @api_view(['POST'])
@@ -427,6 +471,8 @@ def update_people(request: request.Request):
                 'error': f'{e}',
             }, status=status_code)
 
+    
+
 @api_view(['GET'])
 def find_people_with_relationship(request: request.Request):
     res = []
@@ -435,7 +481,6 @@ def find_people_with_relationship(request: request.Request):
     res = [get_husband_wife_by_id(relationship['person2_id']) for relationship in relationships]
     return JsonResponse({'data': res})
 
-from datetime import date, timedelta
 
 @api_view(['GET'])
 def count_people(request):

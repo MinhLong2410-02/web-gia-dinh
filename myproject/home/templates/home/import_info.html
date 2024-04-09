@@ -68,25 +68,25 @@
                 <input type="date" id="death_date" name="death_date">
             </div>
         </div>
-        <div class="form-group" style = "padding : 0 7%">
-            <label for="relationship">Quan hệ:</label>
-            <select id="relationship" name="relationship">
-                <option value="Bà cố nội">Bà cố nội</option>
-                <option value="Ông cố nội">Ông cố nội</option>
-                <option value="Ông ngoại">Ông ngoại</option>
-                <option value="Bà ngoại">Bà ngoại</option>
-                <option value="Ông nội">Ông nội</option>
-                <option value="Bà nội">Bà nội</option>
-                <option value="Ba">Ba</option>
-                <option value="Mẹ">Mẹ</option>
-            </select>
-        </div>
+        
         <div class="form-group wrap-search">
             <input type="text" id="search" name="search" placeholder="Nhập tên người cần tìm kiếm">
             <div class="recommend">
                 <ul id="warp-item">
                 </ul>
             </div>
+        </div>
+        <div class="form-group" style = "padding : 0 7%">
+            <label for="relationship">Quan hệ:</label>
+            <select id="relationship" name="relationship">
+                <option value="Ông ngoại">Ông ngoại</option>
+                <option value="Bà ngoại">Bà ngoại</option>
+                <option value="Ông nội">Ông nội</option>
+                <option value="Bà nội">Bà nội</option>
+                <option value="Bố Con">Bố</option>
+                <option value="Mẹ Con">Mẹ</option>
+                <option value="Vợ Chồng">Vợ/Chồng</option>
+            </select>
         </div>
         <div class="form-group">
             <input type="tel" id="phone_number" name="phone_number" placeholder="Nhập số điện thoại">
@@ -141,14 +141,12 @@
         <div class="action-buttons">
             <button type="submit" class="submit-btn">ĐỒNG Ý</button>
             <button type="button" class="cancel-btn">HỦY</button>
-            {% comment %} 
-            const sex = document.querySelector('input[name="gender"]:checked').value {% endcomment %}
         </div>
     </form>
         
     <script>
 
-        const BE_HOST = {{ API_URL|safe }};
+        const BE_HOST = '{{ API_URL|safe }}';
 
         const recommend = document.querySelector('.recommend');
         const search = document.querySelector('#search');
@@ -161,11 +159,10 @@
                 return;
             }
             console.log("ngoai")
-            {% comment %} recommend.style.display = 'none'; {% endcomment %}
         })
 
         search.addEventListener('keyup', function() {
-            fetch(`${BE_HOST}home/api/find-people/?name=` + search.value)
+            fetch(`${BE_HOST}/home/api/find-people/?name=` + search.value)
             .then(response => response.json())
             .then(data => {
                 const wrapItem = document.querySelector('#warp-item');
@@ -190,7 +187,7 @@
         
 
 
-        const url = `${BE_HOST}import-info/`
+        const url = `${BE_HOST}/home/import-info/`
 
         const form = document.querySelector('form');
         form.addEventListener('submit', e => {
@@ -239,7 +236,7 @@
             }
             
 
-            fetch(`${BE_HOST}home/api/update-people/`, {
+            fetch(`${BE_HOST}/home/import-info/`, {
                 method: 'POST',
                 body: formData
             }).then(res => {

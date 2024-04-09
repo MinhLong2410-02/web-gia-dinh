@@ -131,5 +131,19 @@ def get_image_url(id: int, table: str) -> str:
     else:
         img = Relationships.objects.get(relationship_id=id).relationship_img
     path = API_URL + img
-    print(path)
     return path
+
+def create_relationship_if_not_exists(person1, person2, person3, relationship_check, relationship_create):
+    r = Relationships.objects.filter(
+                    person1 = person1,
+                    person2 = person2,
+                    relationship_type = relationship_check
+                )
+    if not r.exists():
+        return False
+    r = Relationships.objects.create(
+                    person1 = person3,
+                    person2 = person2,
+                    relationship_type = relationship_create
+                )
+    return True
