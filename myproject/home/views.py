@@ -1,22 +1,21 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
-from django.http import JsonResponse
+from rest_framework.views import APIView
+from django.http import HttpResponse, JsonResponse
 from .forms import LoginForm
 from .models import *
 from rest_framework import status, request
 from django.contrib.auth.views import (LoginView)
-from django.conf import settings
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q, F, ExpressionWrapper, IntegerField, TimeField
 from .utils import *
 from django.db.models import Case, When, Value, IntegerField
 from django.db.models.functions import Cast
-API_URL = settings.API_URL
-
-
+from datetime import timedelta
 
 class Login(LoginView):
     template_name = 'home/login.html'
@@ -28,14 +27,20 @@ class Login(LoginView):
         return reverse_lazy('home')
 
 def FamilyTreeView(request, family_id):
-    # head_family = get_head_family_tree_by_family_id(family_id)
-    head_family = Families.objects.get(family_id=family_id).leader
-    head_family = People.objects.get(people_id=head_family)
-    if head_family is None:
-        return render(request, 'home/family.html', {'data': []})
-    res = get_husband_wife_by_id(head_family.people_id)
-    return render(request, 'home/family.html', {'data': res, 'API_URL': API_URL})  
-
+    res = dict()
+    head_family = People.objects.filter(family__family_id=family_id).first()
+    relationship = Relationships.objects.filter(person1=head_family, relationship_type='Vợ Chồng')
+    if not relationship.exists():
+        relationship = Relationships.objects.filter(person2=head_family, relationship_type='Vợ Chồng')
+    if not relationship.exists():
+        wife = None
+    else:
+        wife = relationship.first().person2
+        wife = People.objects.get(people=wife.people)
+        wife = {'name': wife.full_name_vn, 'id': wife.people, 'img': wife.profile_picture}
+    res['wife'] = wife
+    res['husband']= {'name': head_family.full_name_vn, 'id': head_family.people ,'img': head_family.profile_picture}
+    return render(request, 'home/family.html', {'data': res, 'API_URL': API_URL})
 
 class BirthDateView(View):
     template_name = 'home/birth_date.html'
@@ -122,7 +127,7 @@ class MarriedDateView(View):
         ).values(
             'person1__full_name', 'person1__profile_picture',
             'person2__full_name', 'person2__profile_picture',
-            'start_date', 'relationship_img'
+            'start_date', 'relationship_id'
         )
 
         # Format the data
@@ -133,7 +138,7 @@ class MarriedDateView(View):
                 "full_name2": relationship['person2__full_name'],
                 "img2": relationship['person2__profile_picture'],
                 "start_date": relationship['start_date'].strftime("%d/%m/%Y") if relationship['start_date'] else None,
-                "relationship_img": relationship['relationship_img']
+                "relationship_img": get_image_url(relationship['relationship_id'], 'relationships')
             }
             for relationship in relationships
         ]
@@ -148,9 +153,9 @@ class HomeView(View):
 
     def get(self, request, *args, **kwargs):
         leader_ids = list(Families.objects.all().exclude(leader__isnull=True).values_list('leader', flat=True))
-        leader_ids_list = list(People.objects.filter(people_id__in=leader_ids)\
+        leader_ids_list = list(People.objects.filter(people__in=leader_ids)\
             .order_by('birth_date')\
-            .values_list('people_id', flat=True))
+            .values_list('people', flat=True))
         # sort Family by people_leader_ids list using leader field
         leader_id_index = {leader_id: index for index, leader_id in enumerate(leader_ids_list)}
             
@@ -167,9 +172,7 @@ class HomeView(View):
 
         # Sort the annotated queryset based on the index
         families = annotated_families.order_by('leader_id_index').values()
-        
 
-        # print(families)
         if request.user.is_authenticated:
             return self.authenticated_user(request, list(families))
         else:
@@ -181,47 +184,46 @@ class HomeView(View):
     def non_authenticated_user(self, request, families):
         return render(request, self.template_name_non_authenticated, {'families': families})
 
-@csrf_exempt
-def import_info(request):
-    context = {'API_URL': API_URL}
-    return render(request, 'home/import_info.html', context)
+# @csrf_exempt
+# def import_info(request):
+#     context = {'API_URL': API_URL}
+#     return render(request, 'home/import_info.html', context)
 
-class UpdateInfoView(View):
+class UpdateInfoView(View, LoginRequiredMixin):
     template_name = 'home/update_people.html'
     
     def get(self, request, *args, **kwargs):
-        people_id = request.GET.get('id')
+        person_id = request.GET.get('id')
         person_email = request.user.email
-
-        if people_id:
-            person = People.objects.select_related('family').get(people_id=people_id)
+        if person_id:
+            person = People.objects.select_related('family').get(people=person_id)
             person2 = People.objects.select_related('family').get(email=person_email)
             relationship = Relationships.objects.filter(person1=person, person2=person2).exists()
             relationship2 = Relationships.objects.filter(person1=person2, person2=person).exists()
             
             is_married = Relationships.objects.filter(
-                Q(person1_id=person.people_id, relationship_type='Vợ Chồng') | Q(person2_id=person.people_id, relationship_type='Vợ Chồng')
+                Q(person1=person.people, relationship_type='Vợ Chồng') | Q(person2=person.people, relationship_type='Vợ Chồng')
             ).exists()
-            if relationship or relationship2 or person.people_id == person2.people_id:
+            if relationship or relationship2 or person.people == person2.people:
                 people_in_family = People.objects.filter(
                     family_id=person.family_id
                 ).values(
-                    'people_id', 'full_name_vn', 
+                    'people', 'full_name_vn', 
                 )
                 return render(request, self.template_name, {
                     'data': {
-                        'id': people_id,
+                        'id': person_id,
                         'full_name': person.full_name_vn,
 
                         'birth_date': timezone.datetime.strftime(person.birth_date, '%Y-%m-%d') if person.birth_date else None,
                         'death_date': timezone.datetime.strftime(person.death_date, '%Y-%m-%d') if person.death_date else None,
 
-                        'profile_picture': person.profile_picture,
+                        'profile_picture': get_image_url(person_id, 'profile_pictures'),
                         'gender': person.gender,
                         'phone_number': person.phone_number,
                         'contact_address': person.contact_address,
                         'nationality': person.nationality,
-                        'birth_place': person.birth_place,
+                        'birth_place': person.place_of_birth,
                         'marital_status': person.marital_status,
                         'history': person.history,
                         'achievement': person.achievement,
@@ -239,29 +241,30 @@ class UpdateInfoView(View):
             else:
                 return render(request, 'home/permission_denied.html')
         else:
+            person_id = request.user.id
             person = People.objects.select_related('family').get(email=person_email)
             people_in_family = People.objects.filter(
                 family_id=person.family_id
             ).values(
-                'people_id', 'full_name_vn', 
+                'people', 'full_name_vn', 
             )
             is_married = Relationships.objects.filter(
-                Q(person1_id=person.people_id, relationship_type='Vợ Chồng') | Q(person2_id=person.people_id, relationship_type='Vợ Chồng')
+                Q(person1_id=person.people, relationship_type='Vợ Chồng') | Q(person2_id=person.people, relationship_type='Vợ Chồng')
             ).exists()
             
             return render(request, self.template_name, {
                 'data': {
-                    'id': person.people_id,
+                    'id': person.people,
                     'full_name': person.full_name_vn,
                     'birth_date': timezone.datetime.strftime(person.birth_date, '%Y-%m-%d') if person.birth_date else None,
                     'death_date': timezone.datetime.strftime(person.death_date, '%Y-%m-%d') if person.death_date else None,
 
-                    'profile_picture': person.profile_picture,
+                    'profile_picture': get_image_url(person_id, 'profile_pictures'),
                     'gender': person.gender,
                     'phone_number': person.phone_number,
                     'contact_address': person.contact_address,
                     'nationality': person.nationality,
-                    'birth_place': person.birth_place,
+                    'birth_place': person.place_of_birth,
                     'marital_status': person.marital_status,
                     'history': person.history,
                     'achievement': person.achievement,
@@ -277,13 +280,14 @@ class UpdateInfoView(View):
                 'API_URL': API_URL,
             })
         
+
  
 class ProfileView(View):
     template_name = 'home/profile.html'
     
     def get(self, request, *args, **kwargs):
         people_id = request.GET.get('id')
-        person = People.objects.get(people_id=people_id)
+        person = People.objects.get(people=people_id)
         return render(request, self.template_name, {
                     'data': {
                         'id': people_id,
@@ -297,7 +301,7 @@ class ProfileView(View):
                         'phone_number': person.phone_number,
                         'contact_address': person.contact_address,
                         'nationality': person.nationality,
-                        'birth_place': person.birth_place,
+                        'birth_place': person.place_of_birth,
                         'marital_status': person.marital_status,
                         'history': person.history,
                         'achievement': person.achievement,
@@ -311,7 +315,58 @@ class ProfileView(View):
                     'API_URL': API_URL,
                 })
 
-'''API ENDPOINTS'''          
+'''API ENDPOINTS'''    
+# from rest_framework.permissions import IsAuthenticated
+class PeopleImport(APIView, LoginRequiredMixin):
+    def get(self, request):
+        context = {'API_URL': API_URL}
+        return render(request, 'home/import_info.html', context)
+    
+    def post(self, request):
+        request_data = request.data
+        search = request_data['search']
+        relationship = request_data.get('relationship')
+        person = People.objects.get(full_name = search)
+        gender = person.gender
+        if relationship == 'Vợ Chồng':
+            people_id = person.people 
+            check_married = Relationships.objects.filter(person1_id=people_id, relationship_type='Vợ Chồng').exists() if gender else Relationships.objects.filter(person2_id=people_id, relationship_type='Vợ Chồng').exists()
+            if check_married:
+                return JsonResponse({'message': 'Đã kết hôn rồi'}, status=status.HTTP_400_BAD_REQUEST)
+        people = People.objects.create(
+            full_name_vn=request_data.get('full_name'),
+            full_name = convert_vietnamese_accent_to_english(request_data.get('full_name')),
+            # birth_date is DateField, so it should be save in appropriate format
+            birth_date = None if request_data.get('death_date') == '' else timezone.datetime.strftime(request_data.get('birth_date'), '%Y-%m-%d'),
+            death_date = None if request_data.get('death_date') == '' else timezone.datetime.strftime(request_data.get('death_date'), '%Y-%m-%d'),
+            gender = request_data.get(gender) == 'true',
+            phone_number = None if request_data.get('phone_number') == 'None' else request_data.get('phone_number'),
+            contact_address = request_data.get('contact_address'),
+            place_of_birth = request_data.get('birth_place'), 
+            nationality = request_data.get('nationality'),
+            occupation = request_data.get('occupation'),
+            history = request_data.get('history'),
+            education_level = request_data.get('education_level'),
+            health_status = request_data.get('health_status'),
+            hobbies_interests = request_data.get('hobbies_interests'),
+            social_media_links = request_data.get('social_media_links'),
+        )
+        if request_data.get('profile_picture') == '':
+            people.profile_picture = '/home/media/profile_pictures/default.png'
+            people.save()
+        else:
+            people.profile_picture = upload_image('profile_pictures', people.people, request_data.get('profile_picture'))
+            people.save()
+        
+        relationship = request_data['relationship']
+        Relationships.objects.create(
+            person2=person,
+            person1=people,
+            relationship_type=relationship,
+        )
+        
+        return JsonResponse({'message': 'Đã kết hôn rồi'})
+    
 @api_view(['GET'])
 def find_people(request: request.Request):
     name = request.GET.get('name')
@@ -321,15 +376,7 @@ def find_people(request: request.Request):
         name[i] = convert_vietnamese_accent_to_english(name[i]).capitalize()
     name = ' '.join(name)  
     people = People.objects.filter(full_name__icontains=name)
-    res = [{"full_name": person.full_name, "people_id": person.people_id,} for person in people]
-    # for person in people:
-    #     res.append({"full_name": person.full_name, "people_id": person.people_id,})
-    # people = People.objects.raw(f"SELECT * FROM people WHERE full_name LIKE %s", f"%{name}%")
-    # for person in people:
-    #     res.add({
-    #         "full_name": person.full_name,
-    #         "people_id": person.people_id,
-    #         })
+    res = [{"full_name": person.full_name, "people_id": person.people,} for person in people]
     return JsonResponse({'data': list(res)})
 
 @api_view(['POST'])
@@ -352,7 +399,7 @@ def update_people(request: request.Request):
         
         if bool(request.data.get('profile_picture')):
             profile_picture = request.data.get('profile_picture')
-            people.profile_picture = upload_image(f'./static/profile_pictures/{people.people_id}.jpg', profile_picture)
+            people.profile_picture = upload_image('people', people.people, profile_picture)
             people.save()
         
         people2 = People.objects.get(full_name=request.data.get('search'))
@@ -366,16 +413,21 @@ def update_people(request: request.Request):
         return reverse_lazy('home')
     else:
         status_code = status.HTTP_400_BAD_REQUEST
-        people_id = request.GET.get('id')
+        
         request_data = request.POST
         try:
             if bool(request.data.get('profile_picture')):
                 profile_picture = request.data.get('profile_picture')
-                with open(f'./static/profile_pictures/{people_id}.jpg', 'wb+') as destination:
-                    for chunk in profile_picture.chunks():
-                        destination.write(chunk)
+                
+                path = upload_image('people', people_id, profile_picture)
+                People.objects.filter(people=people_id).update(profile_picture=path)
+                
+                # with open(f'./static/profile_pictures/{people_id}.jpg', 'wb+') as destination:
+                #     for chunk in profile_picture.chunks():
+                #         destination.write(chunk)
+                
             day = timezone.datetime.strptime(request_data.get('birth_date'), '%Y-%m-%d').date()
-            People.objects.filter(people_id=people_id).update(
+            People.objects.filter(people=people_id).update(
                 full_name_vn=request_data.get('full_name'),
                 full_name=convert_vietnamese_accent_to_english(request_data.get('full_name')),
                 birth_date=day,
@@ -385,7 +437,7 @@ def update_people(request: request.Request):
                 occupation=request_data.get('occupation'),
                 contact_address=request_data.get('contact_address'),
                 nationality = request_data.get('nationality'),
-                birth_place = request_data.get('birth_place'),
+                place_of_birth = request_data.get('birth_place'),
                 marital_status = request_data.get('marital_status'),
                 history = request_data.get('history'),
                 achievement = request_data.get('achievement'),
@@ -393,7 +445,7 @@ def update_people(request: request.Request):
                 health_status = request_data.get('health_status'),
                 family_info = request_data.get('family_info'),
                 social_media_links = request_data.get('social_media_links'),
-                profile_picture = f'{API_URL}/static/profile_pictures/{people_id}.jpg',
+                # profile_picture = upload_image('people', people_id, request.data.get('profile_picture')), # needed fix
             )
             
             if request.data.get('is_married') == 'true' or (request.data.get('is_married') == True and request.data.get('is_married') != 'false'):
@@ -402,10 +454,8 @@ def update_people(request: request.Request):
                     relationship = Relationships.objects.get(
                         Q(person1_id=people_id, relationship_type='Vợ Chồng') | Q(person2_id=people_id, relationship_type='Vợ Chồng')
                     )
-                    with open(f'./static/profile_pictures/relationships/{relationship.relationship_id}.jpg', 'wb+') as destination:
-                        for chunk in profile_picture.chunks():
-                            destination.write(chunk)
-                    relationship.relationship_img = f'./static/profile_pictures/relationships/{relationship.relationship_id}.jpg'
+                    upload_image(f'relationships', relationship.relationship_id, profile_picture)
+                    relationship.relationship_img = f'relationships/{relationship.relationship_id}.jpg'
                     relationship.save()
                 people = People.objects.get(people_id=people_id)
                 people.marital_status = "Đã kết hôn"   
@@ -421,45 +471,48 @@ def update_people(request: request.Request):
                 'error': f'{e}',
             }, status=status_code)
 
+    
+
 @api_view(['GET'])
 def find_people_with_relationship(request: request.Request):
     res = []
     person1_id = request.GET.get('id')
-    relationships = Relationships.objects.filter(person1_id=person1_id, relationship_type='Cha Con').values('person2_id')
+    relationships = Relationships.objects.filter(person1=person1_id, relationship_type='Cha Con').values('person2_id')
     res = [get_husband_wife_by_id(relationship['person2_id']) for relationship in relationships]
     return JsonResponse({'data': res})
+
 
 @api_view(['GET'])
 def count_people(request):
     current_date = timezone.now().date()
+    end_date = current_date + timedelta(days=10)
 
-    start_date = current_date
-    end_date = current_date + timezone.timedelta(days=10)
-
-    people_in_current_month_count = People.objects.filter(
-        birth_date__gte=start_date,
-        birth_date__lte=end_date
-    ).exclude(
-        birth_date__isnull=True
+    # Correcting variable names and logic for birthday count
+    people_in_date_range_count = People.objects.filter(
+        Q(birth_date__month=current_date.month, birth_date__day__gte=current_date.day) |
+        Q(birth_date__month=end_date.month, birth_date__day__lte=end_date.day) &
+        Q(birth_date__isnull=False)
     ).count()
-        
-    couples_in_current_month_count = Relationships.objects.filter(
-        relationship_type='Vợ Chồng',
-        start_date__gte=start_date,
-        start_date__lte=end_date
-    ).exclude(
-        start_date__isnull=True
+
+    # Fixing logic for counting marriages within the date range
+    # Assuming `start_date` refers to the anniversary date of the relationship
+    couples_in_date_range_count = Relationships.objects.filter(
+        Q(start_date__month=current_date.month, start_date__day__gte=current_date.day) |
+        Q(start_date__month=end_date.month, start_date__day__lte=end_date.day),
+        start_date__isnull=False,
+        relationship_type='Vợ Chồng'
     ).count()
     
-    passed_away_in_current_month_count = People.objects.filter(
-        death_date__gte=start_date,
-        death_date__lte=end_date
-    ).exclude(
-        death_date__isnull=True
+    # Fixing logic for counting death anniversaries within the date range
+    passed_away_in_date_range_count = People.objects.filter(
+        Q(death_date__month=current_date.month, death_date__day__gte=current_date.day) |
+        Q(death_date__month=end_date.month, death_date__day__lte=end_date.day),
+        death_date__isnull=False
     ).count()
     
+    # Correcting the JsonResponse data keys according to the variables used
     return JsonResponse({'data': {
-        'birth_date_count': people_in_current_month_count,
-        'married_date_count': couples_in_current_month_count,
-        'death_date_count': passed_away_in_current_month_count,
+        'birth_date_count': people_in_date_range_count,
+        'married_date_count': couples_in_date_range_count,
+        'death_date_count': passed_away_in_date_range_count,
     }})

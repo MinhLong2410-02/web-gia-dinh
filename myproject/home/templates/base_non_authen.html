@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     {% comment %} <meta name="viewport" content="width=device-width, initial-scale=1.0"> {% endcomment %}
-    <link href="https://fonts.googleapis.com/css?family=Oswald:500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <title>{% block title %}Trang Chủ{% endblock %}</title>
 </head>
@@ -34,7 +35,7 @@
         </div>
         <div class="footer-section">
             <a href="{% url 'death_date' %}" class="icon-button">
-                <img src="{% static 'images/info.png' %}" alt="Ngày Mất">
+                <img src="{% static 'images/cross.png' %}" alt="Ngày Mất">
             </a>     
             <span class="icon-text">Ngày Mất</span>
         </div>

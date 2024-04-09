@@ -1,7 +1,8 @@
 from django.db import connection
-from .models import People, Relationships
+from .models import People, Relationships, Families
 from django.conf import settings
 DATABASES = settings.DATABASES['default']
+API_URL = settings.API_URL
 def convert_vietnamese_accent_to_english(text):
     """
     Convert Vietnamese accents to English
@@ -91,24 +92,58 @@ def get_head_family_tree_by_family_id(family_id):
     return rows
 
 def get_husband_wife_by_id(partner_id):
-    person = People.objects.get(people_id=partner_id)
-    res = {'husband': {'name': person.full_name_vn, 'id': person.people_id ,'img': person.profile_picture}}
+    person = People.objects.get(people=partner_id)
+    res = {'husband': {'name': person.full_name_vn, 'id': person.people ,'img': person.profile_picture}}
     
     wife = Relationships.objects.filter(person1_id=partner_id, relationship_type='Vợ Chồng')
     if wife.exists():
         wife = wife.values('person2_id') 
-        wife = People.objects.get(people_id=wife[0]['person2_id'])
-        res['wife']= {'name': wife.full_name_vn, 'img': wife.profile_picture, 'id': wife.people_id}
+        wife = People.objects.get(people=wife[0]['person2_id'])
+        res['wife']= {'name': wife.full_name_vn, 'img': wife.profile_picture, 'id': wife.people}
     else:
         wife = Relationships.objects.filter(person2_id=partner_id, relationship_type='Vợ Chồng')
         if wife.exists():
             wife = wife.values('person1_id') 
-            wife = People.objects.get(people_id=wife[0]['person1_id'])
-            res['wife']= {'name': wife.full_name_vn, 'img': wife.profile_picture, 'id': wife.people_id}
+            wife = People.objects.get(people=wife[0]['person1_id'])
+            res['wife']= {'name': wife.full_name_vn, 'img': wife.profile_picture, 'id': wife.people}
     return res
 
-def upload_image(path, file):
+def upload_image(path, object_id, file):
+    if path == 'relationships':
+        path = './media/relationships/'
+    elif path == 'families':
+        path = './media/families/'
+    else:
+        path = './media/profile_pictures/'
+    path = path + str(object_id) + '.png'
     with open(path, 'wb+') as destination:
         for chunk in file.chunks():
             destination.write(chunk)
+    return '/home' + path[1:]
+
+def get_image_url(id: int, table: str) -> str:
+    if table == 'profile_pictures':
+        people = People.objects.get(people=id)
+        img = people.profile_picture
+    elif table == 'families':
+        family = Families.objects.get(family_id=id)
+        img = family.family_img
+    else:
+        img = Relationships.objects.get(relationship_id=id).relationship_img
+    path = API_URL + img
     return path
+
+def create_relationship_if_not_exists(person1, person2, person3, relationship_check, relationship_create):
+    r = Relationships.objects.filter(
+                    person1 = person1,
+                    person2 = person2,
+                    relationship_type = relationship_check
+                )
+    if not r.exists():
+        return False
+    r = Relationships.objects.create(
+                    person1 = person3,
+                    person2 = person2,
+                    relationship_type = relationship_create
+                )
+    return True

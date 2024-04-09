@@ -5,7 +5,7 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    margin-top: 20px;
+    margin-top: 30px;
     margin-bottom: 150px;
 }
 
@@ -23,14 +23,18 @@
 
 .item {
     margin: 1rem 0;
-    background-color: rgb(244, 249, 253);
-    border: 1px solid black;
-    height: 350px;
-    width: 80%;
+    background-color: rgb(255, 255, 255);
+    min-height: 300px; 
+    overflow-y: auto; 
+
+    width: 100%;
     border-radius: 1rem;
     display: flex;
     justify-content: space-between;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ */
+    border: none; /* Loại bỏ viền */
 }
+
 .item a {
     width: 100%;
     display: flex;
@@ -60,7 +64,7 @@
     height: 80%;
     padding: 10px;
     object-fit: cover;
-    border-radius: 1rem;
+    border-radius: 6rem;
 }
  
 .wrap-text {
@@ -68,18 +72,46 @@
     width: 60%;
     display: flex;
     flex-direction: column;
-    flex: 1;
+    flex: 5;
     justify-content: center;
     align-items: center;
     padding: 10px;
 }
 
 .name {
-    font-size: 30px;
+    font-size: 48px;
     font-weight: 600;
     margin-bottom: 10px;
-
+    font-family: 'Oswald', sans-serif;
+    color: #177502; /* Màu nền */
+    white-space: nowrap; /* Ngăn chặn chữ rớt dòng */
 }
+
+.wrap-text p {
+    font-family: 'Comfortaa', cursive; /* Sử dụng phông chữ Comfortaa */
+    font-size: 15px; /* Hoặc bất kỳ kích thước nào bạn muốn */
+}
+.highlight {
+}
+
+.age-value {
+    color: #004d00; /* Màu xanh lá */
+    font-size: 48px; /* Đặt kích thước chữ thành 38px */
+    font-weight: bold; /* Làm cho chữ đậm */
+}
+
+.cause-of-death {
+    width: 100%; /* Kéo dài từ bên trái qua bên phải */
+    text-align: left; /* Căn chỉnh nội dung về phía bên trái */
+    margin-top: 20px; /* Tạo khoảng cách phía trên, nếu cần */
+    padding-left: 10px; /* Tạo padding bên trái để nội dung không dính sát vào viền */
+    box-sizing: border-box; /* Đảm bảo width bao gồm cả padding và border */
+}
+.birth-date, .death-date {
+    font-size: 3.2em; /* Tăng kích thước chữ */
+    font-weight: bold; /* Làm cho chữ đậm */
+}
+
 
 .wrap-people {
     display: flex;
@@ -110,6 +142,10 @@
     flex-direction: column;
 }
 
+.banner-image img {
+    width: 400px; /* Gấp đôi kích thước hoặc điều chỉnh theo nhu cầu */
+    height: auto; /* Giữ tỉ lệ hình ảnh */
+}
 
 .banner {
     background-color: #f2f2f2; /* Màu nền cho banner */
@@ -126,10 +162,13 @@
     height: 200px;
     margin-bottom: 35px;
 }
-
 @keyframes scrollBannerText {
-    0% { transform: translateX(80%); }
-    100% { transform: translateX(-500%); }
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+
+.banner p {
+    animation: scrollBannerText 5s linear infinite; /* Tăng tốc độ chạy */
 }
 
 .wrap-textBanner {
